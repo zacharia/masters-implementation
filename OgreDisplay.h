@@ -27,6 +27,8 @@ public:
 	
 	void initialize();
 
+	void createPrimitiveMeshes();
+
 	RenderWindow* getRenderWindow();
 
 	void drawFrame();

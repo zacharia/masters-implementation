@@ -196,8 +196,8 @@ void Interpreter::interpretFile(string filename)
 
 	Rule temp = Rule();
 
-	// FILE* input = fopen(filename.c_str(), "r");
-	// yyrestart(input);
+	FILE* input = fopen(filename.c_str(), "r");
+	yyrestart(input);
 
 	// int current = yylex();
 	// while (current != -1)
@@ -213,4 +213,6 @@ void Interpreter::interpretFile(string filename)
 	// 		break;
 	// 	}
 	// }
+
+	delete input;
 }

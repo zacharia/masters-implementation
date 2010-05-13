@@ -79,6 +79,11 @@ void OgreDisplay::initialize()
 	sceneMgr->getBillboardSet("voxel_grid")->setPointRenderingEnabled(true);
 }
 
+void OgreDisplay::createPrimitiveMeshes()
+{
+	
+}
+
 //this is used to let OIS get the screen to track
 RenderWindow* OgreDisplay::getRenderWindow()
 {
