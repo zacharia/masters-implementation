@@ -196,36 +196,21 @@ void Interpreter::interpretFile(string filename)
 
 	Rule temp = Rule();
 
-	FILE* input = fopen(filename.c_str(), "r");
-	yyrestart(input);
+	// FILE* input = fopen(filename.c_str(), "r");
+	// yyrestart(input);
 
-	int current = yylex();
-	// cout << current << " " << yytext << "\n";
-	// current = yylex();
-	// cout << current << " " << yytext << "\n";
-	//  current = yylex();
-	// cout << current << " " << yytext << "\n";
-	//  current = yylex();
-	// cout << current << " " << yytext << "\n";
-	// current = yylex();
-	// cout << current << " " << yytext << "\n";
-	// current = yylex();
-	// cout << current << " " << yytext << "\n";
-	// current = yylex();
-	// cout << current << " " << yytext << "\n";
-	// current = yylex();
-	// cout << current << " " << yytext << "\n";
-	while (current != -1)
-	{
-		cout << current << " |" << yytext << "|\n";
-		if (current == SYMBOL)
-		{
+	// int current = yylex();
+	// while (current != -1)
+	// {
+	// 	cout << current << " |" << yytext << "|\n";
+	// 	if (current == SYMBOL)
+	// 	{
 			
-		}
-		current == yylex();
-		if (current == -1)
-		{
-			break;
-		}
-	}
+	// 	}
+	// 	current == yylex();
+	// 	if (current == -1)
+	// 	{
+	// 		break;
+	// 	}
+	// }
 }

@@ -18,9 +18,6 @@
 //project inclusions
 #include "VoxelGrid.h"
 
-//included to allow other classes to access these, possibly could include them into the .l file instead.
-//#include "SymbolDefines.h"
-
 using namespace std;
 
 struct Rule

@@ -7,8 +7,6 @@ Zacharia Crumley
 
 %{
 
-//#include "SymbolDefines.h"
-
 #define ASSIGN 2
 #define PLUS 6
 #define MINUS 7

@@ -116,15 +116,13 @@ int main(int argc, char** argv)
 	vg->initializeVoxelGrid(0x00);
 
 	vg->makeRectangle(Ogre::Vector3(10,10,10), Ogre::Vector3(5, 5, 5), true);
-	// vg->makeRectangle(Ogre::Vector3(75,50,50), Ogre::Vector3(10, 20, 10), true);
-	// vg->makeEllipsoid(Ogre::Vector3(50, 10, 10), Ogre::Vector3(30, 10, 15), true);
-	// vg->makeCylinder(Ogre::Vector3(50, 50, 50), Ogre::Vector3(10, 10, 10), 'z', true);
 
 	//interpreter initialization
 
 	interpret = new Interpreter();
 	interpret->setVoxelGrid(vg);
-	cout << infile << "[]\n";
+
+	//interpret the input file if we've been given one
 	if (infile != "")
 	{
 		interpret->interpretFile(infile);

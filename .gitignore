@@ -1,1 +1,4 @@
 *~
+*.o
+lex.yy.c
+prototype
