@@ -14,6 +14,7 @@ OgreDisplay::OgreDisplay()
 	viewport = NULL;
 
 	cubeCount = 0;
+	cylinderCount = 0;
 }
 
 //deletes root.
@@ -89,7 +90,9 @@ void OgreDisplay::initialize()
 
 	//do mesh setup stuff
 	cubeCount = 0;
+	cylinderCount = 0;
 	this->createCubeMesh(); //use default arguments to make the default cube
+	this->createCylinderMesh(); //use default arguments to make the default cylinder
 }
 
 void OgreDisplay::createCubeMesh(std::string name, std::string material)
@@ -122,6 +125,60 @@ void OgreDisplay::createCubeMesh(std::string name, std::string material)
 
 	cubeMesh->convertToMesh(name);
 }
+
+
+void OgreDisplay::createCylinderMesh(std::string name, std::string material)
+{
+	//make a cube mesh
+	
+	ManualObject* cylinderMesh = sceneMgr->createManualObject("cylinder");
+	cylinderMesh->begin(material, RenderOperation::OT_TRIANGLE_LIST);
+	
+	for(double i = 0.0; i < Math::PI * 2; i += Math::PI / 5)
+	{
+		cylinderMesh->position(cos(i), 1, sin(i));
+		cylinderMesh->textureCoord(i / (Math::PI * 2), 1.0);
+		Ogre::Vector3 myNormal(cos(i), 0, sin(i));
+		myNormal.normalise();
+		cylinderMesh->normal(myNormal);
+	}
+	
+	for(double i = 0.0; i < Math::PI * 2; i += Math::PI / 5)
+	{
+		cylinderMesh->position(cos(i), -1, sin(i));
+		cylinderMesh->textureCoord(i / (Math::PI * 2), 0.0);
+		Ogre::Vector3 myNormal(cos(i), 0, sin(i));
+		myNormal.normalise();
+		cylinderMesh->normal(myNormal);
+	}
+	
+	for(int i = 0; i < 10; i++)
+	{
+		cylinderMesh->triangle(i, (i+1) % 10, ((i + 10) % 20));
+	}
+	
+	for(int i = 10; i < 20; i++)
+	{
+		cylinderMesh->triangle(i, (i+1) % 10, (i+1) % 10 + 10);
+	}
+	
+	cylinderMesh->position(0, 1, 0);
+	cylinderMesh->textureCoord(0.5, 0.5);
+	
+	cylinderMesh->position(0, -1, 0);
+	cylinderMesh->textureCoord(0.5, 0.5);
+	
+	for(int i = 0; i < 10; i++)
+	{
+		cylinderMesh->triangle(20, (i+1) % 10, i);
+		cylinderMesh->triangle(21, ((i+10) % 10) + 10, ((i+ 11) % 10) + 10);
+	}
+
+	cylinderMesh->end();
+
+	cylinderMesh->convertToMesh(name);
+}
+
 
 //this is used to let OIS get the screen to track
 RenderWindow* OgreDisplay::getRenderWindow()
@@ -215,6 +272,17 @@ void OgreDisplay::addCube(Vector3 pos, Vector3 scale, std::string meshName)
 
 	Entity* ent = sceneMgr->createEntity("cube" + intToString(cubeCount), meshName);
 	cubeCount++;
+	
+	node->attachObject(ent);
+}
+
+void OgreDisplay::addCylinder(Vector3 pos, Vector3 scale, std::string meshName)
+{
+	SceneNode* node = sceneMgr->getRootSceneNode()->createChildSceneNode(pos);
+	node->setScale(scale);
+
+	Entity* ent = sceneMgr->createEntity("cylinder" + intToString(cylinderCount), meshName);
+	cylinderCount++;
 	
 	node->attachObject(ent);
 }

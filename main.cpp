@@ -155,6 +155,7 @@ int main(int argc, char** argv)
 
 	display->addCube(Vector3(0,0,0));
 	display->addCube(Vector3(0,-10,0), Vector3(3,1,1));
+	display->addCylinder(Vector3(14,-5,0), Vector3(3,2,1));
 
 	//OIS init
 

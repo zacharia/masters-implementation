@@ -19,6 +19,7 @@ class OgreDisplay
 	Viewport* viewport;
 
 	int cubeCount;
+	int cylinderCount;
 
 	std::string intToString(int in);
 	
@@ -39,13 +40,17 @@ public:
 
 	void addVoxelBillboard(Vector3 pos);
 
-	void addCube(Vector3 pos, Vector3 scale = Vector3(1,1,1), std::string meshName = "default");
+	void addCube(Vector3 pos, Vector3 scale = Vector3(1,1,1), std::string meshName = "defaultCubeMesh");
+
+	void addCylinder(Vector3 pos, Vector3 scale = Vector3(1,1,1), std::string meshName = "defaultCylinderMesh");
 
 	void createVoxelMesh();
 
 	void buildStaticGeometry();
 
-	void createCubeMesh(std::string name = "default", std::string material = "basic/cube_default");
+	void createCubeMesh(std::string name = "defaultCubeMesh", std::string material = "basic/cube_default");
+
+	void createCylinderMesh(std::string name = "defaultCylinderMesh", std::string material = "basic/cylinder_default");
 
 	Camera* getCamera();
 };
