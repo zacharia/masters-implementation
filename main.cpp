@@ -153,6 +153,9 @@ int main(int argc, char** argv)
 	//display->buildStaticGeometry();
 	//display->addVoxelBillboard(Ogre::Vector3(0,0,0));
 
+	display->addCube(Vector3(0,0,0));
+	display->addCube(Vector3(0,-10,0), Vector3(3,1,1));
+
 	//OIS init
 
 	input = InputManager::getSingletonPtr();

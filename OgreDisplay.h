@@ -18,6 +18,8 @@ class OgreDisplay
 	RenderWindow* renderWindow;
 	Viewport* viewport;
 
+	int cubeCount;
+
 	std::string intToString(int in);
 	
 public:
@@ -26,8 +28,6 @@ public:
 	~OgreDisplay();
 	
 	void initialize();
-
-	void createPrimitiveMeshes();
 
 	RenderWindow* getRenderWindow();
 
@@ -39,9 +39,13 @@ public:
 
 	void addVoxelBillboard(Vector3 pos);
 
+	void addCube(Vector3 pos, Vector3 scale = Vector3(1,1,1), std::string meshName = "default");
+
 	void createVoxelMesh();
 
 	void buildStaticGeometry();
+
+	void createCubeMesh(std::string name = "default", std::string material = "basic/cube_default");
 
 	Camera* getCamera();
 };

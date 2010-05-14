@@ -8,6 +8,12 @@
 OgreDisplay::OgreDisplay()
 {
 	root = NULL;
+	camera = NULL;
+	sceneMgr = NULL;
+	renderWindow = NULL;
+	viewport = NULL;
+
+	cubeCount = 0;
 }
 
 //deletes root.
@@ -36,6 +42,9 @@ void OgreDisplay::initialize()
 	root->getRenderSystem()->setConfigOption( "Video Mode", "1400x1050" );
 	root->getRenderSystem()->setConfigOption( "VSync", "Yes" );
 	root->saveConfig();
+
+	//FIXME: how can I get it to read this from resources.cfg instead of manually specifying it here?
+	root->addResourceLocation("./content/", "FileSystem");
 	
 	//if (root->showConfigDialog())
 	//FIXME: make it a command line thing to not show this?
@@ -77,11 +86,41 @@ void OgreDisplay::initialize()
 	sceneMgr->getBillboardSet("voxel_grid")->setDefaultDimensions(1.0, 1.0);
 	//enable this to rendering the voxels as points
 	sceneMgr->getBillboardSet("voxel_grid")->setPointRenderingEnabled(true);
+
+	//do mesh setup stuff
+	cubeCount = 0;
+	this->createCubeMesh(); //use default arguments to make the default cube
 }
 
-void OgreDisplay::createPrimitiveMeshes()
+void OgreDisplay::createCubeMesh(std::string name, std::string material)
 {
+	//make a cube mesh
 	
+	ManualObject* cubeMesh = sceneMgr->createManualObject("cube");
+	cubeMesh->begin(material, RenderOperation::OT_TRIANGLE_LIST);
+	
+	cubeMesh->position(-0.5, -0.5, -0.5); //0
+	cubeMesh->position(-0.5, -0.5, 0.5); //1
+	cubeMesh->position(0.5, -0.5, 0.5); //2
+	cubeMesh->position(0.5, -0.5, -0.5); //3
+	cubeMesh->position(-0.5, 0.5, -0.5); //4
+	cubeMesh->position(-0.5, 0.5, 0.5); //5
+	cubeMesh->position(0.5, 0.5, 0.5); //6
+	cubeMesh->position(0.5, 0.5, -0.5); //7
+
+	//bottom
+	cubeMesh->quad(3,2,1,0);
+	//top
+	cubeMesh->quad(4,5,6,7);
+	//sides
+	cubeMesh->quad(0,1,5,4);
+	cubeMesh->quad(7,6,2,3);
+	cubeMesh->quad(2,6,5,1);
+	cubeMesh->quad(0,4,7,3);
+
+	cubeMesh->end();
+
+	cubeMesh->convertToMesh(name);
 }
 
 //this is used to let OIS get the screen to track
@@ -167,4 +206,15 @@ Camera* OgreDisplay::getCamera()
 void OgreDisplay::addVoxelBillboard(Vector3 pos)
 {
 	sceneMgr->getBillboardSet("voxel_grid")->createBillboard(Vector3(pos.x, pos.y, pos.z));
+}
+
+void OgreDisplay::addCube(Vector3 pos, Vector3 scale, std::string meshName)
+{
+	SceneNode* node = sceneMgr->getRootSceneNode()->createChildSceneNode(pos);
+	node->setScale(scale);
+
+	Entity* ent = sceneMgr->createEntity("cube" + intToString(cubeCount), meshName);
+	cubeCount++;
+	
+	node->attachObject(ent);
 }
