@@ -40,9 +40,9 @@ public:
 
 	void addVoxelBillboard(Vector3 pos);
 
-	void addCube(Vector3 pos, Vector3 scale = Vector3(1,1,1), std::string meshName = "defaultCubeMesh");
+	void addCube(Vector3 pos, Vector3 scale = Vector3(1,1,1), Quaternion rot = Quaternion::IDENTITY, std::string meshName = "defaultCubeMesh");
 
-	void addCylinder(Vector3 pos, Vector3 scale = Vector3(1,1,1), std::string meshName = "defaultCylinderMesh");
+	void addCylinder(Vector3 pos, Vector3 scale = Vector3(1,1,1), Quaternion rot = Quaternion::IDENTITY, std::string meshName = "defaultCylinderMesh");
 
 	void createVoxelMesh();
 

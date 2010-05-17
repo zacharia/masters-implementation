@@ -154,8 +154,8 @@ int main(int argc, char** argv)
 	//display->addVoxelBillboard(Ogre::Vector3(0,0,0));
 
 	display->addCube(Vector3(0,0,0));
-	display->addCube(Vector3(0,-10,0), Vector3(3,1,1));
-	display->addCylinder(Vector3(14,-5,0), Vector3(3,2,1));
+	display->addCube(Vector3(0,-10,0), Vector3(3,1,1), Quaternion(Radian(2),Vector3(0,1,0)) );
+	display->addCylinder(Vector3(14,-5,0), Vector3(3,2,1), Quaternion(Radian(2),Vector3(0,1,2)));
 
 	//OIS init
 
