@@ -111,16 +111,14 @@ int main(int argc, char** argv)
 
 	//voxel grid init
 
-	vg = new VoxelGrid(100, 100, 100);
-	
-	vg->initializeVoxelGrid(0x00);
-
-	vg->makeRectangle(Ogre::Vector3(10,10,10), Ogre::Vector3(5, 5, 5), true);
+	// vg = new VoxelGrid(100, 100, 100);
+	// vg->initializeVoxelGrid(0x00);
+	// vg->makeRectangle(Ogre::Vector3(10,10,10), Ogre::Vector3(5, 5, 5), true);
 
 	//interpreter initialization
 
 	interpret = new Interpreter();
-	interpret->setVoxelGrid(vg);
+	//interpret->setVoxelGrid(vg);
 
 	//interpret the input file if we've been given one
 	if (infile != "")
@@ -134,21 +132,21 @@ int main(int argc, char** argv)
 	display->initialize();
 	display->createVoxelMesh();
 
-	for (int i = 0; i < vg->getXSize(); i++)
-	{
-		for (int j = 0; j < vg->getYSize(); j++)
-		{
-			for (int k = 0; k < vg->getZSize(); k++)
-			{
-				if (vg->getValue(i,j,k) == 0x01)
-				{
-					//display->addVoxel(Ogre::Vector3(i,j,k));
-					//display->addVoxelStatic(Ogre::Vector3(i,j,k));
-					display->addVoxelBillboard(Ogre::Vector3(i,j,k));
-				}
-			}
-		}
-	}
+	// for (int i = 0; i < vg->getXSize(); i++)
+	// {
+	// 	for (int j = 0; j < vg->getYSize(); j++)
+	// 	{
+	// 		for (int k = 0; k < vg->getZSize(); k++)
+	// 		{
+	// 			if (vg->getValue(i,j,k) == 0x01)
+	// 			{
+	// 				//display->addVoxel(Ogre::Vector3(i,j,k));
+	// 				//display->addVoxelStatic(Ogre::Vector3(i,j,k));
+	// 				display->addVoxelBillboard(Ogre::Vector3(i,j,k));
+	// 			}
+	// 		}
+	// 	}
+	// }
 	//display->addVoxelStatic(Ogre::Vector3(0,0,0));
 	//display->buildStaticGeometry();
 	//display->addVoxelBillboard(Ogre::Vector3(0,0,0));

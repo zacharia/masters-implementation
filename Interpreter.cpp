@@ -196,6 +196,8 @@ void Interpreter::interpretFile(string filename)
 
 	Rule temp = Rule();
 
+	DerivationTreeNode root;
+		
 	FILE* input = fopen(filename.c_str(), "r");
 	yyrestart(input);
 
@@ -213,6 +215,9 @@ void Interpreter::interpretFile(string filename)
 	// 		break;
 	// 	}
 	// }
+
+	DerivationTree derTree;
+	derTree.initialize(root);
 
 	delete input;
 }

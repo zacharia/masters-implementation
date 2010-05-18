@@ -3,7 +3,7 @@
 CC=g++
 WFLAGS=-Wall -Wextra -g
 
-all: main.cpp Utility VoxelGrid InputManager OgreDisplay Interpreter DerivationTree
+all: main.cpp Utility VoxelGrid InputManager OgreDisplay DerivationTree Interpreter
 	$(CC) $(WFLAGS) -o prototype main.cpp VoxelGrid.o InputManager.o OgreDisplay.o Interpreter.o DerivationTree.o Utility.o -lOgreMain -lOIS
 
 VoxelGrid: VoxelGrid.cpp VoxelGrid.h

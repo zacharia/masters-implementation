@@ -17,6 +17,7 @@
 
 //project inclusions
 #include "VoxelGrid.h"
+#include "DerivationTree.h"
 
 using namespace std;
 
