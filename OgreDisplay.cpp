@@ -224,7 +224,7 @@ void OgreDisplay::createVoxelMesh()
 void OgreDisplay::addVoxel(Vector3 pos)
 {
 	//make the voxel cube normally, and attach it to a scene node
-	std::string name = "v" + intToString(pos.x) + " " + intToString(pos.y) + " " + intToString(pos.z);
+	std::string name = "v" + Utility::numToString(pos.x) + " " + Utility::numToString(pos.y) + " " + Utility::numToString(pos.z);
 	SceneNode* newVoxel = sceneMgr->getRootSceneNode()->createChildSceneNode();
 	newVoxel->attachObject(sceneMgr->createEntity(name, "voxel"));
 	newVoxel->translate(pos.x, pos.y, pos.z);
@@ -234,7 +234,7 @@ void OgreDisplay::addVoxel(Vector3 pos)
 void OgreDisplay::addVoxelStatic(Vector3 pos)
 {
 	//make the voxel cube normally, and attach it to a scene node
-	std::string name = "v" + intToString(pos.x) + " " + intToString(pos.y) + " " + intToString(pos.z);
+	std::string name = "v" + Utility::numToString(pos.x) + " " + Utility::numToString(pos.y) + " " + Utility::numToString(pos.z);
 	SceneNode* newVoxel = sceneMgr->getRootSceneNode()->createChildSceneNode();
 	newVoxel->attachObject(sceneMgr->createEntity(name, "voxel"));
 	newVoxel->translate(pos.x, pos.y, pos.z);
@@ -246,13 +246,6 @@ void OgreDisplay::addVoxelStatic(Vector3 pos)
 void OgreDisplay::buildStaticGeometry()
 {
 	( sceneMgr->getStaticGeometry("voxel_grid") )->build();
-}
-
-std::string OgreDisplay::intToString(int in)
-{
-	std::stringstream convert;
-	convert << in;
-	return convert.str();
 }
 
 Camera* OgreDisplay::getCamera()
@@ -270,7 +263,7 @@ void OgreDisplay::addCube(Vector3 pos, Vector3 scale, Quaternion rot, std::strin
 	SceneNode* node = sceneMgr->getRootSceneNode()->createChildSceneNode(pos, rot);
 	node->setScale(scale);
 
-	Entity* ent = sceneMgr->createEntity("cube" + intToString(cubeCount), meshName);
+	Entity* ent = sceneMgr->createEntity("cube" + Utility::numToString(cubeCount), meshName);
 	cubeCount++;
 	
 	node->attachObject(ent);
@@ -281,7 +274,7 @@ void OgreDisplay::addCylinder(Vector3 pos, Vector3 scale, Quaternion rot, std::s
 	SceneNode* node = sceneMgr->getRootSceneNode()->createChildSceneNode(pos, rot);
 	node->setScale(scale);
 
-	Entity* ent = sceneMgr->createEntity("cylinder" + intToString(cylinderCount), meshName);
+	Entity* ent = sceneMgr->createEntity("cylinder" + Utility::numToString(cylinderCount), meshName);
 	cylinderCount++;
 	
 	node->attachObject(ent);

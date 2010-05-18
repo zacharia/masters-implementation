@@ -8,6 +8,9 @@
 #include <OGRE/Ogre.h>
 #include <sstream>
 
+//project inclusions
+#include "Utility.h"
+
 using namespace Ogre;
 
 class OgreDisplay
@@ -19,9 +22,7 @@ class OgreDisplay
 	Viewport* viewport;
 
 	int cubeCount;
-	int cylinderCount;
-
-	std::string intToString(int in);
+	int cylinderCount;	
 	
 public:
 	OgreDisplay();
@@ -52,7 +53,7 @@ public:
 
 	void createCylinderMesh(std::string name = "defaultCylinderMesh", std::string material = "basic/cylinder_default");
 
-	Camera* getCamera();
+	Camera* getCamera();	
 };
 
 #endif
