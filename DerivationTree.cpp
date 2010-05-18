@@ -26,6 +26,11 @@ void DerivationTree::initialize(DerivationTreeNode r)
 	root = new DerivationTreeNode(r);
 }
 
+std::string DerivationTree::displayTree()
+{
+	return root->displayNode(0);
+}
+
 //----------------------------Node Object Methods-----------------------------
 
 DerivationTreeNode::DerivationTreeNode()
@@ -65,7 +70,13 @@ DerivationTreeNode::~DerivationTreeNode()
 
 void DerivationTreeNode::scaleNode(double factor)
 {
-	DerivationTreeNode temp = DerivationTreeNode(this); //FIXME: Should I copy the children or not?
+	//a new temp node that will become the child
+	DerivationTreeNode temp = DerivationTreeNode(this);
+	//copy the children to the children node
+	temp.children = std::vector<DerivationTreeNode>(this->children);
+	//and then remove them from this node
+	this->children.clear();
+	
 	temp.extents *= factor;
 
 	this->children.push_back(temp);
@@ -89,7 +100,13 @@ void DerivationTreeNode::splitNode(int num, char axis)
 
 void DerivationTreeNode::moveNode(Vector3 pos)
 {
-	DerivationTreeNode temp = DerivationTreeNode(this); //FIXME: Should I copy the children or not? What about just assigning the children to the node created in this method?
+	//a new temp node that will become the child
+	DerivationTreeNode temp = DerivationTreeNode(this);
+	//copy the children to the children node
+	temp.children = std::vector<DerivationTreeNode>(this->children);
+	//and then remove them from this node
+	this->children.clear();
+	
 	temp.position += pos;
 
 	this->children.push_back(temp);
@@ -97,7 +114,10 @@ void DerivationTreeNode::moveNode(Vector3 pos)
 
 void DerivationTreeNode::rotateNode(Quaternion rot)
 {
-	DerivationTreeNode temp = DerivationTreeNode(this); //FIXME: Should I copy the children or not?
+	DerivationTreeNode temp = DerivationTreeNode(this);
+	temp.children = std::vector<DerivationTreeNode>(this->children);
+	this->children.clear();
+	
 	temp.orientation = temp.orientation * rot; //FIXME: Is this right to apply the rotation?
 
 	this->children.push_back(temp);
@@ -112,4 +132,44 @@ void DerivationTreeNode::addPrimitive(int intype, Vector3 pos, Vector3 ext, Quat
 	temp.orientation = orient;
 
 	this->children.push_back(temp);
+}
+
+void DerivationTreeNode::removeNode()
+{
+	DerivationTreeNode temp = DerivationTreeNode(this);
+
+	temp.type = EMPTY;
+
+	this->children.push_back(temp);
+}
+
+std::string DerivationTreeNode::displayNode(int n)
+{
+	std::string ret = "";
+	
+	//output appropriate amount of whitespace first
+	for (int i = 0; i < n; i++)
+	{
+		ret += "\t";
+	}
+	
+	//output this node's contents
+	ret = ret + "Type: " + Utility::numToString(type) +
+		+ " Position: "
+		+ Utility::numToString(position.x) + " "
+		+ Utility::numToString(position.y) + " "
+		+ Utility::numToString(position.z) + " "
+		+ " Extents: "
+		+ Utility::numToString(extents.x) + " "
+		+ Utility::numToString(extents.y) + " "
+		+ Utility::numToString(extents.z) + " ";
+
+	ret += "\n";
+
+	for (std::vector<DerivationTreeNode>::iterator i = children.begin(); i != children.end(); i++)
+	{
+		ret += i->displayNode(n + 1);
+	}
+
+	return ret;
 }

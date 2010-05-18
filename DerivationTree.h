@@ -8,11 +8,13 @@
 #define _DERIVATIONTREE_H
 
 #include <vector>
+
 #include "OgreDisplay.h"
 
 #define UNDEFINED -1
-#define RECTANGLE 0
-#define CYLINDER 1
+#define EMPTY 0
+#define RECTANGLE 2
+#define CYLINDER 2
 
 class DerivationTreeNode
 {
@@ -35,7 +37,7 @@ class DerivationTreeNode
 public:
 	DerivationTreeNode();
 
-	DerivationTreeNode(DerivationTreeNode* in, bool copyChildren = true);
+	DerivationTreeNode(DerivationTreeNode* in, bool copyChildren = false);
 
 	~DerivationTreeNode();
 
@@ -48,6 +50,10 @@ public:
 	void rotateNode(Quaternion rot);
 
 	void addPrimitive(int intype, Vector3 pos, Vector3 ext, Quaternion orient);
+
+	void removeNode();
+
+	std::string displayNode(int n = 0);
 };
 
 class DerivationTree
@@ -60,6 +66,8 @@ public:
 	~DerivationTree();
 
 	void initialize(DerivationTreeNode r);
+
+	std::string displayTree();
 };
 
 #endif
