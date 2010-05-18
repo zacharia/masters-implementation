@@ -92,6 +92,11 @@ void DerivationTreeNode::splitNode(int num, char axis)
 	{
 		temp = DerivationTreeNode(this);
 
+		if (axis == 'x') //This is just temp to shut up an annoying error. It can be removed later
+		{
+			
+		}
+
 		//derive the children split nodes from the parent
 
 		this->children.push_back(temp);

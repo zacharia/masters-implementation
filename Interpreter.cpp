@@ -201,20 +201,16 @@ void Interpreter::interpretFile(string filename)
 	FILE* input = fopen(filename.c_str(), "r");
 	yyrestart(input);
 
-	// int current = yylex();
-	// while (current != -1)
-	// {
-	// 	cout << current << " |" << yytext << "|\n";
-	// 	if (current == SYMBOL)
-	// 	{
+	int current = yylex();
+	while (current != -1)
+	{
+		//cout << current << " |" << yytext << "|\n";
+		if (current == SYMBOL)
+		{
 			
-	// 	}
-	// 	current == yylex();
-	// 	if (current == -1)
-	// 	{
-	// 		break;
-	// 	}
-	// }
+		}
+		current = yylex();
+	}
 
 	DerivationTree derTree;
 	derTree.initialize(root);

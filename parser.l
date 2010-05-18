@@ -7,6 +7,7 @@ Zacharia Crumley
 
 %{
 
+//Make sure that none of these are 0 or less. 0 and -1 are reserved for other stuff.
 #define ASSIGN 2
 #define PLUS 6
 #define MINUS 7
