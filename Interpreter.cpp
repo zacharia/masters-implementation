@@ -5,7 +5,7 @@
 Interpreter::Interpreter()
 {
 	vg = NULL;
-	rules = vector<Rule>();
+	rules = vector<GrammarRule>();
 }
 
 Interpreter::~Interpreter()
@@ -194,7 +194,7 @@ void Interpreter::interpretFile(string filename)
 {
 	using namespace Ogre;
 
-	Rule temp = Rule();
+	GrammarRule currRule = GrammarRule();
 
 	DerivationTreeNode root;
 		
@@ -209,6 +209,18 @@ void Interpreter::interpretFile(string filename)
 		{
 			
 		}
+		else if (current == ASSIGN)
+		{
+			
+		}
+		else if (current == RULE_SEPARATOR)
+		{
+			
+		}
+		else if (current == START_SYMBOL)
+		{
+			
+		}		
 		current = yylex();
 	}
 

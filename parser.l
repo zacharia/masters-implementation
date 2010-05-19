@@ -21,6 +21,7 @@ Zacharia Crumley
 #define STACK_POP 15
 #define SYMBOL 16
 #define NUMBER 17
+#define COMMA 20
 
 //if you want stuff to be echoed uncomment this line
 #define __ECHO_ON__ ECHO;
@@ -43,6 +44,8 @@ symbol [A-Za-z]+
 %%
 
 "->"			{ __ECHO_ON__ return ASSIGN; }
+
+","			{ __ECHO_ON__ return COMMA; }
 
 "+"			{ __ECHO_ON__ return PLUS; }
 "-"			{ __ECHO_ON__ return MINUS; }

@@ -18,20 +18,9 @@
 //project inclusions
 #include "VoxelGrid.h"
 #include "DerivationTree.h"
+#include "GrammarRule.h"
 
 using namespace std;
-
-struct Rule
-{
-	string lhs;
-	vector<string> rhs;
-
-	Rule()
-	{
-		lhs = "";
-		rhs.clear();
-	}
-};
 
 class Interpreter
 {
@@ -39,7 +28,7 @@ class Interpreter
 
 	VoxelGrid* vg;
 
-	vector<Rule> rules;
+	vector<GrammarRule> rules;
 
 public:
 	Interpreter();

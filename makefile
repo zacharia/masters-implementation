@@ -3,8 +3,8 @@
 CC=g++
 WFLAGS=-Wall -Wextra -g
 
-all: main.cpp Utility VoxelGrid InputManager OgreDisplay DerivationTree Interpreter
-	$(CC) $(WFLAGS) -o prototype main.cpp VoxelGrid.o InputManager.o OgreDisplay.o Interpreter.o DerivationTree.o Utility.o -lOgreMain -lOIS
+all: main.cpp Utility VoxelGrid InputManager OgreDisplay DerivationTree GrammarRule Interpreter
+	$(CC) $(WFLAGS) -o prototype main.cpp VoxelGrid.o InputManager.o OgreDisplay.o GrammarRule.o Interpreter.o DerivationTree.o Utility.o -lOgreMain -lOIS
 
 VoxelGrid: VoxelGrid.cpp VoxelGrid.h
 	$(CC) $(WFLAGS) -c -o VoxelGrid.o VoxelGrid.cpp
@@ -17,6 +17,9 @@ OgreDisplay: OgreDisplay.h OgreDisplay.cpp
 
 Interpreter: Interpreter.cpp Interpreter.h FlexParser
 	$(CC) $(WFLAGS) -c -o Interpreter.o Interpreter.cpp
+
+GrammarRule: GrammarRule.cpp GrammarRule.h
+	$(CC) $(WFLAGS) -c -o GrammarRule.o GrammarRule.cpp
 
 FlexParser: parser.l
 	flex parser.l
