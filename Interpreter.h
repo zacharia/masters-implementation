@@ -29,6 +29,7 @@ class Interpreter
 	VoxelGrid* vg;
 
 	vector<GrammarRule> rules;
+	Symbol startSymbol;
 
 public:
 	Interpreter();

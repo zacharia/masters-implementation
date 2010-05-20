@@ -207,21 +207,50 @@ void Interpreter::interpretFile(string filename)
 		//cout << current << " |" << yytext << "|\n";
 		if (current == SYMBOL)
 		{
+			cout << "symbol.\n";
 			
+			if (currRule.lhs.name == "")
+			{
+				currRule.lhs = Symbol(yytext);
+			}
+			else
+			{
+				currRule.rhs.push_back(Symbol(yytext));
+			}
+		}
+		else if (current == OPEN_BRACKET)
+		{
+			cout << "open bracket.\n";
 		}
 		else if (current == ASSIGN)
 		{
-			
+			cout << "assign.\n";
 		}
 		else if (current == RULE_SEPARATOR)
 		{
+			cout << "rule separator.\n";
 			
+			//add the last rule to the rule set
+			rules.push_back(currRule);
+			//reinitialize the currRule var to take the next rule
+			currRule = GrammarRule();
 		}
 		else if (current == START_SYMBOL)
 		{
+			cout << "start symbol.\n";
 			
+			yylex();
+			startSymbol.name = yytext;
 		}		
 		current = yylex();
+	}
+
+	cout << "Displaying Rule set: \n";
+	cout << "START SYMBOL: " << startSymbol.toString() << "\n";
+	cout << "NORMAL SYMBOLS: \n";
+	for (vector<GrammarRule>::iterator i = rules.begin(); i != rules.end(); i++)
+	{
+		cout << i->toString() << "\n";
 	}
 
 	DerivationTree derTree;

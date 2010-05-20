@@ -36,13 +36,17 @@ public:
 	~Symbol();
 
 	Symbol(std::string inname);
+
+	std::string toString();
+
+	//bool operator==(Symbol& comp) const;
 };
 
 class GrammarRule
 {
 public:
-	std::string lhs;
-	std::vector<std::string> rhs;
+	Symbol lhs;
+	std::vector<Symbol> rhs;
 
 	std::string name;
 
@@ -50,6 +54,10 @@ public:
 	GrammarRule();
 
 	~GrammarRule();
+
+	std::string toString();
+
+	//bool operator==(GrammarRule& comp); //const;
 };
 
 #endif
