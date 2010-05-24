@@ -15,13 +15,25 @@
 #include <OGRE/Ogre.h>
 
 //project inclusions
-// HERE
+#include "Utility.h"
+
+//these are used to define what string is associated with each symbol type.
+#define RECTANGE_NODE "rectangle"
+#define CYLINDER_NODE "cylinder"
+#define SPHERE_NODE "sphere"
+
+#define SCALE_NODE "scale"
+#define SPLIT_NODE "split"
+#define MOVE_NODE "move"
+#define ROTATE_NODE "rotate"
+#define ADD_PRIMITIVE "add"
+#define REMOVE_NODE "remove"
 
 class Symbol
 {
 public:
 	std::string name;
-	double factor;
+	Ogre::Vector3 factor;
 	int num;
 	char axis;
 	Ogre::Vector3 pos;
@@ -49,6 +61,8 @@ public:
 	std::vector<Symbol> rhs;
 
 	std::string name;
+
+	double probability;
 
 public:
 	GrammarRule();

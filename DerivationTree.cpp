@@ -68,7 +68,7 @@ DerivationTreeNode::~DerivationTreeNode()
 	//do nothing since there were no new's used in the creation of this?
 }
 
-void DerivationTreeNode::scaleNode(double factor)
+void DerivationTreeNode::scaleNode(Vector3 factor)
 {
 	//a new temp node that will become the child
 	DerivationTreeNode temp = DerivationTreeNode(this);

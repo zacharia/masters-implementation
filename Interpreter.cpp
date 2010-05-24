@@ -195,6 +195,8 @@ void Interpreter::interpretFile(string filename)
 	using namespace Ogre;
 
 	GrammarRule currRule = GrammarRule();
+	//this stores whether we still need to assign the LHS of the current rule (if it's false, symbols should be added to the RHS of the current rule)
+	bool lhs = true;
 
 	DerivationTreeNode root;
 		
@@ -209,9 +211,11 @@ void Interpreter::interpretFile(string filename)
 		{
 			cout << "symbol.\n";
 			
-			if (currRule.lhs.name == "")
+			if (// (currRule.lhs.name == "") &&
+			    (lhs))
 			{
 				currRule.lhs = Symbol(yytext);
+				lhs = false;
 			}
 			else
 			{
@@ -221,10 +225,124 @@ void Interpreter::interpretFile(string filename)
 		else if (current == OPEN_BRACKET)
 		{
 			cout << "open bracket.\n";
+			string lastSymbolType;
+			Symbol* lastSymbol = NULL;
+			
+			if (lhs)
+			{
+				lastSymbolType = currRule.lhs.name;
+				lastSymbol = &currRule.lhs;
+			}
+			else
+			{
+				lastSymbolType = currRule.rhs.back().name;
+				lastSymbol = &currRule.rhs.back();
+			}
+
+			if (lastSymbolType == "scale")
+			{
+				yylex();
+				lastSymbol->factor.x = atof(yytext);
+				yylex(); //read the ,
+				yylex();
+				lastSymbol->factor.y = atof(yytext);
+				yylex(); //read the ,
+				yylex();
+				lastSymbol->factor.z = atof(yytext);
+				yylex(); //read the )
+			}
+			else if (lastSymbolType == "split")
+			{
+				
+			}
+			else if (lastSymbolType == "move")
+			{
+				yylex();
+				lastSymbol->pos.x = atof(yytext);
+				yylex(); //read the ,
+				yylex();
+				lastSymbol->pos.y = atof(yytext);
+				yylex(); //read the ,
+				yylex();
+				lastSymbol->pos.z = atof(yytext);
+				yylex(); //read the )
+			}
+			else if (lastSymbolType == "rotate")
+			{
+				double tempAngle;
+				yylex();
+				tempAngle = atof(yytext);
+				yylex(); //read the ,
+				Vector3 temp;
+				yylex();
+				temp.x = atof(yytext);
+				yylex(); //read the ,
+				yylex();
+				temp.y = atof(yytext);
+				yylex(); //read the ,
+				yylex();
+				temp.z = atof(yytext);
+				yylex(); //read the )
+				lastSymbol->rot = Ogre::Quaternion(Ogre::Radian(tempAngle), Ogre::Vector3(temp));
+			}
+			else if (lastSymbolType == "add")
+			{
+				//read in what type of shape to add
+				int tempType;
+				yylex();
+				tempType = atof(yytext);
+				yylex(); //read the ,
+				lastSymbol->intype = tempType;
+
+				//read in it's position relative to the parent
+				Vector3 temp;
+				yylex();
+				temp.x = atof(yytext);
+				yylex(); //read the ,
+				yylex();
+				temp.y = atof(yytext);
+				yylex(); //read the ,
+				yylex();
+				temp.z = atof(yytext);
+				yylex(); //read the )
+				lastSymbol->pos = Vector3(temp);
+
+				//read in it's extents
+				yylex();
+				temp.x = atof(yytext);
+				yylex(); //read the ,
+				yylex();
+				temp.y = atof(yytext);
+				yylex(); //read the ,
+				yylex();
+				temp.z = atof(yytext);
+				yylex(); //read the )
+				lastSymbol->ext = Vector3(temp);
+
+				//read in it's orientation as a Quaternion
+				yylex();
+				tempType = atof(yytext);
+				yylex(); //read the ,
+				yylex();
+				temp.x = atof(yytext);
+				yylex(); //read the ,
+				yylex();
+				temp.y = atof(yytext);
+				yylex(); //read the ,
+				yylex();
+				temp.z = atof(yytext);
+				yylex(); //read the )
+				lastSymbol->orient = Ogre::Quaternion(Ogre::Radian(tempType), Ogre::Vector3(temp));
+			}
+			else if (lastSymbolType == "remove")
+			{
+				//should I add a parameter for whether to delete the children?
+			}
 		}
 		else if (current == ASSIGN)
 		{
 			cout << "assign.\n";
+			lhs = false;
 		}
 		else if (current == RULE_SEPARATOR)
 		{
@@ -234,6 +352,7 @@ void Interpreter::interpretFile(string filename)
 			rules.push_back(currRule);
 			//reinitialize the currRule var to take the next rule
 			currRule = GrammarRule();
+			lhs = true;
 		}
 		else if (current == START_SYMBOL)
 		{
@@ -241,7 +360,14 @@ void Interpreter::interpretFile(string filename)
 			
 			yylex();
 			startSymbol.name = yytext;
-		}		
+		}
+		else if (current == PROBABILITY)
+		{
+			cout << "probability symbol.\n";
+
+			yylex();
+			currRule.probability = atof(yytext);
+		}
 		current = yylex();
 	}
 

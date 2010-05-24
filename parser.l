@@ -22,6 +22,7 @@ Zacharia Crumley
 #define SYMBOL 16
 #define NUMBER 17
 #define COMMA 20
+#define PROBABILITY 21
 
 //if you want stuff to be echoed uncomment this line
 #define __ECHO_ON__ ECHO;
@@ -35,8 +36,8 @@ Zacharia Crumley
 %option yylineno
 %option nodefault
 
-int [0-9]+
-float [0-9]+\.[0-9]+
+int -?[0-9]+
+float -?[0-9]+\.[0-9]+
 number {int}|{float}
 
 symbol [A-Za-z]+
@@ -61,6 +62,8 @@ symbol [A-Za-z]+
 {symbol}                { __ECHO_ON__ return SYMBOL; }
 
 {number}		{ __ECHO_ON__ return NUMBER; }
+
+":"			{ __ECHO_ON__ return PROBABILITY; }
 
 <<EOF>>			{ return -1; }
 

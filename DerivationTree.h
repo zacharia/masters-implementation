@@ -41,7 +41,7 @@ public:
 
 	~DerivationTreeNode();
 
-	void scaleNode(double factor);
+	void scaleNode(Vector3 factor);
 
 	void splitNode(int num, char axis);
 

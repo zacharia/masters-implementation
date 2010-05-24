@@ -8,6 +8,8 @@ GrammarRule::GrammarRule()
 {
 	lhs = Symbol();
 	rhs.clear();
+	name = "";
+	probability = 1.0;
 }
 
 GrammarRule::~GrammarRule()
@@ -26,6 +28,8 @@ std::string GrammarRule::toString()
 	{
 		ret = ret + i->toString() + " ";
 	}
+
+	ret = ret + ": " + Utility::numToString(probability);
 
 	ret = ret + ";\n";
 	
@@ -64,7 +68,7 @@ std::string GrammarRule::toString()
 Symbol::Symbol()
 {
 	name = "";
-	factor = 0.0;
+	factor = Ogre::Vector3();
 	num = intype = 0;
 	axis = '\0';
 	pos = ext = Ogre::Vector3();
@@ -74,7 +78,7 @@ Symbol::Symbol()
 Symbol::Symbol(std::string inname)
 {
 	name = inname;
-	factor = 0.0;
+	factor = Ogre::Vector3();
 	num = intype = 0;
 	axis = '\0';
 	pos = ext = Ogre::Vector3();
@@ -90,9 +94,33 @@ Symbol::~Symbol()
 std::string Symbol::toString()
 {
 	std::string ret = "";
-	ret = ret +
-		this->name + " ";
-		
+	ret = ret + this->name;
+
+	ret = ret + "(";
+
+	if (this->name == SCALE_NODE)
+	{
+		ret = ret + Utility::numToString(factor.x) + ", " + Utility::numToString(factor.y) + ", " + Utility::numToString(factor.z);
+	}
+	if (this->name == SPLIT_NODE)
+	{
+		ret = ret + "not_implemented_yet";
+	}
+	if (this->name == MOVE_NODE)
+	{
+		ret = ret + Utility::numToString(pos.x) + ", " + Utility::numToString(pos.y) + ", " + Utility::numToString(pos.z);
+	}
+	if (this->name == ROTATE_NODE)
+	{
+		ret = ret + Utility::numToString(rot.w) + ", " + Utility::numToString(rot.x) + ", " + Utility::numToString(rot.y) + ", " + Utility::numToString(rot.z);
+	}
+	if (this->name == ADD_PRIMITIVE)
+	{
+		ret = ret + Utility::numToString(intype);
+	}
+
+	ret = ret + ")";
+	
 	return ret;
 }
 
