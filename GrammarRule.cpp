@@ -69,7 +69,8 @@ Symbol::Symbol()
 {
 	name = "";
 	factor = Ogre::Vector3();
-	num = intype = 0;
+	num = 0;
+	intype = "";
 	axis = '\0';
 	pos = ext = Ogre::Vector3();
 	rot = orient = Ogre::Quaternion();
@@ -79,7 +80,8 @@ Symbol::Symbol(std::string inname)
 {
 	name = inname;
 	factor = Ogre::Vector3();
-	num = intype = 0;
+	num = 0;
+	intype = "";
 	axis = '\0';
 	pos = ext = Ogre::Vector3();
 	rot = orient = Ogre::Quaternion();
@@ -116,7 +118,10 @@ std::string Symbol::toString()
 	}
 	if (this->name == ADD_PRIMITIVE)
 	{
-		ret = ret + Utility::numToString(intype);
+		ret = ret + intype + ",  " +
+			Utility::numToString(pos.x) + ", " + Utility::numToString(pos.y) + ", " + Utility::numToString(pos.z) + ",  " +
+			Utility::numToString(factor.x) + ", " + Utility::numToString(factor.y) + ", " + Utility::numToString(factor.z) + ",  " +
+			Utility::numToString(rot.w) + ", " + Utility::numToString(rot.x) + ", " + Utility::numToString(rot.y) + ", " + Utility::numToString(rot.z);;
 	}
 
 	ret = ret + ")";

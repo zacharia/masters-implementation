@@ -38,7 +38,7 @@ public:
 	char axis;
 	Ogre::Vector3 pos;
 	Ogre::Quaternion rot;
-	int intype;
+	std::string intype;
 	Ogre::Vector3 ext;
 	Ogre::Quaternion orient;
 

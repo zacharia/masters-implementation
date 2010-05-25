@@ -197,8 +197,7 @@ void Interpreter::interpretFile(string filename)
 	GrammarRule currRule = GrammarRule();
 	//this stores whether we still need to assign the LHS of the current rule (if it's false, symbols should be added to the RHS of the current rule)
 	bool lhs = true;
-
-	DerivationTreeNode root;
+	bool startSymbolNext = false;
 		
 	FILE* input = fopen(filename.c_str(), "r");
 	yyrestart(input);
@@ -227,8 +226,14 @@ void Interpreter::interpretFile(string filename)
 			cout << "open bracket.\n";
 			string lastSymbolType;
 			Symbol* lastSymbol = NULL;
-			
-			if (lhs)
+
+			if (startSymbolNext)
+			{
+				lastSymbolType = ADD_PRIMITIVE;
+				lastSymbol = &startSymbol;
+				startSymbolNext = false;
+			}
+			else if (lhs)
 			{
 				lastSymbolType = currRule.lhs.name;
 				lastSymbol = &currRule.lhs;
@@ -239,7 +244,7 @@ void Interpreter::interpretFile(string filename)
 				lastSymbol = &currRule.rhs.back();
 			}
 
-			if (lastSymbolType == "scale")
+			if (lastSymbolType == SCALE_NODE)
 			{
 				yylex();
 				lastSymbol->factor.x = atof(yytext);
@@ -251,11 +256,11 @@ void Interpreter::interpretFile(string filename)
 				lastSymbol->factor.z = atof(yytext);
 				yylex(); //read the )
 			}
-			else if (lastSymbolType == "split")
+			else if (lastSymbolType == SPLIT_NODE)
 			{
 				
 			}
-			else if (lastSymbolType == "move")
+			else if (lastSymbolType == MOVE_NODE)
 			{
 				yylex();
 				lastSymbol->pos.x = atof(yytext);
@@ -267,7 +272,7 @@ void Interpreter::interpretFile(string filename)
 				lastSymbol->pos.z = atof(yytext);
 				yylex(); //read the )
 			}
-			else if (lastSymbolType == "rotate")
+			else if (lastSymbolType == ROTATE_NODE)
 			{
 				double tempAngle;
 				yylex();
@@ -285,14 +290,12 @@ void Interpreter::interpretFile(string filename)
 				yylex(); //read the )
 				lastSymbol->rot = Ogre::Quaternion(Ogre::Radian(tempAngle), Ogre::Vector3(temp));
 			}
-			else if (lastSymbolType == "add")
+			else if (lastSymbolType == ADD_PRIMITIVE)
 			{
 				//read in what type of shape to add
-				int tempType;
 				yylex();
-				tempType = atof(yytext);
+				lastSymbol->intype = yytext;
 				yylex(); //read the ,
-				lastSymbol->intype = tempType;
 
 				//read in it's position relative to the parent
 				Vector3 temp;
@@ -321,7 +324,7 @@ void Interpreter::interpretFile(string filename)
 
 				//read in it's orientation as a Quaternion
 				yylex();
-				tempType = atof(yytext);
+				double tempType = atof(yytext);
 				yylex(); //read the ,
 				yylex();
 				temp.x = atof(yytext);
@@ -334,7 +337,7 @@ void Interpreter::interpretFile(string filename)
 				yylex(); //read the )
 				lastSymbol->orient = Ogre::Quaternion(Ogre::Radian(tempType), Ogre::Vector3(temp));
 			}
-			else if (lastSymbolType == "remove")
+			else if (lastSymbolType == REMOVE_NODE)
 			{
 				//should I add a parameter for whether to delete the children?
 			}
@@ -360,6 +363,7 @@ void Interpreter::interpretFile(string filename)
 			
 			yylex();
 			startSymbol.name = yytext;
+			startSymbolNext = true;
 		}
 		else if (current == PROBABILITY)
 		{
@@ -380,6 +384,10 @@ void Interpreter::interpretFile(string filename)
 	}
 
 	DerivationTree derTree;
+	DerivationTreeNode root;
+
+	
+	
 	derTree.initialize(root);
 
 	delete input;

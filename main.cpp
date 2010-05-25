@@ -169,19 +169,23 @@ int main(int argc, char** argv)
 	if (vg != NULL)
 	{
 		delete vg;
+		vg = NULL;
 	}
 	if (input != NULL)
 	{
 		input->removeAllListeners();
 		delete input;
+		input = NULL;
 	}
 	if (display != NULL)
 	{
 		delete display;
+		display = NULL;
 	}
 	if (interpret != NULL)
 	{
 		delete interpret;
+		interpret = NULL;
 	}
 
 	cout << "\nEND OF PROGRAM\n";
