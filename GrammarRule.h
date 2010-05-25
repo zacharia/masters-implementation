@@ -18,7 +18,7 @@
 #include "Utility.h"
 
 //these are used to define what string is associated with each symbol type.
-#define RECTANGE_NODE "rectangle"
+#define RECTANGLE_NODE "rectangle"
 #define CYLINDER_NODE "cylinder"
 #define SPHERE_NODE "sphere"
 

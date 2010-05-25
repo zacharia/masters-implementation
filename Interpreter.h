@@ -30,6 +30,7 @@ class Interpreter
 
 	vector<GrammarRule> rules;
 	Symbol startSymbol;
+	DerivationTree derTree;
 
 public:
 	Interpreter();
@@ -41,6 +42,8 @@ public:
 	void interpretFileLsystem(string filename);
 
 	void interpretFile(string filename);
+
+	void deriveTree();
 };
 
 #endif

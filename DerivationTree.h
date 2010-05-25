@@ -10,11 +10,13 @@
 #include <vector>
 
 #include "OgreDisplay.h"
+#include "GrammarRule.h"
 
 #define UNDEFINED -1
 #define EMPTY 0
 #define RECTANGLE 2
-#define CYLINDER 2
+#define CYLINDER 3
+#define SPHERE 4
 
 class DerivationTreeNode
 {
@@ -38,6 +40,13 @@ public:
 	DerivationTreeNode();
 
 	DerivationTreeNode(DerivationTreeNode* in, bool copyChildren = false);
+
+	DerivationTreeNode(std::string intype,
+			   Vector3 inpos = Vector3::ZERO,
+			   Vector3 inextents = Vector3::UNIT_SCALE,
+			   Quaternion inorient = Quaternion::IDENTITY,
+			   std::vector<DerivationTreeNode>* inchildren = NULL,
+			   DerivationTreeNode* inparent = NULL);
 
 	~DerivationTreeNode();
 

@@ -383,12 +383,14 @@ void Interpreter::interpretFile(string filename)
 		cout << i->toString() << "\n";
 	}
 
-	DerivationTree derTree;
-	DerivationTreeNode root;
-
-	
-	
+	DerivationTreeNode root = DerivationTreeNode(startSymbol.name, startSymbol.pos, startSymbol.ext);
+	derTree = DerivationTree();
 	derTree.initialize(root);
-
+	
 	delete input;
+}
+
+void Interpreter::deriveTree()
+{
+	
 }

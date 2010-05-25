@@ -58,6 +58,30 @@ DerivationTreeNode::DerivationTreeNode(DerivationTreeNode* in, bool copyChildren
 	}
 }
 
+DerivationTreeNode::DerivationTreeNode(std::string intype, Vector3 inpos, Vector3 inextents, Quaternion inorient, std::vector<DerivationTreeNode>* inchildren, DerivationTreeNode* inparent)
+{
+	if (intype == RECTANGLE_NODE)
+	{
+		type = RECTANGLE;
+	}
+	else if (intype == CYLINDER_NODE)
+	{
+		type = CYLINDER;
+	}
+	else if (intype == SPHERE_NODE)
+	{
+		type = SPHERE;
+	}
+	position = Vector3(inpos);
+	extents = Vector3(inextents);
+	orientation = Quaternion(inorient);
+	if (inchildren != NULL)
+	{
+		children = std::vector<DerivationTreeNode>(inchildren->begin(), inchildren->end());	
+	}
+	parent = inparent;
+}
+
 DerivationTreeNode::~DerivationTreeNode()
 {
 	for (std::vector<DerivationTreeNode>::iterator i = children.begin(); i != children.end(); i++)
