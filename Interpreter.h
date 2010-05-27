@@ -50,7 +50,11 @@ public:
 
 	void interpretFile(string filename);
 
-	void deriveTree();	
+	void deriveTree();
+
+	void setMaxIterations(int in);
+
+	int getMaxIterations();
 };
 
 #endif

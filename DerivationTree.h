@@ -30,6 +30,9 @@ public:
 
 	//the children of this node
 	std::vector<DerivationTreeNode> children;
+
+	//true if this node is currently active in the tree
+	bool active;
 	
 public:
 	DerivationTreeNode();
@@ -58,6 +61,10 @@ public:
 	void removeNode();
 
 	std::string displayNode(int n = 0);
+
+	DerivationTreeNode* findNode(std::string search, DerivationTreeNode* target = NULL);
+
+	bool isActive();
 };
 
 class DerivationTree
@@ -76,6 +83,10 @@ public:
 	DerivationTreeNode* getRoot();
 
 	void setRoot(DerivationTreeNode* in);
+
+	bool isRootNull();
+
+	DerivationTreeNode* findNode(std::string search);
 };
 
 #endif

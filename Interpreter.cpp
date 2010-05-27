@@ -6,6 +6,7 @@ Interpreter::Interpreter()
 {
 	vg = NULL;
 	rules = vector<GrammarRule>();
+	maxIterations = -1;
 }
 
 Interpreter::~Interpreter()
@@ -395,11 +396,19 @@ void Interpreter::interpretFile(string filename)
 void Interpreter::deriveTree()
 {
 	int iterations = 0;
+	DerivationTreeNode* target = NULL;
 		
 	while (treeHasNonTerminals(derTree.getRoot()) &&
 	       underMaxIterations(iterations))
 	{
-		
+		for (vector<GrammarRule>::iterator i = rules.begin(); i != rules.end(); i++)
+		{
+			target = derTree.findNode(i->lhs);
+			if ((target != NULL))
+			{
+				
+			}
+		}
 	}
 }
 
@@ -443,4 +452,14 @@ bool Interpreter::underMaxIterations(int iterations)
 		return false;
 	}
 	
+}
+
+void Interpreter::setMaxIterations(int in)
+{
+	maxIterations = in;
+}
+
+int Interpreter::getMaxIterations()
+{
+	return maxIterations;
 }

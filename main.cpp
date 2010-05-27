@@ -28,6 +28,7 @@ int mouseX=100, mouseY=100;
 //store the change in mouse positions each tick
 int mouseDeltaX = 0, mouseDeltaY = 0;
 Interpreter* interpret = NULL;
+int maxIterations = -1;
 
 //argument variables
 string infile = "";
@@ -107,6 +108,10 @@ int main(int argc, char** argv)
 		{
 			infile = argv[++i];
 		}
+		if (curr == "-m") //maxIterations for derivation
+		{
+			maxIterations = atoi(argv[++i]);
+		}
 	}
 
 	//voxel grid init
@@ -125,6 +130,7 @@ int main(int argc, char** argv)
 	{
 		interpret->interpretFile(infile);
 	}
+	interpret->setMaxIterations(maxIterations);
 	 
 	//ogre init
 

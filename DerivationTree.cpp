@@ -41,6 +41,30 @@ DerivationTreeNode* DerivationTree::getRoot()
 	return root;
 }
 
+DerivationTreeNode* DerivationTree::findNode(std::string search)
+{
+	if (root == NULL)
+	{
+		return NULL;
+	}
+	else
+	{
+		return root->findNode(search, root);
+	}
+}
+
+bool DerivationTree::isRootNull()
+{
+	if (root == NULL)
+	{
+		return true;
+	}
+	else
+	{
+		return false;
+	}
+}
+
 
 //----------------------------Node Object Methods-----------------------------
 
@@ -53,6 +77,8 @@ DerivationTreeNode::DerivationTreeNode()
 
 	this->parent = NULL;
 
+	this->active = true;
+
 	children = std::vector<DerivationTreeNode>();
 }
 
@@ -63,6 +89,7 @@ DerivationTreeNode::DerivationTreeNode(DerivationTreeNode* in, bool copyChildren
 	this->orientation = in->orientation;
 	this->type = in->type;
 	this->parent = NULL;
+	this->active = true;
 	if (copyChildren)
 	{
 		this->children = std::vector<DerivationTreeNode>(in->children);	
@@ -80,6 +107,7 @@ DerivationTreeNode::DerivationTreeNode(std::string intype, Vector3 inpos, Vector
 		children = std::vector<DerivationTreeNode>(inchildren->begin(), inchildren->end());	
 	}
 	parent = inparent;
+	this->active = true;
 }
 
 DerivationTreeNode::~DerivationTreeNode()
@@ -104,6 +132,7 @@ void DerivationTreeNode::scaleNode(Vector3 factor)
 	temp.extents *= factor;
 
 	this->children.push_back(temp);
+	this->active = false;
 }
 
 //NOTE: char is either 'x', 'y' or 'z' and indicates along which local axis to split the node
@@ -125,6 +154,7 @@ void DerivationTreeNode::splitNode(int num, char axis)
 
 		this->children.push_back(temp);
 	}
+	this->active = false;
 }
 
 void DerivationTreeNode::moveNode(Vector3 pos)
@@ -139,6 +169,8 @@ void DerivationTreeNode::moveNode(Vector3 pos)
 	temp.position += pos;
 
 	this->children.push_back(temp);
+
+	this->active = false;
 }
 
 void DerivationTreeNode::rotateNode(Quaternion rot)
@@ -150,6 +182,8 @@ void DerivationTreeNode::rotateNode(Quaternion rot)
 	temp.orientation = temp.orientation * rot; //FIXME: Is this right to apply the rotation?
 
 	this->children.push_back(temp);
+
+	this->active = false;
 }
 
 void DerivationTreeNode::addPrimitive(std::string intype, Vector3 pos, Vector3 ext, Quaternion orient)
@@ -170,6 +204,8 @@ void DerivationTreeNode::removeNode()
 	temp.type = UNDEFINED_NODE;
 
 	this->children.push_back(temp);
+
+	this->active = false;
 }
 
 std::string DerivationTreeNode::displayNode(int n)
@@ -201,4 +237,41 @@ std::string DerivationTreeNode::displayNode(int n)
 	}
 
 	return ret;
+}
+
+DerivationTreeNode* DerivationTreeNode::findNode(std::string search, DerivationTreeNode* target)
+{
+	if (target == NULL)
+	{
+		return NULL;
+	}
+	if (target->type == search)
+	{
+		return target;
+	}
+	else
+	{
+		if (target->children.empty())
+		{
+			return NULL;
+		}
+		else
+		{
+			DerivationTreeNode* ret = NULL;
+			for (std::vector<DerivationTreeNode>::iterator i = target->children.begin(); i != target->children.end(); i++)
+			{
+				ret = findNode(search, &(*i));
+				if ((ret != NULL) && (ret->isActive()))
+				{
+					return ret;
+				}				
+			}
+			return ret;
+		}
+	}
+}
+
+bool DerivationTreeNode::isActive()
+{
+	return this->active;
 }
