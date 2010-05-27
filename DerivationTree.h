@@ -12,14 +12,9 @@
 #include "OgreDisplay.h"
 #include "GrammarRule.h"
 
-#define UNDEFINED -1
-#define EMPTY 0
-#define RECTANGLE 2
-#define CYLINDER 3
-#define SPHERE 4
-
 class DerivationTreeNode
 {
+public:
 	//the location of this node's shape (the center), relative to the parent shape
 	Vector3 position;
 	//the extents of this shape's scope (i.e. it's dimensions)
@@ -28,7 +23,7 @@ class DerivationTreeNode
 	Quaternion orientation;
 	
 	//what type of shape is at this node (see the #defines above)
-	int type;
+	std::string type;
 
 	//a pointer to the parent of this node
 	DerivationTreeNode* parent;
@@ -58,7 +53,7 @@ public:
 
 	void rotateNode(Quaternion rot);
 
-	void addPrimitive(int intype, Vector3 pos, Vector3 ext, Quaternion orient);
+	void addPrimitive(std::string intype, Vector3 pos, Vector3 ext, Quaternion orient);
 
 	void removeNode();
 
@@ -77,6 +72,10 @@ public:
 	void initialize(DerivationTreeNode r);
 
 	std::string displayTree();
+
+	DerivationTreeNode* getRoot();
+
+	void setRoot(DerivationTreeNode* in);
 };
 
 #endif

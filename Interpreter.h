@@ -32,6 +32,13 @@ class Interpreter
 	Symbol startSymbol;
 	DerivationTree derTree;
 
+	//stores the maximum number of grammar rules that can be executed
+	int maxIterations;
+
+	bool treeHasNonTerminals(DerivationTreeNode in);
+
+	bool underMaxIterations(int iterations);
+
 public:
 	Interpreter();
 
@@ -43,7 +50,7 @@ public:
 
 	void interpretFile(string filename);
 
-	void deriveTree();
+	void deriveTree();	
 };
 
 #endif

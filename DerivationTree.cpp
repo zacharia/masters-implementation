@@ -31,11 +31,22 @@ std::string DerivationTree::displayTree()
 	return root->displayNode(0);
 }
 
+void DerivationTree::setRoot(DerivationTreeNode* in)
+{
+	root = in;
+}
+
+DerivationTreeNode* DerivationTree::getRoot()
+{
+	return root;
+}
+
+
 //----------------------------Node Object Methods-----------------------------
 
 DerivationTreeNode::DerivationTreeNode()
 {
-	this->type = UNDEFINED;
+	this->type = UNDEFINED_NODE;
 	this->position = Vector3(0,0,0);
 	this->extents = Vector3(0,0,0);
 	this->orientation = Quaternion::IDENTITY;
@@ -60,18 +71,7 @@ DerivationTreeNode::DerivationTreeNode(DerivationTreeNode* in, bool copyChildren
 
 DerivationTreeNode::DerivationTreeNode(std::string intype, Vector3 inpos, Vector3 inextents, Quaternion inorient, std::vector<DerivationTreeNode>* inchildren, DerivationTreeNode* inparent)
 {
-	if (intype == RECTANGLE_NODE)
-	{
-		type = RECTANGLE;
-	}
-	else if (intype == CYLINDER_NODE)
-	{
-		type = CYLINDER;
-	}
-	else if (intype == SPHERE_NODE)
-	{
-		type = SPHERE;
-	}
+	type = intype;
 	position = Vector3(inpos);
 	extents = Vector3(inextents);
 	orientation = Quaternion(inorient);
@@ -152,7 +152,7 @@ void DerivationTreeNode::rotateNode(Quaternion rot)
 	this->children.push_back(temp);
 }
 
-void DerivationTreeNode::addPrimitive(int intype, Vector3 pos, Vector3 ext, Quaternion orient)
+void DerivationTreeNode::addPrimitive(std::string intype, Vector3 pos, Vector3 ext, Quaternion orient)
 {
 	DerivationTreeNode temp;
 	temp.type = intype;
@@ -167,7 +167,7 @@ void DerivationTreeNode::removeNode()
 {
 	DerivationTreeNode temp = DerivationTreeNode(this);
 
-	temp.type = EMPTY;
+	temp.type = UNDEFINED_NODE;
 
 	this->children.push_back(temp);
 }
@@ -183,7 +183,7 @@ std::string DerivationTreeNode::displayNode(int n)
 	}
 	
 	//output this node's contents
-	ret = ret + "Type: " + Utility::numToString(type) +
+	ret = ret + "Type: " + type +
 		+ " Position: "
 		+ Utility::numToString(position.x) + " "
 		+ Utility::numToString(position.y) + " "

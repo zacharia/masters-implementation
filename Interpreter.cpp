@@ -386,11 +386,61 @@ void Interpreter::interpretFile(string filename)
 	DerivationTreeNode root = DerivationTreeNode(startSymbol.name, startSymbol.pos, startSymbol.ext);
 	derTree = DerivationTree();
 	derTree.initialize(root);
+
+	this->deriveTree();
 	
 	delete input;
 }
 
 void Interpreter::deriveTree()
 {
+	int iterations = 0;
+		
+	while (treeHasNonTerminals(derTree.getRoot()) &&
+	       underMaxIterations(iterations))
+	{
+		
+	}
+}
+
+bool Interpreter::treeHasNonTerminals(DerivationTreeNode in)
+{
+	vector<std::string> nonTerminals;
+	for (std::vector<GrammarRule>::iterator i = rules.begin(); i != rules.end(); i++)
+	{
+		nonTerminals.push_back((i->lhs).name);
+	}
+	
+	if (in.children.empty())
+	{
+		for (vector<std::string>::iterator i = nonTerminals.begin(); i != nonTerminals.end(); i++)
+		{
+			if (*i == in.type)
+			{
+				return true;
+			}
+		}
+		return false;
+	}
+	else
+	{
+		for (vector<DerivationTreeNode>::iterator i = in.children.begin(); i != in.children.end(); i++)
+		{
+			return treeHasNonTerminals(*i);
+		}
+		return false;
+	}
+}
+
+bool Interpreter::underMaxIterations(int iterations)
+{
+	if ((iterations < maxIterations) && (maxIterations > 0))
+	{
+		return true;
+	}
+	else
+	{
+		return false;
+	}
 	
 }
