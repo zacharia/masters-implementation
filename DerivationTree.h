@@ -48,6 +48,8 @@ public:
 
 	~DerivationTreeNode();
 
+	void applySymbol(Symbol* in);
+
 	void scaleNode(Vector3 factor);
 
 	void splitNode(int num, char axis);

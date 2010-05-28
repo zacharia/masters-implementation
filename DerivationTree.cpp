@@ -275,3 +275,35 @@ bool DerivationTreeNode::isActive()
 {
 	return this->active;
 }
+
+void DerivationTreeNode::applySymbol(Symbol* in)
+{
+	if (in->name == SCALE_NODE)
+	{
+		this->scaleNode(in->factor);
+	}
+	else if (in->name == SPLIT_NODE)
+	{
+		this->splitNode(in->num, in->axis);
+	}
+	else if (in->name == MOVE_NODE)
+	{
+		this->moveNode(in->pos);
+	}
+	else if (in->name == ROTATE_NODE)
+	{
+		this->rotateNode(in->rot);
+	}
+	else if (in->name == ADD_PRIMITIVE)
+	{
+		this->addPrimitive(in->intype, in->pos, in->ext, in->orient);
+	}
+	else if (in->name == REMOVE_NODE)
+	{
+		this->removeNode();
+	}
+	else
+	{
+		
+	}
+}

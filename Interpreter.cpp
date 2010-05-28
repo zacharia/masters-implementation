@@ -389,6 +389,8 @@ void Interpreter::interpretFile(string filename)
 	derTree.initialize(root);
 
 	this->deriveTree();
+
+	cout << "\nLE TREE:\n\n" << derTree.displayTree();
 	
 	delete input;
 }
@@ -406,7 +408,10 @@ void Interpreter::deriveTree()
 			target = derTree.findNode(i->lhs.name);
 			if ((target != NULL))
 			{
-				
+				for (vector<Symbol>::iterator j = i->rhs.begin(); j != i->rhs.end(); j++)
+				{
+					target->applySymbol(&*j);
+				}
 			}
 		}
 	}
@@ -443,15 +448,30 @@ bool Interpreter::treeHasNonTerminals(DerivationTreeNode in)
 
 bool Interpreter::underMaxIterations(int iterations)
 {
-	if ((iterations < maxIterations) && (maxIterations > 0))
+	if (maxIterations > 0)
 	{
-		return true;
+		if (iterations < maxIterations)
+		{
+			return true;
+		}
+		else
+		{
+			return false;
+		}
 	}
 	else
 	{
-		return false;
+		return true;
 	}
 	
+	// if ((iterations < maxIterations) && (maxIterations > 0))
+	// {
+	// 	return true;
+	// }
+	// else
+	// {
+	// 	return false;
+	// }	
 }
 
 void Interpreter::setMaxIterations(int in)
