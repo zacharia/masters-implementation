@@ -124,14 +124,13 @@ int main(int argc, char** argv)
 
 	interpret = new Interpreter();
 	//interpret->setVoxelGrid(vg);
-
+	interpret->setMaxIterations(maxIterations);
 	//interpret the input file if we've been given one
 	if (infile != "")
 	{
 		interpret->interpretFile(infile);
 	}
-	interpret->setMaxIterations(maxIterations);
-	 
+	
 	//ogre init
 
 	display = new OgreDisplay();

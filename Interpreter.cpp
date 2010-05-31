@@ -338,6 +338,50 @@ void Interpreter::interpretFile(string filename)
 				yylex(); //read the )
 				lastSymbol->orient = Ogre::Quaternion(Ogre::Radian(tempType), Ogre::Vector3(temp));
 			}
+			else if ((lastSymbolType == RECTANGLE_NODE) || (lastSymbolType == CYLINDER_NODE) || (lastSymbolType == SPHERE_NODE))
+			{
+				lastSymbol->intype = lastSymbolType;
+				
+				//read in it's position relative to the parent
+				Vector3 temp;
+				yylex();
+				temp.x = atof(yytext);
+				yylex(); //read the ,
+				yylex();
+				temp.y = atof(yytext);
+				yylex(); //read the ,
+				yylex();
+				temp.z = atof(yytext);
+				yylex(); //read the )
+				lastSymbol->pos = Vector3(temp);
+
+				//read in it's extents
+				yylex();
+				temp.x = atof(yytext);
+				yylex(); //read the ,
+				yylex();
+				temp.y = atof(yytext);
+				yylex(); //read the ,
+				yylex();
+				temp.z = atof(yytext);
+				yylex(); //read the )
+				lastSymbol->ext = Vector3(temp);
+
+				//read in it's orientation as a Quaternion
+				yylex();
+				double tempType = atof(yytext);
+				yylex(); //read the ,
+				yylex();
+				temp.x = atof(yytext);
+				yylex(); //read the ,
+				yylex();
+				temp.y = atof(yytext);
+				yylex(); //read the ,
+				yylex();
+				temp.z = atof(yytext);
+				yylex(); //read the )
+				lastSymbol->orient = Ogre::Quaternion(Ogre::Radian(tempType), Ogre::Vector3(temp));
+			}
 			else if (lastSymbolType == REMOVE_NODE)
 			{
 				//should I add a parameter for whether to delete the children?
@@ -414,6 +458,7 @@ void Interpreter::deriveTree()
 				}
 			}
 		}
+		iterations++;
 	}
 }
 
