@@ -85,7 +85,7 @@ DerivationTreeNode::DerivationTreeNode()
 DerivationTreeNode::DerivationTreeNode(DerivationTreeNode* in, bool copyChildren)
 {
 	this->position = in->position;
-	this->extents = in->extents;
+	this->extents = Vector3(in->extents);
 	this->orientation = in->orientation;
 	this->type = in->type;
 	this->parent = NULL;
@@ -120,10 +120,8 @@ DerivationTreeNode::~DerivationTreeNode()
 	//do nothing since there were no new's used in the creation of this?
 }
 
-void DerivationTreeNode::scaleNode(Vector3 factor)
+DerivationTreeNode* DerivationTreeNode::scaleNode(Vector3 factor)
 {
-	std::cout << "active: " << this->active << "\n"; //TEMP
-	
 	//a new temp node that will become the child
 	DerivationTreeNode temp = DerivationTreeNode(this);
 	//copy the children to the children node
@@ -131,18 +129,20 @@ void DerivationTreeNode::scaleNode(Vector3 factor)
 	//and then remove them from this node
 	//this->children.clear();
 	this->children = std::vector<DerivationTreeNode>();
-	
+
 	temp.extents.x *= factor.x;
 	temp.extents.y *= factor.y;
 	temp.extents.z *= factor.z;
 
 	this->children.push_back(temp);
 	this->active = false;
+
+	return &*(--(this->children.end()));
 }
 
 //NOTE: char is either 'x', 'y' or 'z' and indicates along which local axis to split the node
 //    not everything will necessarily obey the axis thing, e.g. cylinders can only split along their x or z axes
-void DerivationTreeNode::splitNode(int num, char axis)
+DerivationTreeNode* DerivationTreeNode::splitNode(int num, char axis)
 {
 	DerivationTreeNode temp;
 	
@@ -160,9 +160,11 @@ void DerivationTreeNode::splitNode(int num, char axis)
 		this->children.push_back(temp);
 	}
 	this->active = false;
+
+	return this;
 }
 
-void DerivationTreeNode::moveNode(Vector3 pos)
+DerivationTreeNode* DerivationTreeNode::moveNode(Vector3 pos)
 {
 	//a new temp node that will become the child
 	DerivationTreeNode temp = DerivationTreeNode(this);
@@ -176,9 +178,11 @@ void DerivationTreeNode::moveNode(Vector3 pos)
 	this->children.push_back(temp);
 
 	this->active = false;
+
+	return &*(--(this->children.end()));
 }
 
-void DerivationTreeNode::rotateNode(Quaternion rot)
+DerivationTreeNode* DerivationTreeNode::rotateNode(Quaternion rot)
 {
 	DerivationTreeNode temp = DerivationTreeNode(this);
 	temp.children = std::vector<DerivationTreeNode>(this->children.begin(), this->children.end());
@@ -189,9 +193,11 @@ void DerivationTreeNode::rotateNode(Quaternion rot)
 	this->children.push_back(temp);
 
 	this->active = false;
+
+	return &*(--(this->children.end()));
 }
 
-void DerivationTreeNode::addPrimitive(std::string intype, Vector3 pos, Vector3 ext, Quaternion orient)
+DerivationTreeNode* DerivationTreeNode::addPrimitive(std::string intype, Vector3 pos, Vector3 ext, Quaternion orient)
 {
 	DerivationTreeNode temp;
 	temp.type = intype;
@@ -200,9 +206,11 @@ void DerivationTreeNode::addPrimitive(std::string intype, Vector3 pos, Vector3 e
 	temp.orientation = orient;
 
 	this->children.push_back(temp);
+
+	return this;
 }
 
-void DerivationTreeNode::removeNode()
+DerivationTreeNode* DerivationTreeNode::removeNode()
 {
 	DerivationTreeNode temp = DerivationTreeNode(this);
 
@@ -211,6 +219,8 @@ void DerivationTreeNode::removeNode()
 	this->children.push_back(temp);
 
 	this->active = false;
+
+        return this; //should this be the parent rather?
 }
 
 std::string DerivationTreeNode::displayNode(int n)
@@ -247,11 +257,13 @@ std::string DerivationTreeNode::displayNode(int n)
 
 DerivationTreeNode* DerivationTreeNode::findNode(std::string search, DerivationTreeNode* target)
 {
+	//if we're not given a tree to look at, return NULL
 	if (target == NULL)
 	{
 		return NULL;
 	}
-	if (target->type == search)
+	//if the node we're given matches, and is active, return it
+	if ((target->type == search) && (target->isActive()))
 	{
 		return target;
 	}
@@ -282,38 +294,39 @@ bool DerivationTreeNode::isActive()
 	return this->active;
 }
 
-void DerivationTreeNode::applySymbol(Symbol* in)
+//returns the address of the newly derived node
+DerivationTreeNode* DerivationTreeNode::applySymbol(Symbol* in)
 {
 	if (in->name == SCALE_NODE)
 	{
-		this->scaleNode(in->factor);
+		return this->scaleNode(in->factor);
 	}
 	else if (in->name == SPLIT_NODE)
 	{
-		this->splitNode(in->num, in->axis);
+		return this->splitNode(in->num, in->axis);
 	}
 	else if (in->name == MOVE_NODE)
 	{
-		this->moveNode(in->pos);
+		return this->moveNode(in->pos);
 	}
 	else if (in->name == ROTATE_NODE)
 	{
-		this->rotateNode(in->rot);
+		return this->rotateNode(in->rot);
 	}
 	else if (in->name == ADD_PRIMITIVE)
 	{
-		this->addPrimitive(in->intype, in->pos, in->ext, in->orient);
+		return this->addPrimitive(in->intype, in->pos, in->ext, in->orient);
 	}
 	else if ((in->name == RECTANGLE_NODE) || (in->name == CYLINDER_NODE) || (in->name == SPHERE_NODE))
 	{
-		this->addPrimitive(in->name, in->pos, in->ext, in->orient);
+		return this->addPrimitive(in->name, in->pos, in->ext, in->orient);
 	}
 	else if (in->name == REMOVE_NODE)
 	{
-		this->removeNode();
+		return this->removeNode();
 	}
 	else
 	{
-		
+		return NULL;
 	}
 }

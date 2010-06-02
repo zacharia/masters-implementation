@@ -209,7 +209,7 @@ void Interpreter::interpretFile(string filename)
 		//cout << current << " |" << yytext << "|\n";
 		if (current == SYMBOL)
 		{
-			cout << "symbol.\n";
+			//cout << "symbol.\n";
 			
 			if (// (currRule.lhs.name == "") &&
 			    (lhs))
@@ -224,13 +224,13 @@ void Interpreter::interpretFile(string filename)
 		}
 		else if (current == OPEN_BRACKET)
 		{
-			cout << "open bracket.\n";
+			//cout << "open bracket.\n";
 			string lastSymbolType;
 			Symbol* lastSymbol = NULL;
 
 			if (startSymbolNext)
 			{
-				lastSymbolType = ADD_PRIMITIVE;
+				lastSymbolType = startSymbol.name;
 				lastSymbol = &startSymbol;
 				startSymbolNext = false;
 			}
@@ -243,6 +243,7 @@ void Interpreter::interpretFile(string filename)
 			{
 				lastSymbolType = currRule.rhs.back().name;
 				lastSymbol = &currRule.rhs.back();
+				cout << lastSymbolType << "\n";
 			}
 
 			if (lastSymbolType == SCALE_NODE)
@@ -389,12 +390,12 @@ void Interpreter::interpretFile(string filename)
 		}
 		else if (current == ASSIGN)
 		{
-			cout << "assign.\n";
+			//cout << "assign.\n";
 			lhs = false;
 		}
 		else if (current == RULE_SEPARATOR)
 		{
-			cout << "rule separator.\n";
+			//cout << "rule separator.\n";
 			
 			//add the last rule to the rule set
 			rules.push_back(currRule);
@@ -404,7 +405,7 @@ void Interpreter::interpretFile(string filename)
 		}
 		else if (current == START_SYMBOL)
 		{
-			cout << "start symbol.\n";
+			//cout << "start symbol.\n";
 			
 			yylex();
 			startSymbol.name = yytext;
@@ -412,7 +413,7 @@ void Interpreter::interpretFile(string filename)
 		}
 		else if (current == PROBABILITY)
 		{
-			cout << "probability symbol.\n";
+			//cout << "probability symbol.\n";
 
 			yylex();
 			currRule.probability = atof(yytext);
@@ -420,7 +421,7 @@ void Interpreter::interpretFile(string filename)
 		current = yylex();
 	}
 
-	cout << "Displaying Rule set: \n";
+	cout << "\n\n===RULES===\n";
 	cout << "START SYMBOL: " << startSymbol.toString() << "\n";
 	cout << "NORMAL SYMBOLS: \n";
 	for (vector<GrammarRule>::iterator i = rules.begin(); i != rules.end(); i++)
@@ -450,11 +451,12 @@ void Interpreter::deriveTree()
 		for (vector<GrammarRule>::iterator i = rules.begin(); i != rules.end(); i++)
 		{
 			target = derTree.findNode(i->lhs.name);
-			if ((target != NULL))
+			if (target != NULL)
 			{
 				for (vector<Symbol>::iterator j = i->rhs.begin(); j != i->rhs.end(); j++)
 				{
-					target->applySymbol(&*j);
+					//update target to point at the node it should modify for the symbol in this rule					
+					target = target->applySymbol(&*j);
 				}
 			}
 		}

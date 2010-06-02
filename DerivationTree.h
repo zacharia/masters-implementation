@@ -48,19 +48,23 @@ public:
 
 	~DerivationTreeNode();
 
-	void applySymbol(Symbol* in);
+	/*
+	  all of these methods return a pointer to the Node that should be modified next, to avoid problems with multiple symbols per rule. In most cases this is just the new child node.
+	  In some cases, the node to return might not always be intuitive (like split nodes).
+	 */
+	DerivationTreeNode* applySymbol(Symbol* in);
 
-	void scaleNode(Vector3 factor);
+	DerivationTreeNode* scaleNode(Vector3 factor);
 
-	void splitNode(int num, char axis);
+	DerivationTreeNode* splitNode(int num, char axis);
 
-	void moveNode(Vector3 pos);
+	DerivationTreeNode* moveNode(Vector3 pos);
 
-	void rotateNode(Quaternion rot);
+	DerivationTreeNode* rotateNode(Quaternion rot);
 
-	void addPrimitive(std::string intype, Vector3 pos, Vector3 ext, Quaternion orient);
+	DerivationTreeNode* addPrimitive(std::string intype, Vector3 pos, Vector3 ext, Quaternion orient);
 
-	void removeNode();
+	DerivationTreeNode* removeNode();
 
 	std::string displayNode(int n = 0);
 

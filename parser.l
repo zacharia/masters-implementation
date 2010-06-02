@@ -25,9 +25,9 @@ Zacharia Crumley
 #define PROBABILITY 21
 
 //if you want stuff to be echoed uncomment this line
-#define __ECHO_ON__ ECHO;
+//#define __ECHO_ON__ ECHO;
 //otherwise uncomment this line
-//#define __ECHO_ON__
+#define __ECHO_ON__
 
 %}
 
