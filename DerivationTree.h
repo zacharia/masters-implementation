@@ -70,6 +70,8 @@ public:
 
 	DerivationTreeNode* findNode(std::string search, DerivationTreeNode* target = NULL);
 
+	void createPrimitives(OgreDisplay* in);
+
 	bool isActive();
 };
 
@@ -93,6 +95,8 @@ public:
 	bool isRootNull();
 
 	DerivationTreeNode* findNode(std::string search);
+
+	void createPrimitives(OgreDisplay* in);
 };
 
 #endif

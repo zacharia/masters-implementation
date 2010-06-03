@@ -137,6 +137,9 @@ int main(int argc, char** argv)
 	display->initialize();
 	display->createVoxelMesh();
 
+	interpret->setDisplay(display);
+	interpret->createPrimitives();
+
 	// for (int i = 0; i < vg->getXSize(); i++)
 	// {
 	// 	for (int j = 0; j < vg->getYSize(); j++)

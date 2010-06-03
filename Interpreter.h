@@ -19,6 +19,7 @@
 #include "VoxelGrid.h"
 #include "DerivationTree.h"
 #include "GrammarRule.h"
+#include "OgreDisplay.h"
 
 using namespace std;
 
@@ -39,6 +40,8 @@ class Interpreter
 
 	bool underMaxIterations(int iterations);
 
+	OgreDisplay* display;
+
 public:
 	Interpreter();
 
@@ -51,6 +54,10 @@ public:
 	void interpretFile(string filename);
 
 	void deriveTree();
+
+	void createPrimitives();
+
+	void setDisplay(OgreDisplay* in);
 
 	void setMaxIterations(int in);
 

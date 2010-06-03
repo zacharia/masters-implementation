@@ -440,6 +440,10 @@ void Interpreter::interpretFile(string filename)
 	delete input;
 }
 
+/*
+  Do the derivation of the tree.
+  Assumes that everything has been set up through all the other methods in this class.
+ */
 void Interpreter::deriveTree()
 {
 	int iterations = 0;
@@ -462,6 +466,16 @@ void Interpreter::deriveTree()
 		}
 		iterations++;
 	}
+}
+
+void Interpreter::createPrimitives()
+{
+	derTree.createPrimitives(display);
+}
+
+void Interpreter::setDisplay(OgreDisplay* in)
+{
+	display = in;
 }
 
 bool Interpreter::treeHasNonTerminals(DerivationTreeNode in)

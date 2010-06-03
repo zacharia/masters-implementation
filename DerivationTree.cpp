@@ -65,6 +65,10 @@ bool DerivationTree::isRootNull()
 	}
 }
 
+void DerivationTree::createPrimitives(OgreDisplay* in)
+{
+	root->createPrimitives(in);
+}
 
 //----------------------------Node Object Methods-----------------------------
 
@@ -137,6 +141,7 @@ DerivationTreeNode* DerivationTreeNode::scaleNode(Vector3 factor)
 	this->children.push_back(temp);
 	this->active = false;
 
+	//return the newly created child node in case there are further things to do in this rule
 	return &*(--(this->children.end()));
 }
 
@@ -328,5 +333,37 @@ DerivationTreeNode* DerivationTreeNode::applySymbol(Symbol* in)
 	else
 	{
 		return NULL;
+	}
+}
+
+void DerivationTreeNode::createPrimitives(OgreDisplay* in)
+{
+	//if it's a leaf node
+	if (this->isActive())
+	{
+		//make the primitive of it
+		if (this->type == RECTANGLE_NODE)
+		{
+			in->addCube(this->position, this->extents, this->orientation);
+			std::cout << "adding rectangle" << "\n"; //TEMP 
+		}
+		else if (this->type == CYLINDER_NODE)
+		{
+			in->addCylinder(this->position, this->extents, this->orientation);
+			std::cout << "adding cylinder" << "\n"; //TEMP 
+		}
+		else if (this->type == SPHERE_NODE)
+		{
+			
+		}
+	}
+	//if it's a non-leaf node
+	else
+	{
+		//recurse on it's children.
+		for (std::vector<DerivationTreeNode>::iterator i = this->children.begin(); i != this->children.end(); i++)
+		{
+			i->createPrimitives(in);
+		}
 	}
 }
