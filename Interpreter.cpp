@@ -260,7 +260,12 @@ void Interpreter::interpretFile(string filename)
 			}
 			else if (lastSymbolType == SPLIT_NODE)
 			{
-				
+				yylex();
+				lastSymbol->num = atoi(yytext);
+				yylex(); //read the ,
+				yylex();
+				lastSymbol->axis = yytext[0];
+				yylex(); //read the )
 			}
 			else if (lastSymbolType == MOVE_NODE)
 			{

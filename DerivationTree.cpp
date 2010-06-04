@@ -151,11 +151,20 @@ DerivationTreeNode* DerivationTreeNode::splitNode(int num, char axis)
 {
 	DerivationTreeNode temp;
 	
-	for (int i = 0; i < num; i++)
+	for (int i = 1; i <= num; i++)
 	{
 		temp = DerivationTreeNode(this);
 
 		if (axis == 'x') //This is just temp to shut up an annoying error. It can be removed later
+		{
+			temp.extents.x = temp.extents.x / num;
+			temp.position.x = this->position.x + ((i - num/2) * temp.extents.x);
+		}
+		else if (axis == 'y')
+		{
+			
+		}
+		else if (axis == 'z')
 		{
 			
 		}
