@@ -22,7 +22,7 @@
 #define CYLINDER_NODE "cylinder"
 #define SPHERE_NODE "sphere"
 
-#define UNDEFINED_NODE ""
+#define UNDEFINED_NODE "undefined_node"
 #define SCALE_NODE "scale"
 #define SPLIT_NODE "split"
 #define MOVE_NODE "move"

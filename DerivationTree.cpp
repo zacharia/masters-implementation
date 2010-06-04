@@ -217,11 +217,10 @@ DerivationTreeNode* DerivationTreeNode::addPrimitive(std::string intype, Vector3
 
 DerivationTreeNode* DerivationTreeNode::removeNode()
 {
-	DerivationTreeNode temp = DerivationTreeNode(this);
-
-	temp.type = UNDEFINED_NODE;
-
-	this->children.push_back(temp);
+	//I commented these out since I think they're pretty much redundant with the active flag added.
+	// DerivationTreeNode temp = DerivationTreeNode(this);
+	// temp.type = UNDEFINED_NODE;
+	// this->children.push_back(temp);
 
 	this->active = false;
 
@@ -345,12 +344,12 @@ void DerivationTreeNode::createPrimitives(OgreDisplay* in)
 		if (this->type == RECTANGLE_NODE)
 		{
 			in->addCube(this->position, this->extents, this->orientation);
-			std::cout << "adding rectangle" << "\n"; //TEMP 
+			//std::cout << "adding rectangle" << "\n"; //TEMP 
 		}
 		else if (this->type == CYLINDER_NODE)
 		{
 			in->addCylinder(this->position, this->extents, this->orientation);
-			std::cout << "adding cylinder" << "\n"; //TEMP 
+			//std::cout << "adding cylinder" << "\n"; //TEMP 
 		}
 		else if (this->type == SPHERE_NODE)
 		{
