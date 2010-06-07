@@ -467,6 +467,7 @@ void Interpreter::deriveTree()
 					//update target to point at the node it should modify for the symbol in this rule					
 					target = target->applySymbol(&*j);
 				}
+				break; //this prevents more than one derivation happening per iteration. It breaks out of the for loop and back into the while loop
 			}
 		}
 		iterations++;
