@@ -219,7 +219,7 @@ void Interpreter::interpretFile(string filename)
 			}
 			else
 			{
-				currRule.rhs.push_back(Symbol(yytext));
+				currRule.rhs.back().expansion.push_back(Symbol(yytext));
 			}
 		}
 		else if (current == OPEN_BRACKET)
@@ -241,8 +241,8 @@ void Interpreter::interpretFile(string filename)
 			}
 			else
 			{
-				lastSymbolType = currRule.rhs.back().name;
-				lastSymbol = &currRule.rhs.back();
+				lastSymbolType = currRule.rhs.back().expansion.back().name;
+				lastSymbol = &currRule.rhs.back().expansion.back();
 				cout << lastSymbolType << "\n";
 			}
 
@@ -397,10 +397,18 @@ void Interpreter::interpretFile(string filename)
 		{
 			//cout << "assign.\n";
 			lhs = false;
+
+			Expansion e;
+			currRule.rhs.push_back(e);
 		}
 		else if (current == RULE_SEPARATOR)
 		{
 			//cout << "rule separator.\n";
+			currRule.totalProbability = 0.0;
+			for (std::vector<Expansion>::iterator i = currRule.rhs.begin(); i != currRule.rhs.end(); i++)
+			{
+				currRule.totalProbability += i->probability;
+			}
 			
 			//add the last rule to the rule set
 			rules.push_back(currRule);
@@ -421,7 +429,7 @@ void Interpreter::interpretFile(string filename)
 			//cout << "probability symbol.\n";
 
 			yylex();
-			currRule.probability = atof(yytext);
+			currRule.rhs.back().probability = atof(yytext);
 		}
 		current = yylex();
 	}
@@ -462,7 +470,35 @@ void Interpreter::deriveTree()
 			target = derTree.findNode(i->lhs.name);
 			if (target != NULL)
 			{
-				for (vector<Symbol>::iterator j = i->rhs.begin(); j != i->rhs.end(); j++)
+				std::vector<Symbol>* chosenExpansion;
+
+				//if there's only one rhs
+				if (i->rhs.size() == 1)
+				{
+					//then use it
+					chosenExpansion = &(i->rhs.back().expansion);
+				}
+				//if there are multiple rhs expansions
+				else
+				{
+					//get a random number between zero and the total probability number for the rule.
+					double randNum = Math::RangeRandom(0.0, i->totalProbability);
+
+					std::cout << "thing: " << randNum << " " << i->totalProbability << "\n"; //TEMP 
+					
+					//and choose the corresponding expansion to use
+					double totProb = 0.0;
+					for (std::vector<Expansion>::iterator j = i->rhs.begin(); j != i->rhs.end(); j++)
+					{
+						if ( (randNum > totProb) && (randNum < totProb + j->probability) )
+						{
+							chosenExpansion = &(j->expansion);
+						}
+						totProb += j->probability;
+					}
+				}
+								
+				for (vector<Symbol>::iterator j = chosenExpansion->begin(); j != chosenExpansion->end(); j++)
 				{
 					//update target to point at the node it should modify for the symbol in this rule					
 					target = target->applySymbol(&*j);

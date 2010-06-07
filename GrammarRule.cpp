@@ -9,7 +9,7 @@ GrammarRule::GrammarRule()
 	lhs = Symbol();
 	rhs.clear();
 	name = "";
-	probability = 1.0;
+	totalProbability = 0.0;
 }
 
 GrammarRule::~GrammarRule()
@@ -22,16 +22,22 @@ std::string GrammarRule::toString()
 {
 	std::string ret = "";
 
-	ret = ret + lhs.toString() + " -> ";
+	ret = ret + lhs.toString() + "[" + Utility::numToString(this->totalProbability) + "]";
 	
-	for (std::vector<Symbol>::iterator i = rhs.begin(); i != rhs.end(); i++)
+	for (std::vector<Expansion>::iterator j = rhs.begin(); j != rhs.end(); j++)
 	{
-		ret = ret + i->toString() + " ";
+		ret = ret + " -> ";
+		
+		for (std::vector<Symbol>::iterator i = j->expansion.begin(); i != j->expansion.end(); i++)
+		{
+			ret = ret + i->toString() + " ";
+		}
+
+		ret = ret + ": " + Utility::numToString(j->probability);
+
+		ret = ret + "\n";
 	}
-
-	ret = ret + ": " + Utility::numToString(probability);
-
-	ret = ret + ";\n";
+	ret = ret + ";\n\n";
 	
 	return ret;
 }

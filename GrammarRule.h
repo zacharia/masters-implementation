@@ -55,15 +55,28 @@ public:
 	//bool operator==(Symbol& comp) const;
 };
 
+struct Expansion
+{
+	std::vector<Symbol> expansion;
+	double probability;
+
+	Expansion()
+	{
+		expansion = std::vector<Symbol>();
+		probability = 1.0;
+	}
+};
+
 class GrammarRule
 {
 public:
 	Symbol lhs;
-	std::vector<Symbol> rhs;
+	
+	std::vector<Expansion> rhs;
 
 	std::string name;
 
-	double probability;
+	double totalProbability;
 
 public:
 	GrammarRule();
