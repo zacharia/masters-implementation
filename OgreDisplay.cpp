@@ -261,7 +261,7 @@ void OgreDisplay::addVoxelBillboard(Vector3 pos)
 void OgreDisplay::addCube(Vector3 pos, Vector3 scale, Quaternion rot, std::string meshName)
 {
 	SceneNode* node = sceneMgr->getRootSceneNode()->createChildSceneNode(pos, rot);
-	node->setScale(scale);
+	node->setScale(scale * 2.0);
 
 	Entity* ent = sceneMgr->createEntity("cube" + Utility::numToString(cubeCount), meshName);
 	cubeCount++;
@@ -272,7 +272,7 @@ void OgreDisplay::addCube(Vector3 pos, Vector3 scale, Quaternion rot, std::strin
 void OgreDisplay::addCylinder(Vector3 pos, Vector3 scale, Quaternion rot, std::string meshName)
 {
 	SceneNode* node = sceneMgr->getRootSceneNode()->createChildSceneNode(pos, rot);
-	node->setScale(scale);
+	node->setScale(scale * 2.0);
 
 	Entity* ent = sceneMgr->createEntity("cylinder" + Utility::numToString(cylinderCount), meshName);
 	cylinderCount++;
