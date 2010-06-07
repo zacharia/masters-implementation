@@ -93,6 +93,9 @@ void OgreDisplay::initialize()
 	cylinderCount = 0;
 	this->createCubeMesh(); //use default arguments to make the default cube
 	this->createCylinderMesh(); //use default arguments to make the default cylinder
+
+	//seed the random number generator
+	srand(time(NULL));
 }
 
 void OgreDisplay::createCubeMesh(std::string name, std::string material)
@@ -258,24 +261,55 @@ void OgreDisplay::addVoxelBillboard(Vector3 pos)
 	sceneMgr->getBillboardSet("voxel_grid")->createBillboard(Vector3(pos.x, pos.y, pos.z));
 }
 
-void OgreDisplay::addCube(Vector3 pos, Vector3 scale, Quaternion rot, std::string meshName)
+/*
+  Adds a rectangle to the scene.
+  pos - it's position in space (centre)
+  scale - it's dimensions (extents to the corner of bounding box from the centre)
+  rot - a quaternion that gives it's orientation.
+  materialName - the material to use for this rectangle
+ */
+void OgreDisplay::addCube(Vector3 pos, Vector3 scale, Quaternion rot, std::string materialName, bool randCol)
 {
 	SceneNode* node = sceneMgr->getRootSceneNode()->createChildSceneNode(pos, rot);
 	node->setScale(scale * 2.0);
 
-	Entity* ent = sceneMgr->createEntity("cube" + Utility::numToString(cubeCount), meshName);
+	Entity* ent = sceneMgr->createEntity("cube" + Utility::numToString(cubeCount), "defaultCubeMesh");
 	cubeCount++;
+
+	if (randCol)
+	{
+		MaterialPtr tempMat = ent->getSubEntity(0)->getMaterial()->clone("randCubeCol" + Utility::numToString(cubeCount));
+		tempMat->getTechnique(0)->getPass(0)->getTextureUnitState(0)->setColourOperationEx(LBX_SOURCE1, LBS_MANUAL, LBS_CURRENT, ColourValue(Math::RangeRandom(0.0, 1.0), Math::RangeRandom(0.0, 1.0), Math::RangeRandom(0.0, 1.0), 1.0));
+		
+		ent->setMaterialName("randCubeCol" + Utility::numToString(cubeCount));
+	}
+	else
+	{
+		ent->setMaterialName(materialName);
+	}
 	
 	node->attachObject(ent);
 }
 
-void OgreDisplay::addCylinder(Vector3 pos, Vector3 scale, Quaternion rot, std::string meshName)
+void OgreDisplay::addCylinder(Vector3 pos, Vector3 scale, Quaternion rot, std::string materialName, bool randCol)
 {
 	SceneNode* node = sceneMgr->getRootSceneNode()->createChildSceneNode(pos, rot);
 	node->setScale(scale * 2.0);
 
-	Entity* ent = sceneMgr->createEntity("cylinder" + Utility::numToString(cylinderCount), meshName);
+	Entity* ent = sceneMgr->createEntity("cylinder" + Utility::numToString(cylinderCount), "defaultCylinderMesh");
 	cylinderCount++;
-	
+
+	if (randCol)
+	{
+		MaterialPtr tempMat = ent->getSubEntity(0)->getMaterial()->clone("randCylinderCol" + Utility::numToString(cubeCount));
+		tempMat->getTechnique(0)->getPass(0)->getTextureUnitState(0)->setColourOperationEx(LBX_SOURCE1, LBS_MANUAL, LBS_CURRENT, ColourValue(Math::RangeRandom(0.0, 1.0), Math::RangeRandom(0.0, 1.0), Math::RangeRandom(0.0, 1.0), 1.0));
+		
+		ent->setMaterialName("randCylinderCol" + Utility::numToString(cubeCount));
+	}
+	else
+	{
+		ent->setMaterialName(materialName);
+	}
+
 	node->attachObject(ent);
 }
