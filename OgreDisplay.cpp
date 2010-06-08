@@ -298,10 +298,10 @@ void OgreDisplay::addCylinder(Vector3 pos, Vector3 scale, Quaternion rot, std::s
 
 	if (randCol)
 	{
-		MaterialPtr tempMat = ent->getSubEntity(0)->getMaterial()->clone("randCylinderCol" + Utility::numToString(cubeCount));
+		MaterialPtr tempMat = ent->getSubEntity(0)->getMaterial()->clone("randCylinderCol" + Utility::numToString(cylinderCount));
 		tempMat->getTechnique(0)->getPass(0)->getTextureUnitState(0)->setColourOperationEx(LBX_SOURCE1, LBS_MANUAL, LBS_CURRENT, ColourValue(Math::RangeRandom(0.0, 1.0), Math::RangeRandom(0.0, 1.0), Math::RangeRandom(0.0, 1.0), 1.0));
 		
-		ent->setMaterialName("randCylinderCol" + Utility::numToString(cubeCount));
+		ent->setMaterialName("randCylinderCol" + Utility::numToString(cylinderCount));
 	}
 	else
 	{
