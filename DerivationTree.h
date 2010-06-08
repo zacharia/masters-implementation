@@ -70,6 +70,8 @@ public:
 
 	DerivationTreeNode* findNode(std::string search, DerivationTreeNode* target = NULL);
 
+	void findNodeRand(std::string search, std::vector<DerivationTreeNode*>* choices, DerivationTreeNode* target = NULL);
+
 	void createPrimitives(OgreDisplay* in);
 
 	bool isActive();
@@ -94,7 +96,7 @@ public:
 
 	bool isRootNull();
 
-	DerivationTreeNode* findNode(std::string search);
+	DerivationTreeNode* findNode(std::string search, bool randChoice = true);
 
 	void createPrimitives(OgreDisplay* in);
 };

@@ -41,15 +41,44 @@ DerivationTreeNode* DerivationTree::getRoot()
 	return root;
 }
 
-DerivationTreeNode* DerivationTree::findNode(std::string search)
+DerivationTreeNode* DerivationTree::findNode(std::string search, bool randChoice)
 {
+	//if the root's null, we're not going to find anything
 	if (root == NULL)
 	{
 		return NULL;
 	}
+	//but if the root isn't null and we actually need to search
 	else
 	{
-		return root->findNode(search, root);
+		//if we're just choosing a random node from the entire possible set
+		if (randChoice)
+		{
+			//make a vector of pointers to the potential targets and fill it by searching the tree
+			std::vector<DerivationTreeNode*> choices;
+			root->findNodeRand(search, &choices, root);
+
+			//choose an element from it randomly
+			int chosen = floor(Math::RangeRandom(0.0, choices.size()));
+
+			//this if is in case the RangeRandom returns the max value (which is out of the vector's bounds
+			if (choices.size() == 0)
+			{
+				return NULL;
+			}
+			
+			if (chosen == choices.size())
+			{
+				chosen = choices.size() - 1;
+			}
+			
+			return choices.at(chosen);
+		}
+		//otherwise we're just choosing the first one we find
+		else
+		{
+			return root->findNode(search, root);
+		}
 	}
 }
 
@@ -286,6 +315,7 @@ DerivationTreeNode* DerivationTreeNode::findNode(std::string search, DerivationT
 	{
 		return NULL;
 	}
+
 	//if the node we're given matches, and is active, return it
 	if ((target->type == search) && (target->isActive()))
 	{
@@ -310,6 +340,20 @@ DerivationTreeNode* DerivationTreeNode::findNode(std::string search, DerivationT
 			}
 			return ret;
 		}
+	}
+}
+
+void DerivationTreeNode::findNodeRand(std::string search, std::vector<DerivationTreeNode*>* choices, DerivationTreeNode* target)
+{	
+	//if the node we're given matches, and is active, return it
+	if ((target->type == search) && (target->isActive()))
+	{
+		choices->push_back(target);
+	}
+	
+	for (std::vector<DerivationTreeNode>::iterator i = target->children.begin(); i != target->children.end(); i++)
+	{
+		findNodeRand(search, choices, &(*i));
 	}
 }
 
