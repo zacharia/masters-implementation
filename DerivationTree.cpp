@@ -347,7 +347,7 @@ DerivationTreeNode* DerivationTreeNode::applySymbol(Symbol* in)
 
 void DerivationTreeNode::createPrimitives(OgreDisplay* in)
 {
-	//if it's a leaf node
+	//if it's an active node
 	if (this->isActive())
 	{
 		//make the primitive of it
@@ -366,13 +366,10 @@ void DerivationTreeNode::createPrimitives(OgreDisplay* in)
 			
 		}
 	}
-	//if it's a non-leaf node
-	else
+
+	//recurse on it's children.
+	for (std::vector<DerivationTreeNode>::iterator i = this->children.begin(); i != this->children.end(); i++)
 	{
-		//recurse on it's children.
-		for (std::vector<DerivationTreeNode>::iterator i = this->children.begin(); i != this->children.end(); i++)
-		{
-			i->createPrimitives(in);
-		}
+		i->createPrimitives(in);
 	}
 }

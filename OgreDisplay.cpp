@@ -93,9 +93,6 @@ void OgreDisplay::initialize()
 	cylinderCount = 0;
 	this->createCubeMesh(); //use default arguments to make the default cube
 	this->createCylinderMesh(); //use default arguments to make the default cylinder
-
-	//seed the random number generator
-	srand(time(NULL));
 }
 
 void OgreDisplay::createCubeMesh(std::string name, std::string material)
