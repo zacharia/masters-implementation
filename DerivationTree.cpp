@@ -157,17 +157,27 @@ DerivationTreeNode* DerivationTreeNode::splitNode(int num, char axis)
 
 		if (axis == 'x')
 		{
+			//work out the dimensions of each of the splits
 			temp.extents.x = this->extents.x / num;
-			temp.position.x = (this->position.x - this->extents.x) + temp.extents.x
-				+ (i * temp.extents.x * 2.0);
+			//work out the current split's position.
+			temp.position.x = (this->position.x - this->extents.x) + temp.extents.x //this first part is the edge + half an extent in
+				+ (i * temp.extents.x * 2.0); //then this is the position of the current split.
 		}
 		else if (axis == 'y')
 		{
-			
+			//work out the dimensions of each of the splits
+			temp.extents.y = this->extents.y / num;
+			//work out the current split's position.
+			temp.position.y = (this->position.y - this->extents.y) + temp.extents.y //this first part is the edge + half an extent in
+				+ (i * temp.extents.y * 2.0); //then this is the position of the current split.
 		}
 		else if (axis == 'z')
 		{
-			
+			//work out the dimensions of each of the splits
+			temp.extents.z = this->extents.z / num;
+			//work out the current split's position.
+			temp.position.z = (this->position.z - this->extents.z) + temp.extents.z //this first part is the edge + half an extent in
+				+ (i * temp.extents.z * 2.0); //then this is the position of the current split.
 		}
 
 		//derive the children split nodes from the parent
