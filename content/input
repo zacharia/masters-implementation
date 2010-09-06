@@ -1,0 +1,14 @@
+
+rectangle -> split(2,y) : 1
+	-> split(2,z) : 1
+	-> split(2,x) : 1
+	-> remove() : 1;
+
+rectangle -> split(2,y) : 4
+	-> remove() : 1;
+
+start -> add(rectangle, 0,0,0, 15,15,15, 0,1,1,1) remove();
+
+$
+
+start

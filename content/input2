@@ -1,0 +1,9 @@
+cylinder -> scale(1, 1.5, 1) move(5,0,0) add(cylinder, 1,0,0, 1,1,1, 0,1,1,1) : 1;
+
+rectangle -> scale(1,1,1.5) move(-5,0,0) add(rectangle, -1,0,0, 1,1,1, 0,1,1,1) : 1;
+	
+start -> add(cylinder, 0,0,0, 2,2,2, 0,1,1,1) add(rectangle, 0,0,0, 2,2,2, 0,1,1,1) remove();
+
+$
+
+start

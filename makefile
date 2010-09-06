@@ -3,31 +3,31 @@
 CC=g++
 WFLAGS=-Wall -Wextra -g
 
-all: main.cpp Utility VoxelGrid InputManager OgreDisplay DerivationTree GrammarRule Interpreter
+all: main.cpp Utility.o VoxelGrid.o InputManager.o OgreDisplay.o DerivationTree.o GrammarRule.o Interpreter.o
 	$(CC) $(WFLAGS) -o prototype main.cpp VoxelGrid.o InputManager.o OgreDisplay.o GrammarRule.o Interpreter.o DerivationTree.o Utility.o -lOgreMain -lOIS
 
-VoxelGrid: VoxelGrid.cpp VoxelGrid.h
+VoxelGrid.o: VoxelGrid.cpp VoxelGrid.h
 	$(CC) $(WFLAGS) -c -o VoxelGrid.o VoxelGrid.cpp
 
-InputManager: InputManager.h InputManager.cpp
+InputManager.o: InputManager.h InputManager.cpp
 	$(CC) $(WFLAGS) -c -o InputManager.o InputManager.cpp
 
-OgreDisplay: OgreDisplay.h OgreDisplay.cpp
+OgreDisplay.o: OgreDisplay.h OgreDisplay.cpp
 	$(CC) $(WFLAGS) -c -o OgreDisplay.o OgreDisplay.cpp
 
-Interpreter: Interpreter.cpp Interpreter.h FlexParser
+Interpreter.o: Interpreter.cpp Interpreter.h FlexParser
 	$(CC) $(WFLAGS) -c -o Interpreter.o Interpreter.cpp
 
-GrammarRule: GrammarRule.cpp GrammarRule.h
+GrammarRule.o: GrammarRule.cpp GrammarRule.h
 	$(CC) $(WFLAGS) -c -o GrammarRule.o GrammarRule.cpp
 
 FlexParser: parser.l
 	flex parser.l
 
-DerivationTree: DerivationTree.cpp DerivationTree.h
+DerivationTree.o: DerivationTree.cpp DerivationTree.h
 	$(CC) $(WFLAGS) -c -o DerivationTree.o DerivationTree.cpp
 
-Utility: Utility.cpp Utility.h
+Utility.o: Utility.cpp Utility.h
 	$(CC) $(WFLAGS) -c -o Utility.o Utility.cpp
 
 clean:
