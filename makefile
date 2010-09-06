@@ -15,13 +15,13 @@ InputManager.o: InputManager.h InputManager.cpp
 OgreDisplay.o: OgreDisplay.h OgreDisplay.cpp
 	$(CC) $(WFLAGS) -c -o OgreDisplay.o OgreDisplay.cpp
 
-Interpreter.o: Interpreter.cpp Interpreter.h FlexParser
+Interpreter.o: Interpreter.cpp Interpreter.h lex.yy.c
 	$(CC) $(WFLAGS) -c -o Interpreter.o Interpreter.cpp
 
 GrammarRule.o: GrammarRule.cpp GrammarRule.h
 	$(CC) $(WFLAGS) -c -o GrammarRule.o GrammarRule.cpp
 
-FlexParser: parser.l
+lex.yy.c: parser.l
 	flex parser.l
 
 DerivationTree.o: DerivationTree.cpp DerivationTree.h
