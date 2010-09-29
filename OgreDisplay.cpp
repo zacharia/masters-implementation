@@ -226,7 +226,7 @@ void OgreDisplay::addVoxel(Vector3 pos)
 	//make the voxel cube normally, and attach it to a scene node
 	std::string name = "v" + Utility::numToString(pos.x) + " " + Utility::numToString(pos.y) + " " + Utility::numToString(pos.z);
 	SceneNode* newVoxel = sceneMgr->getRootSceneNode()->createChildSceneNode();
-	newVoxel->attachObject(sceneMgr->createEntity(name, "voxel"));
+	newVoxel->attachObject(sceneMgr->createEntity(name, /*"voxel"*/ "defaultCubeMesh"));
 	newVoxel->translate(pos.x, pos.y, pos.z);
 }
 
@@ -236,7 +236,7 @@ void OgreDisplay::addVoxelStatic(Vector3 pos)
 	//make the voxel cube normally, and attach it to a scene node
 	std::string name = "v" + Utility::numToString(pos.x) + " " + Utility::numToString(pos.y) + " " + Utility::numToString(pos.z);
 	SceneNode* newVoxel = sceneMgr->getRootSceneNode()->createChildSceneNode();
-	newVoxel->attachObject(sceneMgr->createEntity(name, "voxel"));
+	newVoxel->attachObject(sceneMgr->createEntity(name, /*"voxel"*/ "defaultCubeMesh"));
 	newVoxel->translate(pos.x, pos.y, pos.z);
 
 	//add the scene node to the static geometry
