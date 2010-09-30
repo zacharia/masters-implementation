@@ -45,7 +45,7 @@ void Interpreter::interpretFileLsystem(string filename)
 		stack<bool> currentAddMode;
 
 		//initial values to set the turtle to
-		Vector3 currPos(vg->getXSize() / 2.0, vg->getYSize() / 2.0, vg->getZSize() / 2.0);
+		Vector3 currPos(vg->getSize() / 2.0, vg->getSize() / 2.0, vg->getSize() / 2.0);
 		Vector3 currDir(0.0, 1.0, 0.0);
 
 		currentPosition.push(currPos);
@@ -133,11 +133,11 @@ void Interpreter::interpretFileLsystem(string filename)
 
 				if (currentAddMode.top() == true)
 				{
-					vg->makeRectangle(currentPosition.top(), Vector3(xSize, ySize, zSize), true);       
+					vg->makeRectangle(currentPosition.top(), Vector3(xSize, ySize, zSize), Matrix3(), true);       
 				}
 				else
 				{
-					vg->makeRectangle(currentPosition.top(), Vector3(xSize, ySize, zSize), false);
+					vg->makeRectangle(currentPosition.top(), Vector3(xSize, ySize, zSize), Matrix3(), false);
 				}
 			}
 			else if ((currentSymbol == "ellipsoid") || (currentSymbol == "ellipsoid_subtract"))
@@ -154,11 +154,11 @@ void Interpreter::interpretFileLsystem(string filename)
 
 				if (currentAddMode.top() == true)
 				{
-					vg->makeEllipsoid(currentPosition.top(), Vector3(xSize, ySize, zSize), true);	
+					vg->makeEllipsoid(currentPosition.top(), Vector3(xSize, ySize, zSize), Matrix3(), true);	
 				}
 				else
 				{
-					vg->makeEllipsoid(currentPosition.top(), Vector3(xSize, ySize, zSize), false);
+					vg->makeEllipsoid(currentPosition.top(), Vector3(xSize, ySize, zSize), Matrix3(), false);
 				}
 			}
 			else if ((currentSymbol == "cylinder") || (currentSymbol == "cylinder_subtract"))
@@ -176,11 +176,11 @@ void Interpreter::interpretFileLsystem(string filename)
 
 				if (currentAddMode.top() == true)
 				{
-					vg->makeCylinder(currentPosition.top(), Vector3(xSize, ySize, zSize), orientation[0], true);
+					vg->makeCylinder(currentPosition.top(), Vector3(xSize, ySize, zSize), Matrix3(), true);
 				}
 				else
 				{
-					vg->makeCylinder(currentPosition.top(), Vector3(xSize, ySize, zSize), orientation[0], false);
+					vg->makeCylinder(currentPosition.top(), Vector3(xSize, ySize, zSize), Matrix3(), false);
 				}
 			}
 		}

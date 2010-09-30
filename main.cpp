@@ -33,6 +33,7 @@ int maxIterations = -1;
 //argument variables
 string infile = "";
 unsigned int voxel_grid_size = 1024;
+bool display_axes = false;
 
 void tick()
 {
@@ -121,6 +122,10 @@ int main(int argc, char** argv)
 		{
 			infile = argv[++i];
 		}
+		if (curr == "-x") //display axes
+		{
+			display_axes = true;
+		}
 		if (curr == "-h") //display help
 		{
 			cout << "options:\n"
@@ -128,23 +133,26 @@ int main(int argc, char** argv)
 			     << "-m <num>\t the max number of iterations to do when interpreting\n"
 			     << "-s <num>\t the size to make the voxel grid when doing voxel grid stuff\n"
 			     << "-f <file>\t a file to use that was produced by the python interpreter\n"
+			     << "-x\t\t display the x, y and z axes\n"
 			     << "-h\t\t display this help information\n\n";
 		}
 	}
 	
 	//seed the random number generator
 	srand(time(NULL));
-
-	//voxel grid init
-
-	// vg = new VoxelGrid(100, 100, 100);
-	// vg->initializeVoxelGrid(0x00);
-	// vg->makeRectangle(Ogre::Vector3(10,10,10), Ogre::Vector3(5, 5, 5), true);
 		
 	//ogre init
 	display = new OgreDisplay();
 	display->initialize();
 	display->createVoxelMesh();
+
+	if (display_axes)
+	{
+		display->addCube(Ogre::Vector3(0, 0, 0), Ogre::Vector3(0.25, 0.25, 0.25), Ogre::Quaternion::IDENTITY);
+		display->addCube(Ogre::Vector3(0, 0, 0), Ogre::Vector3(0.1, 100, 0.1), Ogre::Quaternion(Ogre::Radian(M_PI), Ogre::Vector3(1,1,0)));
+		display->addCube(Ogre::Vector3(0, 0, 0), Ogre::Vector3(0.1, 100, 0.1), Ogre::Quaternion(Ogre::Radian(M_PI), Ogre::Vector3(0,1,1)));
+		display->addCube(Ogre::Vector3(0, 0, 0), Ogre::Vector3(0.1, 100, 0.1), Ogre::Quaternion::IDENTITY);
+	}
 	
 	//interpret the input file if we've been given one
 	if (infile != "")
@@ -157,6 +165,9 @@ int main(int argc, char** argv)
 		interpret->setDisplay(display);
 		interpret->createPrimitives();
 	}
+
+	//voxel grid init
+	vg = new VoxelGrid(voxel_grid_size);
 	
 	//OIS init
 	input = InputManager::getSingletonPtr();
