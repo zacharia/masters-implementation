@@ -32,6 +32,7 @@ int maxIterations = -1;
 
 //argument variables
 string infile = "";
+unsigned int voxel_grid_size = 1024;
 
 void tick()
 {
@@ -108,9 +109,26 @@ int main(int argc, char** argv)
 		{
 			infile = argv[++i];
 		}
-		if (curr == "-m") //maxIterations for derivation
+		else if (curr == "-m") //maxIterations for derivation
 		{
 			maxIterations = atoi(argv[++i]);
+		}
+		else if (curr == "-s") //size of the octree for the voxel grid
+		{
+			voxel_grid_size = atoi(argv[++i]);
+		}
+		if (curr == "-f") //the already interpreted (by the python thing) file to use
+		{
+			infile = argv[++i];
+		}
+		if (curr == "-h") //display help
+		{
+			cout << "options:\n"
+			     << "-i <file>\t the input file to interpret and use\n"
+			     << "-m <num>\t the max number of iterations to do when interpreting\n"
+			     << "-s <num>\t the size to make the voxel grid when doing voxel grid stuff\n"
+			     << "-f <file>\t a file to use that was produced by the python interpreter\n"
+			     << "-h\t\t display this help information\n\n";
 		}
 	}
 	
@@ -122,61 +140,36 @@ int main(int argc, char** argv)
 	// vg = new VoxelGrid(100, 100, 100);
 	// vg->initializeVoxelGrid(0x00);
 	// vg->makeRectangle(Ogre::Vector3(10,10,10), Ogre::Vector3(5, 5, 5), true);
-
-	//interpreter initialization
-
-	interpret = new Interpreter();
-	//interpret->setVoxelGrid(vg);
-	interpret->setMaxIterations(maxIterations);
-	//interpret the input file if we've been given one
-	if (infile != "")
-	{
-		interpret->interpretFile(infile);
-	}
-	
+		
 	//ogre init
-
 	display = new OgreDisplay();
 	display->initialize();
 	display->createVoxelMesh();
-
-	interpret->setDisplay(display);
-	interpret->createPrimitives();
 	
-	// for (int i = 0; i < vg->getXSize(); i++)
-	// {
-	// 	for (int j = 0; j < vg->getYSize(); j++)
-	// 	{
-	// 		for (int k = 0; k < vg->getZSize(); k++)
-	// 		{
-	// 			if (vg->getValue(i,j,k) == 0x01)
-	// 			{
-	// 				//display->addVoxel(Ogre::Vector3(i,j,k));
-	// 				//display->addVoxelStatic(Ogre::Vector3(i,j,k));
-	// 				display->addVoxelBillboard(Ogre::Vector3(i,j,k));
-	// 			}
-	// 		}
-	// 	}
-	// }
-	//display->addVoxelStatic(Ogre::Vector3(0,0,0));
-	//display->buildStaticGeometry();
-	//display->addVoxelBillboard(Ogre::Vector3(0,0,0));
-
-	//display->addCube(Vector3(0,2,0), Vector3(0.5, 0.5, 0.5));
-	//display->addCube(Vector3(64,2,0), Vector3(0.5, 0.5, 0.5));
-	//display->addCylinder(Vector3(14,-5,0), Vector3(3,2,1), Quaternion(Radian(2),Vector3(0,1,2)));
-
+	//interpret the input file if we've been given one
+	if (infile != "")
+	{
+		//interpreter initialization
+		interpret = new Interpreter();
+		//interpret->setVoxelGrid(vg);
+		interpret->setMaxIterations(maxIterations);
+		interpret->interpretFile(infile);
+		interpret->setDisplay(display);
+		interpret->createPrimitives();
+	}
+	
 	//OIS init
-
 	input = InputManager::getSingletonPtr();
 	input->initialise(display->getRenderWindow());
-	
+
+	//main game loop
 	while (run)
 	{
 		tick();
 		//draw frame
 	}
 
+	//memory clean up
 	if (vg != NULL)
 	{
 		delete vg;
