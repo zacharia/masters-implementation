@@ -50,7 +50,7 @@ class VoxelGrid
 
 	unsigned int getValue(int x, int y, int z);
 
-	//void makeCircle();
+	void makeCircle(Ogre::Vector3 pos, int radius, bool add = true);
 
 	void makeEllipsoid(Ogre::Vector3 pos, Ogre::Vector3 extents, Ogre::Matrix3 orientation, bool add = true);
 

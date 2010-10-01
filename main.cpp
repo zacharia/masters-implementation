@@ -173,6 +173,9 @@ int main(int argc, char** argv)
 	//temp testing:
 	std::cout << vg->getSize() << "\n"; //TEMP 
 	vg->makeRectangle(Ogre::Vector3(50,50,50), Ogre::Vector3(25,25,25), Ogre::Matrix3(1,0,0,0,1,0,0,0,1) );
+	vg->makeEllipsoid(Ogre::Vector3(75,75,75), Ogre::Vector3(20,50,20), Ogre::Matrix3(1,0,0,0,1,0,0,0,1) );
+	vg->makeCylinder(Ogre::Vector3(50,50,50), Ogre::Vector3(5,60,5), Ogre::Matrix3(1,0,0,0,1,0,0,0,1) );
+	vg->makeCircle(Ogre::Vector3(50,50,50), 40 );
 	vg->updateDisplay();
 	//end temp testing
 	
