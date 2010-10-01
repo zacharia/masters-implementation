@@ -168,6 +168,13 @@ int main(int argc, char** argv)
 
 	//voxel grid init
 	vg = new VoxelGrid(voxel_grid_size);
+	vg->setDisplay(display);
+
+	//temp testing:
+	std::cout << vg->getSize() << "\n"; //TEMP 
+	vg->makeRectangle(Ogre::Vector3(50,50,50), Ogre::Vector3(25,25,25), Ogre::Matrix3(1,0,0,0,1,0,0,0,1) );
+	vg->updateDisplay();
+	//end temp testing
 	
 	//OIS init
 	input = InputManager::getSingletonPtr();

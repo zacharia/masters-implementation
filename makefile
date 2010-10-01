@@ -1,7 +1,7 @@
 # Makefile for Voxel prototype
 
 CC=g++
-WFLAGS=-Wall -Wextra -g #-O2
+WFLAGS=-Wall -Wextra -g -O2
 
 all: main.cpp Utility.o VoxelGrid.o InputManager.o OgreDisplay.o DerivationTree.o GrammarRule.o Interpreter.o
 	$(CC) $(WFLAGS) -o prototype main.cpp VoxelGrid.o InputManager.o OgreDisplay.o GrammarRule.o Interpreter.o DerivationTree.o Utility.o -lOgreMain -lOIS

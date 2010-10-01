@@ -11,11 +11,13 @@
 #define _VOXEL_GRID_H
 
 #include <iostream>
+#include <fstream>
 #include <cstdlib>
 #include <math.h>
 #include <OGRE/Ogre.h>
 
 #include "octree/octree.h"
+#include "OgreDisplay.h"
 
 //a macro for easily changing what the octree stores later on
 #define OCTREE_DEF Octree<unsigned int, 32>
@@ -25,6 +27,7 @@ class VoxelGrid
 	int gridSize;
 	unsigned int size;
 	OCTREE_DEF* grid;
+	OgreDisplay* display;
 	
  public:
 	VoxelGrid();
@@ -36,6 +39,12 @@ class VoxelGrid
 	void makeVoxelGrid(int size);
 
 	void displayVoxelGrid();
+
+	void createFromFile(std::string file);
+
+	void setDisplay(OgreDisplay* d);
+
+	void updateDisplay();
 
 	int getSize();
 
