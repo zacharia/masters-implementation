@@ -31,7 +31,7 @@ Interpreter* interpret = NULL;
 int maxIterations = -1;
 
 //argument variables
-string infile = "";
+string infile = "", interpreted_file = "";
 unsigned int voxel_grid_size = 1024;
 bool display_axes = false;
 
@@ -120,7 +120,7 @@ int main(int argc, char** argv)
 		}
 		if (curr == "-f") //the already interpreted (by the python thing) file to use
 		{
-			infile = argv[++i];
+			interpreted_file = argv[++i];
 		}
 		if (curr == "-x") //display axes
 		{
@@ -171,11 +171,12 @@ int main(int argc, char** argv)
 	vg->setDisplay(display);
 
 	//temp testing:
-	std::cout << vg->getSize() << "\n"; //TEMP 
-	vg->makeRectangle(Ogre::Vector3(50,50,50), Ogre::Vector3(25,25,25), Ogre::Matrix3(1,0,0,0,1,0,0,0,1) );
-	vg->makeEllipsoid(Ogre::Vector3(75,75,75), Ogre::Vector3(20,50,20), Ogre::Matrix3(1,0,0,0,1,0,0,0,1) );
-	vg->makeCylinder(Ogre::Vector3(50,50,50), Ogre::Vector3(5,60,5), Ogre::Matrix3(1,0,0,0,1,0,0,0,1) );
-	vg->makeCircle(Ogre::Vector3(50,50,50), 40 );
+	// std::cout << vg->getSize() << "\n"; //TEMP 
+	// vg->makeRectangle(Ogre::Vector3(75,75,75), Ogre::Vector3(25,25,25), Ogre::Matrix3(1,0,0,0,1,0,0,0,1) );
+	// vg->makeEllipsoid(Ogre::Vector3(75,75,75), Ogre::Vector3(20,50,20), Ogre::Matrix3(1,0,0,0,1,0,0,0,1) );
+	// vg->makeCylinder(Ogre::Vector3(50,50,50), Ogre::Vector3(5,60,5), Ogre::Matrix3(1,0,0,0,1,0,0,0,1) );
+	// vg->makeCircle(Ogre::Vector3(50,50,50), 40 );
+	vg->createFromFile(interpreted_file);
 	vg->updateDisplay();
 	//end temp testing
 	

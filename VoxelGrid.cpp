@@ -67,14 +67,108 @@ void VoxelGrid::createFromFile(std::string file)
 	std::ifstream in(file.c_str());
 	if (in)
 	{
-		/*while (!in.eof())
+		//these are temporary variables used to store details when reading in from file
+		std::string temp_name = "", curr_type = "", temp;
+		bool temp_additive = true;
+		Ogre::Vector3 temp_pos = Ogre::Vector3(0,0,0), temp_extents = Ogre::Vector3(1,1,1);
+		Ogre::Matrix3 temp_orientation = Ogre::Matrix3(1,0,0,0,1,0,0,0,1);
+		
+		while (!in.eof())
 		{
-			
-		}*/
+			in >> curr_type >> std::ws;
+			if (curr_type == "name")
+			{
+				in >> temp_name >> std::ws;
+			}
+			else if (curr_type == "active")
+			{
+				//this tag should never appear in the output. Why am I bothering with it?
+				in >> temp >> std::ws;
+				if (temp == "True")
+				{					
+				}
+				else
+				{					
+				}
+			}
+			else if (curr_type == "additive")
+			{
+				in >> temp >> std::ws;
+				if (temp == "True")
+					temp_additive = true;
+				else
+					temp_additive = false;
+			}
+			else if (curr_type == "position")
+			{
+				double temp_arr[3];
+				for (int i = 0; i < 3; ++i)
+				{
+					in >> temp >> std::ws;
+					temp_arr[i] = atof(temp.c_str());
+				}
+				temp_pos = Ogre::Vector3(temp_arr[0], temp_arr[1], temp_arr[2]);
+			}
+			else if (curr_type == "extents")
+			{
+				double temp_arr[3];
+				for (int i = 0; i < 3; ++i)
+				{
+					in >> temp >> std::ws;
+					temp_arr[i] = atof(temp.c_str());
+				}
+				temp_extents = Ogre::Vector3(temp_arr[0], temp_arr[1], temp_arr[2]);
+			}
+			else if (curr_type == "orientation")
+			{
+				Ogre::Real temp_arr[3][3];
+				for (int i = 0; i < 4; ++i)
+				{
+					for (int j = 0; j < 4; ++j)
+					{
+						in >> temp >> std::ws;
+						if ((i != 3) && (j != 3))
+						{
+							temp_arr[i][j] = atof(temp.c_str());		
+						}						
+					}					
+				}
+				temp_orientation = Ogre::Matrix3(temp_arr);
+			}
+			else if (curr_type == "#")
+			{
+				//create an object
+				if (temp_name == "rectangle")
+				{
+					makeRectangle(temp_pos, temp_extents, temp_orientation, temp_additive);
+					std::cout << temp_name << " " << temp_additive << " " << temp_pos.x << " " << temp_pos.y << " " << temp_pos.z << "\n";
+				}
+				else if (temp_name == "cylinder")
+				{
+					makeCylinder(temp_pos, temp_extents, temp_orientation, temp_additive);
+				}
+				else if (temp_name == "circle")
+				{
+					//FIXME: get a better solution for circles not having all attributes
+					makeCircle(temp_pos, temp_extents.x, temp_additive);
+				}
+				else if (temp_name == "ellipsoid")
+				{
+					makeEllipsoid(temp_pos, temp_extents, temp_orientation, temp_additive);
+				}
+								
+				//reset the stuff
+				temp_name = curr_type = "";
+				temp_additive = true;
+				temp_pos = Ogre::Vector3(0,0,0);
+				temp_extents = Ogre::Vector3(1,1,1);
+				temp_orientation = Ogre::Matrix3(1,0,0,0,1,0,0,0,1);
+			}
+		}
 	}
 	else
 	{
-		std::cout << "Error opening file: " << file << "\n";
+		std::cout << "Error openinyg file: " << file << "\n";
 		std::cout << "Nothing was created." << "\n";
 	}
 }
@@ -98,7 +192,7 @@ void VoxelGrid::updateDisplay()
 	//loop through the whole array
 	for (int i = 0; i < grid->size(); ++i)
 	{
-		std::cout << "doing slice: " << i << "\n"; //TEMP 
+		//std::cout << "doing slice: " << i << "\n"; //TEMP 
 		currSlice = grid->zSlice(i);
 		for (int j = 0; j < grid->size(); ++j)
 		{
@@ -121,7 +215,7 @@ void VoxelGrid::updateDisplay()
 					    (grid->at(i,j+1,k) == 0) ||
 					    (grid->at(i,j-1,k) == 0) ||
 					    (grid->at(i,j,k+1) == 0) ||
-					    (grid->at(i,j,k-1) == 0) )					    
+					    (grid->at(i,j,k-1) == 0) )
 					{
 						display->addVoxelBillboard(Ogre::Vector3(i,j,k));	
 					}					
