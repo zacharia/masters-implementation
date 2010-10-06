@@ -21,6 +21,8 @@
 
 //a macro for easily changing what the octree stores later on
 #define OCTREE_DEF Octree<unsigned int, 32>
+#define EMPTY_VAL 0x00000000
+#define OCCUPIED_VAL 0xffffffff
 
 class VoxelGrid
 {
