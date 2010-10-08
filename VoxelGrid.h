@@ -24,6 +24,8 @@
 #define EMPTY_VAL 0x00000000
 #define OCCUPIED_VAL 0xffffffff
 
+#define HIDE_VOXELS
+
 class VoxelGrid
 {
 	int gridSize;

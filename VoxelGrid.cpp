@@ -201,21 +201,32 @@ void VoxelGrid::updateDisplay()
 				//if a voxel is 'on'
 				if (currSlice.at(j,i) == OCCUPIED_VAL)
 				{
+#ifdef HIDE_VOXELS
 					//then check if it's actually visible
 					//this is a very cheap conservative hack at the moment
-					if ((k == grid->size() - 1) ||
+					if (((k == grid->size() - 1) ||
 					    (k == 0) ||
 					    (j == grid->size() - 1) ||
 					    (j == 0) ||
 					    (i == grid->size() - 1) ||
-					    (i == 0) ||
+					    (i == 0))
+					    ||
 					    //actual visibility check
-					    (grid->at(i+1,j,k) == EMPTY_VAL) ||
+					    ((grid->at(i+1,j,k) == EMPTY_VAL) ||
 					    (grid->at(i-1,j,k) == EMPTY_VAL) ||
 					    (grid->at(i,j+1,k) == EMPTY_VAL) ||
 					    (grid->at(i,j-1,k) == EMPTY_VAL) ||
 					    (grid->at(i,j,k+1) == EMPTY_VAL) ||
-					    (grid->at(i,j,k-1) == EMPTY_VAL) )
+					    (grid->at(i,j,k-1) == EMPTY_VAL))
+
+					    /*!((grid->at(i+1,j,k) == OCCUPIED_VAL) &&
+					     (grid->at(i-1,j,k) == OCCUPIED_VAL) &&
+					     (grid->at(i,j+1,k) == OCCUPIED_VAL) &&
+					     (grid->at(i,j-1,k) == OCCUPIED_VAL) &&
+					     (grid->at(i,j,k+1) == OCCUPIED_VAL) &&
+					     (grid->at(i,j,k-1) == OCCUPIED_VAL))*/
+						)
+#endif
 					{						
 						display->addVoxelBillboard(Ogre::Vector3(i,j,k));	
 					}					
