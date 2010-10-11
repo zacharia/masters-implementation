@@ -45,7 +45,7 @@ int VoxelGrid::getSize()
 }
 
 //returns the value at a point in the grid
-unsigned int VoxelGrid::getValue(int x, int y, int z)
+OCTREE_TYPE VoxelGrid::getValue(int x, int y, int z)
 {
 	//if the requested position is invalid, return 0xff
 	if ((x < 0) || (y < 0) || (z < 0) || (x > grid->size()) || (y > grid->size()) || (z > grid->size()))
@@ -187,7 +187,7 @@ void VoxelGrid::updateDisplay()
 	assert(grid->size() > 0);
 
 	//make a slice for use in slicing stuff
-	Array2D<unsigned int> currSlice;
+	Array2D<OCTREE_TYPE> currSlice;
 
 	//loop through the whole array
 	for (int k = 0; k < grid->size(); ++k)

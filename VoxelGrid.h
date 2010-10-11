@@ -20,7 +20,8 @@
 #include "OgreDisplay.h"
 
 //a macro for easily changing what the octree stores later on
-#define OCTREE_DEF Octree<unsigned int, 32>
+#define OCTREE_TYPE unsigned int
+#define OCTREE_DEF Octree<OCTREE_TYPE, 32>
 #define EMPTY_VAL 0x00000000
 #define OCCUPIED_VAL 0xffffffff
 
@@ -52,7 +53,7 @@ class VoxelGrid
 
 	int getSize();
 
-	unsigned int getValue(int x, int y, int z);
+	OCTREE_TYPE getValue(int x, int y, int z);
 
 	void makeCircle(Ogre::Vector3 pos, int radius, bool add = true);
 
