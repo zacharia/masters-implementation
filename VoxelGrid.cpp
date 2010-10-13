@@ -248,6 +248,8 @@ void VoxelGrid::polygonize()
 	TriangleMesh output_mesh;
 	int temp_size = grid->size();
 	OCTREE_TYPE* input_grid = new OCTREE_TYPE[temp_size * temp_size * temp_size];
+	//FIXME: this might not be big enough for very large arrays?
+	unsigned int array_position;
 	
 	//loop through the whole array
 	for (int k = 0; k < grid->size(); ++k)
@@ -257,15 +259,16 @@ void VoxelGrid::polygonize()
 		{
 			for (int j = 0; j < grid->size(); ++j)
 			{
-				input_grid[i*j + k] = currSlice.at(i,j);
-				//if (currSlice.at(i,j) == OCCUPIED_VAL)
-				//	std::cout << "srtgdfg: " << i << " " << j << " " << k << "\n"; //TEMP 
+				//calculate where in the 1D array the current thing belongs
+				//i.e. convert from 3d array into 1d and store that position in array_position
+				array_position = k * grid->size() * grid->size() + j * grid->size() + i;
+				input_grid[array_position] = currSlice.at(i,j);
 			}
 		}
 	}
 
 	MeshExtractor extractor;
-	extractor.extractMesh(&output_mesh, /*(float*)&*/input_grid, false, grid->size(), grid->size(), grid->size(), 2, 0.5);
+	extractor.extractMesh(&output_mesh, /*(float*)&*/input_grid, false, grid->size(), grid->size(), grid->size(), 2, 0.9);
 	delete input_grid;
 
 	Ogre::ManualObject* mesh = display->createManualObject("ship_mesh");
@@ -276,7 +279,7 @@ void VoxelGrid::polygonize()
 	for (std::vector<Vec3f>::iterator i = output_mesh.vertices.begin(); i != output_mesh.vertices.end(); i++)
 	{
 		mesh->position(i->x, i->y, i->z);
-		//mesh->normal(i);
+		//mesh->normal(i);		
 	}
 	
 	for (std::vector<Triangle>::iterator i = output_mesh.triangles.begin(); i != output_mesh.triangles.end(); i++)
@@ -286,7 +289,7 @@ void VoxelGrid::polygonize()
 	
 	mesh->end();
 	mesh->convertToMesh("ship_mesh");
-	
+	display->getSceneManager()->getRootSceneNode()->createChildSceneNode()->attachObject(display->getSceneManager()->createEntity("le ship", "ship_mesh"));
 }
 
 

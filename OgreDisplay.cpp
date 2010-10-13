@@ -315,3 +315,8 @@ ManualObject* OgreDisplay::createManualObject(std::string name)
 {
 	return sceneMgr->createManualObject(name);
 }
+
+SceneManager* OgreDisplay::getSceneManager()
+{
+	return sceneMgr;
+}

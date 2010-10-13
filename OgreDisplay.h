@@ -56,6 +56,8 @@ public:
 	Camera* getCamera();
 
 	ManualObject* createManualObject(std::string name);
+
+	SceneManager* getSceneManager();
 };
 
 #endif

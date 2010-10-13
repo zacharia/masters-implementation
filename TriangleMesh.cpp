@@ -3,8 +3,6 @@
 #include <fstream>
 using namespace std;
 
-ofstream file("rot.txt");
-
 TriangleMesh::TriangleMesh()
 {
 	vertices = std::vector<Vec3f>();
