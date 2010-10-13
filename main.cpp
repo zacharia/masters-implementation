@@ -177,7 +177,8 @@ int main(int argc, char** argv)
 	// vg->makeCylinder(Ogre::Vector3(50,50,50), Ogre::Vector3(5,60,5), Ogre::Matrix3(1,0,0,0,1,0,0,0,1) );
 	// vg->makeCircle(Ogre::Vector3(50,50,50), 40 );
 	vg->createFromFile(interpreted_file);
-	vg->updateDisplay();
+	//vg->updateDisplay();
+	vg->polygonize();
 	//end temp testing
 	
 	//OIS init

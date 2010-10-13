@@ -19,12 +19,31 @@
 #include "octree/octree.h"
 #include "OgreDisplay.h"
 
-//a macro for easily changing what the octree stores later on
+#include "MeshExtractor.h"
+#include "TriangleMesh.h"
+
+//this is for what the octree stores. If this is defined it uses the default thing (unsigned int)
+//otherwise it uses whatever is defined in the else of the macro block
+//#define DEFAULT_CONTENTS
+
+#ifdef DEFAULT_CONTENTS
+//standard definition
 #define OCTREE_TYPE unsigned int
-#define OCTREE_DEF Octree<OCTREE_TYPE, 32>
 #define EMPTY_VAL 0x00000000
 #define OCCUPIED_VAL 0xffffffff
 
+#else
+//experimental types for trying to get Duncan's marching cubes stuff to work
+#define OCTREE_TYPE float
+#define EMPTY_VAL 0.0
+#define OCCUPIED_VAL 1.0
+
+#endif
+
+//a macro for easily changing the octree's definition
+#define OCTREE_DEF Octree<OCTREE_TYPE, 32>
+
+//this is for an optimization when displaying the voxels.
 #define HIDE_VOXELS
 
 class VoxelGrid
@@ -50,6 +69,8 @@ class VoxelGrid
 	void setDisplay(OgreDisplay* d);
 
 	void updateDisplay();
+
+	void polygonize();
 
 	int getSize();
 

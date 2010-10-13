@@ -53,7 +53,9 @@ public:
 
 	void createCylinderMesh(std::string name = "defaultCylinderMesh", std::string material = "basic/cylinder_default");
 
-	Camera* getCamera();	
+	Camera* getCamera();
+
+	ManualObject* createManualObject(std::string name);
 };
 
 #endif

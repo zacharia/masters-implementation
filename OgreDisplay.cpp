@@ -310,3 +310,8 @@ void OgreDisplay::addCylinder(Vector3 pos, Vector3 scale, Quaternion rot, std::s
 
 	node->attachObject(ent);
 }
+
+ManualObject* OgreDisplay::createManualObject(std::string name)
+{
+	return sceneMgr->createManualObject(name);
+}
