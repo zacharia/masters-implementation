@@ -15,6 +15,9 @@ OgreDisplay::OgreDisplay()
 
 	cubeCount = 0;
 	cylinderCount = 0;
+	lightCount = 0;
+
+	cameraLight = NULL;
 }
 
 //deletes root.
@@ -72,7 +75,9 @@ void OgreDisplay::initialize()
 	ResourceGroupManager::getSingleton().initialiseAllResourceGroups();
 
 	//some ambient light
-	sceneMgr->setAmbientLight(ColourValue(1, 1, 1));
+	sceneMgr->setAmbientLight(ColourValue(0.5, 0.5, 0.5));
+	//set the shadow type we'll be using - commented out because it was causing a crash
+	//sceneMgr->setShadowTechnique(Ogre::SHADOWTYPE_STENCIL_ADDITIVE);
 
 	//put the camera looking at the origins
 	camera->setPosition(0,5,5);
@@ -189,6 +194,11 @@ RenderWindow* OgreDisplay::getRenderWindow()
 //draw one frame
 void OgreDisplay::drawFrame()
 {
+	if (cameraLight != NULL)
+	{
+		cameraLight->setPosition(camera->getPosition());
+	}
+	
 	root->renderOneFrame();
 	renderWindow->update();
 }
@@ -319,4 +329,89 @@ ManualObject* OgreDisplay::createManualObject(std::string name)
 SceneManager* OgreDisplay::getSceneManager()
 {
 	return sceneMgr;
+}
+
+/*
+  this method creates a light in the scene, based on the arguments given.
+ */
+Light* OgreDisplay::createLight(std::string type, Vector3 pos, ColourValue col, std::string lname)
+{
+	Light* light;
+	
+	//FIXME: this only does point lights at the moment
+	if (lname != "")
+	{
+		light = sceneMgr->createLight(lname);
+	}
+	else
+	{
+		light = sceneMgr->createLight( "light" + Utility::numToString(lightCount) );
+		lightCount++;
+	}
+	
+	if (type == "point")
+	{
+		light->setType(Light::LT_POINT);
+	}
+	//default to a point light
+	else
+	{
+		light->setType(Light::LT_POINT);
+	}
+	
+	light->setPosition(pos);
+	light->setDiffuseColour(col);
+	light->setSpecularColour(col);
+
+	return light;
+}
+
+/*
+  this method sets up a light that is centred at the camera.
+  if enable is true, the light is created/turned on again.
+  if enable is false, the light is deactivated
+ */
+void OgreDisplay::setCameraLight(bool enable, ColourValue col)
+{	
+	if (enable)
+	{		
+		if (cameraLight == NULL)
+		{
+			cameraLight = createLight("point", camera->getPosition(), col, "camera_light");
+		}
+		else
+		{
+			cameraLight->setPosition(camera->getPosition());
+		}
+	}
+	else
+	{
+		sceneMgr->destroyLight(cameraLight);
+		cameraLight = NULL;
+	}
+}
+
+/*
+  this method sets up a light at the origin.
+  if enable is true, the light is created/turned on again.
+  if enable is false, the light is deactivated
+*/
+void OgreDisplay::setOriginLight(bool enable, ColourValue col)
+{	
+	if (enable)
+	{		
+		if (originLight == NULL)
+		{
+			originLight = createLight("point", Vector3(0,0,0), col, "origin_light");
+		}
+		else
+		{
+			originLight->setPosition(Vector3(0,0,0));
+		}
+	}
+	else
+	{
+		sceneMgr->destroyLight(originLight);
+		originLight = NULL;
+	}
 }

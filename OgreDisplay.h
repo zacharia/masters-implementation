@@ -22,7 +22,14 @@ class OgreDisplay
 	Viewport* viewport;
 
 	int cubeCount;
-	int cylinderCount;	
+	int cylinderCount;
+	int lightCount;
+
+	//if this is non-null, there is a light named "camera_light" that should be moved to the camera position
+	//at each frame
+	Light* cameraLight;
+	//if this is non-null then it is a light that should be placed at the origin.
+	Light* originLight;
 	
 public:
 	OgreDisplay();
@@ -58,6 +65,12 @@ public:
 	ManualObject* createManualObject(std::string name);
 
 	SceneManager* getSceneManager();
+
+	Light* createLight(std::string type, Vector3 pos, ColourValue col, std::string lname = "");
+
+	void setCameraLight(bool enable = true, ColourValue col = ColourValue(1,1,1));
+
+	void setOriginLight(bool enable = true, ColourValue col = ColourValue(1,1,1));
 };
 
 #endif
