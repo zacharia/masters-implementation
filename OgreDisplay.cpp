@@ -18,6 +18,7 @@ OgreDisplay::OgreDisplay()
 	lightCount = 0;
 
 	cameraLight = NULL;
+	originLight = NULL;	
 }
 
 //deletes root.
@@ -75,7 +76,7 @@ void OgreDisplay::initialize()
 	ResourceGroupManager::getSingleton().initialiseAllResourceGroups();
 
 	//some ambient light
-	sceneMgr->setAmbientLight(ColourValue(0.5, 0.5, 0.5));
+	sceneMgr->setAmbientLight(ColourValue(0.0, 0.0, 0.0));
 	//set the shadow type we'll be using - commented out because it was causing a crash
 	//sceneMgr->setShadowTechnique(Ogre::SHADOWTYPE_STENCIL_ADDITIVE);
 
@@ -371,24 +372,17 @@ Light* OgreDisplay::createLight(std::string type, Vector3 pos, ColourValue col, 
   if enable is true, the light is created/turned on again.
   if enable is false, the light is deactivated
  */
-void OgreDisplay::setCameraLight(bool enable, ColourValue col)
+void OgreDisplay::makeCameraLight(ColourValue col)
 {	
-	if (enable)
-	{		
-		if (cameraLight == NULL)
-		{
-			cameraLight = createLight("point", camera->getPosition(), col, "camera_light");
-		}
-		else
-		{
-			cameraLight->setPosition(camera->getPosition());
-		}
+	if (cameraLight == NULL)
+	{
+		cameraLight = createLight("point", camera->getPosition(), col, "camera_light");
 	}
 	else
 	{
-		sceneMgr->destroyLight(cameraLight);
-		cameraLight = NULL;
-	}
+		cameraLight->setDiffuseColour(col);
+		cameraLight->setSpecularColour(col);
+	}	
 }
 
 /*
@@ -396,22 +390,41 @@ void OgreDisplay::setCameraLight(bool enable, ColourValue col)
   if enable is true, the light is created/turned on again.
   if enable is false, the light is deactivated
 */
-void OgreDisplay::setOriginLight(bool enable, ColourValue col)
-{	
-	if (enable)
-	{		
-		if (originLight == NULL)
-		{
-			originLight = createLight("point", Vector3(0,0,0), col, "origin_light");
-		}
-		else
-		{
-			originLight->setPosition(Vector3(0,0,0));
-		}
+void OgreDisplay::makeOriginLight(ColourValue col)
+{
+	if (originLight == NULL)
+	{
+		originLight = createLight("point", Vector3(0,0,0), col, "origin_light");
 	}
 	else
 	{
-		sceneMgr->destroyLight(originLight);
+		originLight->setDiffuseColour(col);
+		originLight->setSpecularColour(col);
+	}
+}
+
+void OgreDisplay::toggleCameraLight()
+{
+	if (cameraLight != NULL)
+	{
+		sceneMgr->destroyLight("camera_light");
+		cameraLight = NULL;
+	}
+	else
+	{
+		makeCameraLight(ColourValue(0,1,0));
+	}
+}
+
+void OgreDisplay::toggleOriginLight()
+{
+	if (originLight != NULL)
+	{
+		sceneMgr->destroyLight("origin_light");
 		originLight = NULL;
+	}
+	else
+	{
+		makeOriginLight(ColourValue(1,0,0));
 	}
 }

@@ -35,6 +35,9 @@ string infile = "", interpreted_file = "";
 unsigned int voxel_grid_size = 1024;
 bool display_axes = false;
 
+bool cameraLightKeyWasDown = false;
+bool originLightKeyWasDown = false;
+
 void tick()
 {
 	//keyboard input handling
@@ -69,6 +72,61 @@ void tick()
 		display->getCamera()->move(Vector3(0.0,-1.0,0.0));
 	}
 
+	//check for lighting control changes
+	if (input->getKeyboard()->isKeyDown(OIS::KC_Q))
+	{
+		cameraLightKeyWasDown = true;
+	}
+	else
+	{
+		if (cameraLightKeyWasDown)
+		{
+			cameraLightKeyWasDown = false;
+			display->toggleCameraLight();	
+		}		
+	}
+	if (input->getKeyboard()->isKeyDown(OIS::KC_E))
+	{
+		originLightKeyWasDown = true;
+	}
+	else
+	{
+		if (originLightKeyWasDown)
+		{
+			originLightKeyWasDown = false;
+			display->toggleOriginLight();	
+		}		
+	}
+	//dimming ambient light
+	if (input->getMouse()->getMouseState().buttonDown(OIS::MB_Left))
+	{
+		Ogre::ColourValue amb_light = display->getSceneManager()->getAmbientLight();
+		amb_light.r -= 0.01;
+		amb_light.g -= 0.01;
+		amb_light.b -= 0.01;
+		if (amb_light.r < 0)
+			amb_light.r = 0;
+		if (amb_light.g < 0)
+			amb_light.g = 0;
+		if (amb_light.b < 0)
+			amb_light.b = 0;
+		display->getSceneManager()->setAmbientLight(amb_light);
+	}
+	if (input->getMouse()->getMouseState().buttonDown(OIS::MB_Right))
+	{
+		Ogre::ColourValue amb_light = display->getSceneManager()->getAmbientLight();
+		amb_light.r += 0.01;
+		amb_light.g += 0.01;
+		amb_light.b += 0.01;
+		if (amb_light.r > 1.0)
+			amb_light.r = 1;
+		if (amb_light.g > 1.0)
+			amb_light.g = 1;
+		if (amb_light.b > 1.0)
+			amb_light.b = 1;
+		display->getSceneManager()->setAmbientLight(amb_light);
+	}
+	
 	//cout << display->getCamera()->getPosition().x;
 
 	//mouse handling
@@ -153,6 +211,10 @@ int main(int argc, char** argv)
 		display->addCube(Ogre::Vector3(0, 0, 0), Ogre::Vector3(0.1, 100, 0.1), Ogre::Quaternion(Ogre::Radian(M_PI), Ogre::Vector3(0,1,1)));
 		display->addCube(Ogre::Vector3(0, 0, 0), Ogre::Vector3(0.1, 100, 0.1), Ogre::Quaternion::IDENTITY);
 	}
+
+	//add a camera origin lights
+	display->makeCameraLight(Ogre::ColourValue(0,1,0));
+	display->makeOriginLight(Ogre::ColourValue(1,0,0));
 	
 	//interpret the input file if we've been given one
 	if (infile != "")

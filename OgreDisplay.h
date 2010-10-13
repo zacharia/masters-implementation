@@ -27,7 +27,7 @@ class OgreDisplay
 
 	//if this is non-null, there is a light named "camera_light" that should be moved to the camera position
 	//at each frame
-	Light* cameraLight;
+	Light* cameraLight;	
 	//if this is non-null then it is a light that should be placed at the origin.
 	Light* originLight;
 	
@@ -68,9 +68,13 @@ public:
 
 	Light* createLight(std::string type, Vector3 pos, ColourValue col, std::string lname = "");
 
-	void setCameraLight(bool enable = true, ColourValue col = ColourValue(1,1,1));
+	void makeCameraLight(ColourValue col = ColourValue(1,1,1));
 
-	void setOriginLight(bool enable = true, ColourValue col = ColourValue(1,1,1));
+	void makeOriginLight(ColourValue col = ColourValue(1,1,1));
+
+	void toggleCameraLight();
+
+	void toggleOriginLight();
 };
 
 #endif

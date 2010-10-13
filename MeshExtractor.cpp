@@ -19,7 +19,7 @@ float MeshExtractor::getDiscreetValueCartesianGrid( const int &x, const int &y, 
 
 float MeshExtractor::getDiscreetValueInvertedGrid( const int &x, const int &y, const int &z)
 {
-	return data[(width - x -1 + width)%width + ((height - y -1 + height)%height)*width + ((depth - z - 1 + depth)%depth)*width*height];
+	return data[(x + width)%width + ((height - y -1 + height)%height)*width + ((z + depth)%depth)*width*height];
 }
 
 void MeshExtractor::setData (float *dataIn, int widthIn, int heightIn, int depthIn)
