@@ -141,7 +141,7 @@ void VoxelGrid::createFromFile(std::string file)
 				if (temp_name == "rectangle")
 				{
 					makeRectangle(temp_pos, temp_extents, temp_orientation, temp_additive);
-					std::cout << temp_name << " " << temp_additive << " " << temp_pos.x << " " << temp_pos.y << " " << temp_pos.z << "\n";
+					//std::cout << temp_name << " " << temp_additive << " " << temp_pos.x << " " << temp_pos.y << " " << temp_pos.z << "\n";
 				}
 				else if (temp_name == "cylinder")
 				{
@@ -168,7 +168,7 @@ void VoxelGrid::createFromFile(std::string file)
 	}
 	else
 	{
-		std::cout << "Error openinyg file: " << file << "\n";
+		std::cout << "Error opening file: " << file << "\n";
 		std::cout << "Nothing was created." << "\n";
 	}
 }
@@ -261,7 +261,7 @@ void VoxelGrid::polygonize()
 			{
 				//calculate where in the 1D array the current thing belongs
 				//i.e. convert from 3d array into 1d and store that position in array_position
-				array_position = k * grid->size() * grid->size() + j * grid->size() + i;
+				array_position = k * grid->size() * grid->size() + i * grid->size() + j;
 				input_grid[array_position] = currSlice.at(i,j);
 			}
 		}
@@ -272,24 +272,34 @@ void VoxelGrid::polygonize()
 	delete input_grid;
 
 	Ogre::ManualObject* mesh = display->createManualObject("ship_mesh");
-	mesh->begin("BaseWhite", RenderOperation::OT_TRIANGLE_LIST);
+	mesh->begin("basic/backface_culling_off", RenderOperation::OT_TRIANGLE_LIST);
 
 	assert(output_mesh.vertices.size() > 0);
-	
-	for (std::vector<Vec3f>::iterator i = output_mesh.vertices.begin(); i != output_mesh.vertices.end(); i++)
-	{
-		mesh->position(i->x, i->y, i->z);
-		//mesh->normal(i);		
-	}
-	
+
+	int count = 0;
+	//FIXME: is this winding the triangles in the correct way?
 	for (std::vector<Triangle>::iterator i = output_mesh.triangles.begin(); i != output_mesh.triangles.end(); i++)
 	{
-		mesh->triangle(i->a, i->b, i->c);
+		mesh->position(output_mesh.vertices[i->a]);
+		mesh->normal(output_mesh.normals[i->na]);
+
+		mesh->position(output_mesh.vertices[i->b]);
+		mesh->normal(output_mesh.normals[i->nb]);
+
+		mesh->position(output_mesh.vertices[i->c]);
+		mesh->normal(output_mesh.normals[i->nc]);
+		
+		count += 3;
+
+		mesh->triangle(count-3,count-2,count-1);
 	}
-	
+		
 	mesh->end();
 	mesh->convertToMesh("ship_mesh");
-	display->getSceneManager()->getRootSceneNode()->createChildSceneNode()->attachObject(display->getSceneManager()->createEntity("le ship", "ship_mesh"));
+	Ogre::Entity* ship = display->getSceneManager()->createEntity("le ship", "ship_mesh");
+	//ship->setCastShadows(true);
+	Ogre::SceneNode* ship_node = display->getSceneManager()->getRootSceneNode()->createChildSceneNode();
+	ship_node->attachObject(ship);	
 }
 
 

@@ -64,7 +64,7 @@ void OgreDisplay::initialize()
 	camera->setFarClipDistance(300.0);
 	
 	viewport = renderWindow->addViewport(camera);
-	viewport->setBackgroundColour(ColourValue(0, 0, 0));
+	viewport->setBackgroundColour(ColourValue(1, 1, 1));
 	
 	camera->setAspectRatio( Real(viewport->getActualWidth()) / Real(viewport->getActualHeight()) );
 
