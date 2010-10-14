@@ -52,6 +52,7 @@ class VoxelGrid
 	unsigned int size;
 	OCTREE_DEF* grid;
 	OgreDisplay* display;
+	double object_addition_granularity;
 	
  public:
 	VoxelGrid();
@@ -82,7 +83,9 @@ class VoxelGrid
 
 	void makeRectangle(Ogre::Vector3 pos = Ogre::Vector3(0,0,0), Ogre::Vector3 extents = Ogre::Vector3(1,1,1), Ogre::Matrix3 orientation = Ogre::Matrix3(1,0,0,0,1,0,0,0,1), bool add = true);
 
-	void makeCylinder(Ogre::Vector3 pos = Ogre::Vector3(0,0,0), Ogre::Vector3 extents = Ogre::Vector3(1,1,1), Ogre::Matrix3 orientation = Ogre::Matrix3(1,0,0,0,1,0,0,0,1), bool add = true); 
+	void makeCylinder(Ogre::Vector3 pos = Ogre::Vector3(0,0,0), Ogre::Vector3 extents = Ogre::Vector3(1,1,1), Ogre::Matrix3 orientation = Ogre::Matrix3(1,0,0,0,1,0,0,0,1), bool add = true);
+
+	void setAdditionGranularity(double g);
 };
 
 #endif

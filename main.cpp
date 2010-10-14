@@ -34,6 +34,7 @@ int maxIterations = -1;
 string infile = "", interpreted_file = "";
 unsigned int voxel_grid_size = 1024;
 bool display_axes = false;
+double grid_granularity = 1.0;
 
 bool cameraLightKeyWasDown = false;
 bool originLightKeyWasDown = false;
@@ -184,6 +185,10 @@ int main(int argc, char** argv)
 		{
 			display_axes = true;
 		}
+		if (curr == "-g") //grid granularity
+		{
+			grid_granularity = atof(argv[++i]);
+		}
 		if (curr == "-h") //display help
 		{
 			cout << "options:\n"
@@ -192,6 +197,7 @@ int main(int argc, char** argv)
 			     << "-s <num>\t the size to make the voxel grid when doing voxel grid stuff\n"
 			     << "-f <file>\t a file to use that was produced by the python interpreter\n"
 			     << "-x\t\t display the x, y and z axes\n"
+			     << "-g <num>\t the granularity to use when adding stuff to the voxel grid.\n"
 			     << "-h\t\t display this help information\n\n";
 		}
 	}
@@ -238,8 +244,11 @@ int main(int argc, char** argv)
 	// vg->makeEllipsoid(Ogre::Vector3(75,75,75), Ogre::Vector3(20,50,20), Ogre::Matrix3(1,0,0,0,1,0,0,0,1) );
 	// vg->makeCylinder(Ogre::Vector3(50,50,50), Ogre::Vector3(5,60,5), Ogre::Matrix3(1,0,0,0,1,0,0,0,1) );
 	// vg->makeCircle(Ogre::Vector3(50,50,50), 40 );
+	std::cout << "Building voxel grid from file.\n";
+	vg->setAdditionGranularity(grid_granularity);
 	vg->createFromFile(interpreted_file);
 	//vg->updateDisplay();
+	std::cout << "Converting voxel grid to a mesh.\n";
 	vg->polygonize();
 	//end temp testing
 	
@@ -254,6 +263,7 @@ int main(int argc, char** argv)
 		//draw frame
 	}
 
+	std::cout << "Cleaning up memory.\n";
 	//memory clean up
 	if (vg != NULL)
 	{

@@ -8,12 +8,14 @@ VoxelGrid::VoxelGrid()
 {
 	grid = NULL;
 	display = NULL;
+	object_addition_granularity = 1.0;
 }
 
 VoxelGrid::VoxelGrid(int size)
 {
 	grid = NULL;
 	display = NULL;
+	object_addition_granularity = 1.0;
 	makeVoxelGrid(size);
 }
 
@@ -268,7 +270,7 @@ void VoxelGrid::polygonize()
 	}
 
 	MeshExtractor extractor;
-	extractor.extractMesh(&output_mesh, /*(float*)&*/input_grid, false, grid->size(), grid->size(), grid->size(), 2, 0.9);
+	extractor.extractMesh(&output_mesh, /*(float*)&*/input_grid, false, grid->size(), grid->size(), grid->size(), 1, 0.9);
 	delete input_grid;
 
 	Ogre::ManualObject* mesh = display->createManualObject("ship_mesh");
@@ -308,12 +310,12 @@ void VoxelGrid::makeCircle(Ogre::Vector3 pos, int radius, bool add)
 	assert(radius >= 1);
 	
 	Ogre::Vector3 currpos;
-		
-	for (int i = -radius; i <= radius; i++)
+	
+	for (double i = -radius; i <= radius; i += object_addition_granularity)
 	{		
-		for (int j = -radius; j <= radius; j++)
+		for (double j = -radius; j <= radius; j += object_addition_granularity)
 		{
-			for (int k = -radius; k <= radius; k++)
+			for (double k = -radius; k <= radius; k += object_addition_granularity)
 			{
 				currpos = pos + Ogre::Vector3(i,j,k);
 				//check the current voxel is in bounds
@@ -347,11 +349,11 @@ void VoxelGrid::makeRectangle(Ogre::Vector3 pos, Ogre::Vector3 extents, Ogre::Ma
 	Ogre::Vector3 currpos;
 	orientation.Orthonormalize();
 	
-	for (int i = -extents.x; i <= extents.x; i++)
+	for (double i = -extents.x; i <= extents.x; i += object_addition_granularity)
 	{		
-		for (int j = -extents.y; j <= extents.y; j++)
+		for (double j = -extents.y; j <= extents.y; j += object_addition_granularity)
 		{
-			for (int k = -extents.z; k <= extents.z; k++)
+			for (double k = -extents.z; k <= extents.z; k += object_addition_granularity)
 			{
 				currpos = pos + (orientation.GetColumn(0) * i) +
 					(orientation.GetColumn(1) * j) +
@@ -384,11 +386,11 @@ void VoxelGrid::makeEllipsoid(Ogre::Vector3 pos, Ogre::Vector3 extents, Ogre::Ma
 	Ogre::Vector3 currpos;
 	orientation.Orthonormalize();
 	
-	for (int i = -extents.x; i <= extents.x; i++)
+	for (double i = -extents.x; i <= extents.x; i += object_addition_granularity)
 	{		
-		for (int j = -extents.y; j <= extents.y; j++)
+		for (double j = -extents.y; j <= extents.y; j += object_addition_granularity)
 		{
-			for (int k = -extents.z; k <= extents.z; k++)
+			for (double k = -extents.z; k <= extents.z; k += object_addition_granularity)
 			{
 				currpos = pos + (orientation.GetColumn(0) * i) +
 					(orientation.GetColumn(1) * j) +
@@ -425,11 +427,11 @@ void VoxelGrid::makeCylinder(Ogre::Vector3 pos, Ogre::Vector3 extents, Ogre::Mat
 	Ogre::Vector3 currpos;
 	orientation.Orthonormalize();
 	
-	for (int i = -extents.x; i <= extents.x; i++)
+	for (double i = -extents.x; i <= extents.x; i += object_addition_granularity)
 	{
-		for (int j = -extents.y; j <= extents.y; j++)
+		for (double j = -extents.y; j <= extents.y; j += object_addition_granularity)
 		{
-			for (int k = -extents.z; k <= extents.z; k++)
+			for (double k = -extents.z; k <= extents.z; k += object_addition_granularity)
 			{
 				currpos = pos + (orientation.GetColumn(0) * i) +
 					(orientation.GetColumn(1) * j) +
@@ -457,4 +459,9 @@ void VoxelGrid::makeCylinder(Ogre::Vector3 pos, Ogre::Vector3 extents, Ogre::Mat
 			}
 		}
 	}
+}
+
+void VoxelGrid::setAdditionGranularity(double g)
+{
+	object_addition_granularity = g;
 }
