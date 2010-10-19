@@ -61,7 +61,7 @@ void OgreDisplay::initialize()
 	sceneMgr = root->createSceneManager( ST_GENERIC, "PrototypeSceneManager");
 	camera = sceneMgr->createCamera("ViewCamera");
 	camera->setNearClipDistance(0.1);
-	camera->setFarClipDistance(300.0);
+	camera->setFarClipDistance(1000.0);
 	
 	viewport = renderWindow->addViewport(camera);
 	viewport->setBackgroundColour(ColourValue(1, 1, 1));

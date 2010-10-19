@@ -9,6 +9,7 @@ VoxelGrid::VoxelGrid()
 	grid = NULL;
 	display = NULL;
 	object_addition_granularity = 1.0;
+	shapes = std::vector<Shape>();
 }
 
 VoxelGrid::VoxelGrid(int size)
@@ -16,6 +17,7 @@ VoxelGrid::VoxelGrid(int size)
 	grid = NULL;
 	display = NULL;
 	object_addition_granularity = 1.0;
+	shapes = std::vector<Shape>();
 	makeVoxelGrid(size);
 }
 
@@ -64,23 +66,25 @@ OCTREE_TYPE VoxelGrid::getValue(int x, int y, int z)
   This reads the file given as an argument (which should be produced by the python interpreter)
   and creates the contents of that file in the voxel grid.
  */
-void VoxelGrid::createFromFile(std::string file)
+void VoxelGrid::readFromFile(std::string file)
 {
 	std::ifstream in(file.c_str());
 	if (in)
 	{
+		shapes.clear();
 		//these are temporary variables used to store details when reading in from file
-		std::string temp_name = "", curr_type = "", temp;
-		bool temp_additive = true;
+		std::string /*temp_name = "", */curr_type = "", temp;
+		/*bool temp_additive = true;
 		Ogre::Vector3 temp_pos = Ogre::Vector3(0,0,0), temp_extents = Ogre::Vector3(1,1,1);
-		Ogre::Matrix3 temp_orientation = Ogre::Matrix3(1,0,0,0,1,0,0,0,1);
+		Ogre::Matrix3 temp_orientation = Ogre::Matrix3(1,0,0,0,1,0,0,0,1);*/
+		Shape temp_shape;
 		
 		while (!in.eof())
 		{
 			in >> curr_type >> std::ws;
 			if (curr_type == "name")
 			{
-				in >> temp_name >> std::ws;
+				in >> temp_shape.type >> std::ws;
 			}
 			else if (curr_type == "active")
 			{
@@ -97,9 +101,9 @@ void VoxelGrid::createFromFile(std::string file)
 			{
 				in >> temp >> std::ws;
 				if (temp == "True")
-					temp_additive = true;
+					temp_shape.additive = true;
 				else
-					temp_additive = false;
+					temp_shape.additive = false;
 			}
 			else if (curr_type == "position")
 			{
@@ -109,7 +113,7 @@ void VoxelGrid::createFromFile(std::string file)
 					in >> temp >> std::ws;
 					temp_arr[i] = atof(temp.c_str());
 				}
-				temp_pos = Ogre::Vector3(temp_arr[0], temp_arr[1], temp_arr[2]);
+				temp_shape.position = Ogre::Vector3(temp_arr[0], temp_arr[1], temp_arr[2]);
 			}
 			else if (curr_type == "extents")
 			{
@@ -119,7 +123,7 @@ void VoxelGrid::createFromFile(std::string file)
 					in >> temp >> std::ws;
 					temp_arr[i] = atof(temp.c_str());
 				}
-				temp_extents = Ogre::Vector3(temp_arr[0], temp_arr[1], temp_arr[2]);
+				temp_shape.extents = Ogre::Vector3(temp_arr[0], temp_arr[1], temp_arr[2]);
 			}
 			else if (curr_type == "orientation")
 			{
@@ -135,36 +139,18 @@ void VoxelGrid::createFromFile(std::string file)
 						}						
 					}					
 				}
-				temp_orientation = Ogre::Matrix3(temp_arr);
+				temp_shape.orientation = Ogre::Matrix3(temp_arr);
 			}
 			else if (curr_type == "#")
 			{
-				//create an object
-				if (temp_name == "rectangle")
-				{
-					makeRectangle(temp_pos, temp_extents, temp_orientation, temp_additive);
-					//std::cout << temp_name << " " << temp_additive << " " << temp_pos.x << " " << temp_pos.y << " " << temp_pos.z << "\n";
-				}
-				else if (temp_name == "cylinder")
-				{
-					makeCylinder(temp_pos, temp_extents, temp_orientation, temp_additive);
-				}
-				else if (temp_name == "circle")
-				{
-					//FIXME: get a better solution for circles not having all attributes
-					makeCircle(temp_pos, temp_extents.x, temp_additive);
-				}
-				else if (temp_name == "ellipsoid")
-				{
-					makeEllipsoid(temp_pos, temp_extents, temp_orientation, temp_additive);
-				}
-								
+				shapes.push_back(temp_shape);
+												
 				//reset the stuff
-				temp_name = curr_type = "";
-				temp_additive = true;
-				temp_pos = Ogre::Vector3(0,0,0);
-				temp_extents = Ogre::Vector3(1,1,1);
-				temp_orientation = Ogre::Matrix3(1,0,0,0,1,0,0,0,1);
+				temp_shape.type = curr_type = "";
+				temp_shape.additive = true;
+				temp_shape.position = Ogre::Vector3(0,0,0);
+				temp_shape.extents = Ogre::Vector3(1,1,1);
+				temp_shape.orientation = Ogre::Matrix3(1,0,0,0,1,0,0,0,1);
 			}
 		}
 	}
@@ -172,6 +158,173 @@ void VoxelGrid::createFromFile(std::string file)
 	{
 		std::cout << "Error opening file: " << file << "\n";
 		std::cout << "Nothing was created." << "\n";
+	}
+}
+
+void VoxelGrid::getBoundingBoxes()
+{
+	assert(shapes.size() > 0);
+	
+	//these store the biggest and smallest corner positions of the whole ship's bounding box.
+	bounding_box_min = Ogre::Vector3(MAX_DOUBLE_VAL, MAX_DOUBLE_VAL, MAX_DOUBLE_VAL);
+	bounding_box_max = Ogre::Vector3(-MAX_DOUBLE_VAL, -MAX_DOUBLE_VAL, -MAX_DOUBLE_VAL);
+	
+	for (std::vector<Shape>::iterator s = shapes.begin(); s != shapes.end(); s++)
+	{
+		//FIXME: add the rest of the types in here as they're added to the program.
+		if ( (s->type == "rectangle") ||  (s->type == "circle") || (s->type == "ellipsoid") || (s->type == "cylinder") )
+		{
+			s->orientation.Orthonormalize();
+			Ogre::Vector3 vertex;//vertices[8];
+			for (int i = -1; i <= 1; i += 2)
+			{
+				for (int j = -1; j <= 1; j += 2)
+				{
+					for (int k = -1; k <= 1; k += 2)
+					{
+						vertex = s->position + (s->orientation.GetColumn(0) * s->extents.x * i)
+							+ (s->orientation.GetColumn(1) * s->extents.y * j)
+							+ (s->orientation.GetColumn(2) * s->extents.z * k);
+
+						//double val;
+					
+						if (vertex.x > bounding_box_max.x)
+						{
+							bounding_box_max.x = vertex.x;
+						}
+					
+						if (vertex.y > bounding_box_max.y)
+						{
+							bounding_box_max.y = vertex.y;
+						}
+					
+						if (vertex.z > bounding_box_max.z)
+						{
+							bounding_box_max.z = vertex.z;
+						}
+						//now do the mins
+					
+						if (vertex.x < bounding_box_min.x)
+						{
+							bounding_box_min.x = vertex.x;
+						}
+					
+						if (vertex.y < bounding_box_min.y)
+						{
+							bounding_box_min.y = vertex.y;
+						}
+					
+						if (vertex.z < bounding_box_min.z)
+						{
+							bounding_box_min.z = vertex.z;
+						}
+					}
+				}
+			}
+		}
+	}
+}
+
+Ogre::Vector3 VoxelGrid::getBoundingBoxMinCorner()
+{
+	return bounding_box_min;
+}
+
+Ogre::Vector3 VoxelGrid::getBoundingBoxMaxCorner()
+{
+	return bounding_box_max;
+}
+
+void VoxelGrid::createShapes()
+{
+	assert(shapes.size() > 0);
+	
+	for (std::vector<Shape>::iterator i = shapes.begin(); i != shapes.end(); i++)
+	{
+		//create an object
+		if (i->type == "rectangle")
+		{
+			makeRectangle(i->position, i->extents, i->orientation, i->additive);
+			//std::cout << temp_name << " " << temp_additive << " " << temp_pos.x << " " << temp_pos.y << " " << temp_pos.z << "\n";
+		}
+		else if (i->type == "cylinder")
+		{
+			makeCylinder(i->position, i->extents, i->orientation, i->additive);
+		}
+		else if (i->type == "circle")
+		{
+			//FIXME: get a better solution for circles not having all attributes
+			makeCircle(i->position, i->extents.x, i->additive);
+		}
+		else if (i->type == "ellipsoid")
+		{
+			makeEllipsoid(i->position, i->extents, i->orientation, i->additive);
+		}
+	}
+}
+
+/*
+  this method scales the shape currently stored in the shapes vector so that the largest dimension
+  is equal to the 
+ */
+void VoxelGrid::scaleShapes()
+{
+	//check everything is legit.
+	assert(grid->size() > 0);
+	assert(shapes.size() > 0);
+	assert(bounding_box_min.x < MAX_DOUBLE_VAL);
+	assert(bounding_box_max.x > -MAX_DOUBLE_VAL);
+
+	//calculate the size of the bounding box that contains all the shapes
+	Ogre::Vector3 size;
+	size.x = bounding_box_max.x - bounding_box_min.x;
+	size.y = bounding_box_max.y - bounding_box_min.y;
+	size.z = bounding_box_max.z - bounding_box_min.z;
+	
+	//work out which side of the bounding box is largest.
+	char biggest_side;
+	if ((size.x > size.y) && (size.x > size.z))
+	{
+		biggest_side = 'x';
+	}
+	if ((size.y > size.x) && (size.y > size.z))
+	{
+		biggest_side = 'y';
+	}
+	if ((size.z > size.x) && (size.z > size.y))
+	{
+		biggest_side = 'z';
+	}
+
+	//then work out, from the largest side, what ratio we'll be scaling by
+	double scale_ratio;
+	if (biggest_side == 'x')
+	{
+		scale_ratio = (double)grid->size() / size.x;
+	}
+	if (biggest_side == 'y')
+	{
+		scale_ratio = (double)grid->size() / size.y;
+	}
+	if (biggest_side == 'z')
+	{
+		scale_ratio = (double)grid->size() / size.z;
+	}
+
+	std::cout << "scale ratio: " << scale_ratio << "\n"; //TEMP 
+	
+	//then scale everything by that factor
+	for (std::vector<Shape>::iterator i = shapes.begin(); i != shapes.end(); i++)
+	{
+		i->position = i->position * scale_ratio;
+		i->extents = i->extents * scale_ratio;
+	}
+
+	getBoundingBoxes();
+	//then position the scaled stuff so that it's inside the octree space
+	for (std::vector<Shape>::iterator i = shapes.begin(); i != shapes.end(); i++)
+	{
+		i->position = i->position - bounding_box_min;
 	}
 }
 
@@ -273,6 +426,8 @@ void VoxelGrid::polygonize()
 	extractor.extractMesh(&output_mesh, /*(float*)&*/input_grid, false, grid->size(), grid->size(), grid->size(), 1, 0.9);
 	delete input_grid;
 
+	//FIXME: This mesh creation stuff really ought to be put into the OgreDisplay class
+	
 	Ogre::ManualObject* mesh = display->createManualObject("ship_mesh");
 	mesh->begin("basic/backface_culling_off", RenderOperation::OT_TRIANGLE_LIST);
 

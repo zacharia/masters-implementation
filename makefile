@@ -2,9 +2,10 @@
 
 CC=g++
 WFLAGS=-Wall -Wextra -g -O2
+PROGRAM_NAME=prototype
 
 all: main.cpp Utility.o VoxelGrid.o InputManager.o OgreDisplay.o DerivationTree.o GrammarRule.o Interpreter.o TriangleMesh.o MeshExtractor.o
-	$(CC) $(WFLAGS) -o prototype main.cpp VoxelGrid.o InputManager.o OgreDisplay.o GrammarRule.o Interpreter.o DerivationTree.o Utility.o TriangleMesh.o MeshExtractor.o -lOgreMain -lOIS
+	$(CC) $(WFLAGS) -o $(PROGRAM_NAME) main.cpp VoxelGrid.o InputManager.o OgreDisplay.o GrammarRule.o Interpreter.o DerivationTree.o Utility.o TriangleMesh.o MeshExtractor.o -lOgreMain -lOIS
 
 VoxelGrid.o: VoxelGrid.cpp VoxelGrid.h
 	$(CC) $(WFLAGS) -c -o VoxelGrid.o VoxelGrid.cpp
@@ -37,4 +38,4 @@ TriangleMesh.o: TriangleMesh.h TriangleMesh.cpp
 	$(CC) $(WFLAGS) -c -o TriangleMesh.o TriangleMesh.cpp
 
 clean:
-	rm *.o prototype lex.yy.c
+	rm *.o $(PROGRAM_NAME) lex.yy.c

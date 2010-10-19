@@ -46,14 +46,34 @@
 //this is for an optimization when displaying the voxels.
 #define HIDE_VOXELS
 
+//the biggest double I'll ever use for this, used for finding the bounding boxes
+#define MAX_DOUBLE_VAL 9999999999
+
 class VoxelGrid
 {
+	//this contains the information for a shape read in from file
+	struct Shape
+	{
+		string type;
+		bool additive;
+		Ogre::Vector3 position;
+		Ogre::Vector3 extents;
+		Ogre::Matrix3 orientation;
+	};
+	
 	int gridSize;
 	unsigned int size;
 	OCTREE_DEF* grid;
 	OgreDisplay* display;
 	double object_addition_granularity;
-	
+
+	//these store the smallest and largest corners of the bounding box of the contents of the voxel grid
+	Ogre::Vector3 bounding_box_min;
+	Ogre::Vector3 bounding_box_max;
+
+	//a vector that contains the shapes that are read in from file.
+	std::vector<Shape> shapes;
+		
  public:
 	VoxelGrid();
 
@@ -65,7 +85,13 @@ class VoxelGrid
 
 	void displayVoxelGrid();
 
-	void createFromFile(std::string file);
+	void readFromFile(std::string file);
+
+	void getBoundingBoxes();
+
+	void scaleShapes();
+
+	void createShapes();
 
 	void setDisplay(OgreDisplay* d);
 
@@ -74,6 +100,10 @@ class VoxelGrid
 	void polygonize();
 
 	int getSize();
+
+	Ogre::Vector3 getBoundingBoxMinCorner();
+
+	Ogre::Vector3 getBoundingBoxMaxCorner();
 
 	OCTREE_TYPE getValue(int x, int y, int z);
 

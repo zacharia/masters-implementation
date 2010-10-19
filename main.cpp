@@ -39,6 +39,10 @@ double grid_granularity = 1.0;
 bool cameraLightKeyWasDown = false;
 bool originLightKeyWasDown = false;
 
+//this is used to indicate whether or not to scale the shapes into the octree's space.
+bool scaleShapes = false;
+bool drawBoundingBoxes = false;
+
 void tick()
 {
 	//keyboard input handling
@@ -185,6 +189,14 @@ int main(int argc, char** argv)
 		{
 			display_axes = true;
 		}
+		if (curr == "--scale-shapes") //display axes
+		{
+			scaleShapes = true;
+		}
+		if (curr == "-b") //display axes
+		{
+			drawBoundingBoxes = true;
+		}
 		if (curr == "-g") //grid granularity
 		{
 			grid_granularity = atof(argv[++i]);
@@ -197,7 +209,10 @@ int main(int argc, char** argv)
 			     << "-s <num>\t the size to make the voxel grid when doing voxel grid stuff\n"
 			     << "-f <file>\t a file to use that was produced by the python interpreter\n"
 			     << "-x\t\t display the x, y and z axes\n"
+			     << "-b\t\t display the bounding boxes of the octree grid and spacecraft.\n"
 			     << "-g <num>\t the granularity to use when adding stuff to the voxel grid.\n"
+			     << "--scale-shapes\t scale the shapes into the octree's coordinates.\n"
+			     << "\n"
 			     << "-h\t\t display this help information\n\n";
 		}
 	}
@@ -213,9 +228,9 @@ int main(int argc, char** argv)
 	if (display_axes)
 	{
 		display->addCube(Ogre::Vector3(0, 0, 0), Ogre::Vector3(0.25, 0.25, 0.25), Ogre::Quaternion::IDENTITY);
-		display->addCube(Ogre::Vector3(0, 0, 0), Ogre::Vector3(0.1, 100, 0.1), Ogre::Quaternion(Ogre::Radian(M_PI), Ogre::Vector3(1,1,0)));
-		display->addCube(Ogre::Vector3(0, 0, 0), Ogre::Vector3(0.1, 100, 0.1), Ogre::Quaternion(Ogre::Radian(M_PI), Ogre::Vector3(0,1,1)));
-		display->addCube(Ogre::Vector3(0, 0, 0), Ogre::Vector3(0.1, 100, 0.1), Ogre::Quaternion::IDENTITY);
+		display->addCube(Ogre::Vector3(0, 0, 0), Ogre::Vector3(0.1, 1000, 0.1), Ogre::Quaternion(Ogre::Radian(M_PI), Ogre::Vector3(1,1,0)));
+		display->addCube(Ogre::Vector3(0, 0, 0), Ogre::Vector3(0.1, 1000, 0.1), Ogre::Quaternion(Ogre::Radian(M_PI), Ogre::Vector3(0,1,1)));
+		display->addCube(Ogre::Vector3(0, 0, 0), Ogre::Vector3(0.1, 1000, 0.1), Ogre::Quaternion::IDENTITY);
 	}
 
 	//add a camera origin lights
@@ -246,11 +261,54 @@ int main(int argc, char** argv)
 	// vg->makeCircle(Ogre::Vector3(50,50,50), 40 );
 	std::cout << "Building voxel grid from file.\n";
 	vg->setAdditionGranularity(grid_granularity);
-	vg->createFromFile(interpreted_file);
+	vg->readFromFile(interpreted_file);
+	vg->getBoundingBoxes();
+
+	if (scaleShapes)
+	{		
+		vg->scaleShapes();
+	}
+	
+	vg->createShapes();
 	//vg->updateDisplay();
 	std::cout << "Converting voxel grid to a mesh.\n";
 	vg->polygonize();
 	//end temp testing
+
+	if (drawBoundingBoxes)
+	{
+		//draw octree grid boundaries
+		int grid_size = vg->getSize();
+		display->addCube(Ogre::Vector3(grid_size, grid_size, grid_size / 2.0), Ogre::Vector3(0.25, 0.25, grid_size / 2.0), Ogre::Quaternion::IDENTITY);
+		display->addCube(Ogre::Vector3(grid_size, grid_size / 2.0, grid_size), Ogre::Vector3(0.25, grid_size / 2.0, 0.25), Ogre::Quaternion::IDENTITY);
+		display->addCube(Ogre::Vector3(grid_size / 2.0, grid_size, grid_size), Ogre::Vector3(grid_size / 2.0, 0.25, 0.25), Ogre::Quaternion::IDENTITY);
+
+		//draw shapes bounding box
+		Ogre::Vector3 min_corn = vg->getBoundingBoxMinCorner();		
+		Ogre::Vector3 max_corn = vg->getBoundingBoxMaxCorner();
+		Ogre::Vector3 box_size = max_corn - min_corn;
+		Ogre::Vector3 mid_point = box_size * 0.5;
+
+		std::cout << min_corn.x << " " << min_corn.y << " " << min_corn.z << "\n"; //TEMP
+		std::cout << max_corn.x << " " << max_corn.y << " " << max_corn.z << "\n"; //TEMP
+		std::cout << box_size.x << " " << box_size.y << " " << box_size.z << "\n"; //TEMP
+		std::cout << mid_point.x << " " << mid_point.y << " " << mid_point.z << "\n"; //TEMP 
+		
+		// display->addCube(Ogre::Vector3(mid_point.x, max_corn.y, min_corn.z), Ogre::Vector3(box_size.x / 2.0, 0.25, 0.25), Ogre::Quaternion::IDENTITY);
+		// display->addCube(Ogre::Vector3(mid_point.x, max_corn.y, max_corn.z), Ogre::Vector3(box_size.x / 2.0, 0.25, 0.25), Ogre::Quaternion::IDENTITY);
+		// display->addCube(Ogre::Vector3(min_corn.x, max_corn.y, mid_point.z), Ogre::Vector3(0.25, 0.25, box_size.z / 2.0), Ogre::Quaternion::IDENTITY);
+		// display->addCube(Ogre::Vector3(max_corn.x, max_corn.y, mid_point.z), Ogre::Vector3(0.25, 0.25, box_size.z / 2.0), Ogre::Quaternion::IDENTITY);
+		
+		// display->addCube(Ogre::Vector3(, , ), Ogre::Vector3(, , ), Ogre::Quaternion::IDENTITY);
+
+		display->addCube(min_corn, Ogre::Vector3(1000, 0.25, 0.25), Ogre::Quaternion::IDENTITY);
+		display->addCube(min_corn, Ogre::Vector3(0.25, 1000, 0.25), Ogre::Quaternion::IDENTITY);
+		display->addCube(min_corn, Ogre::Vector3(0.25, 0.25, 1000), Ogre::Quaternion::IDENTITY);
+
+		display->addCube(max_corn, Ogre::Vector3(1000, 0.25, 0.25), Ogre::Quaternion::IDENTITY);
+		display->addCube(max_corn, Ogre::Vector3(0.25, 1000, 0.25), Ogre::Quaternion::IDENTITY);
+		display->addCube(max_corn, Ogre::Vector3(0.25, 0.25, 1000), Ogre::Quaternion::IDENTITY);
+	}
 	
 	//OIS init
 	input = InputManager::getSingletonPtr();
