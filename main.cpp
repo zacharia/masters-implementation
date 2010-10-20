@@ -14,7 +14,6 @@ A comment
 #include "VoxelGrid.h"
 #include "InputManager.h"
 #include "OgreDisplay.h"
-#include "Interpreter.h"
 
 using namespace std;
 
@@ -27,7 +26,6 @@ bool run = true;
 int mouseX=100, mouseY=100;
 //store the change in mouse positions each tick
 int mouseDeltaX = 0, mouseDeltaY = 0;
-Interpreter* interpret = NULL;
 int maxIterations = -1;
 
 //argument variables
@@ -237,18 +235,6 @@ int main(int argc, char** argv)
 	display->makeCameraLight(Ogre::ColourValue(0,1,0));
 	display->makeOriginLight(Ogre::ColourValue(1,0,0));
 	
-	//interpret the input file if we've been given one
-	if (infile != "")
-	{
-		//interpreter initialization
-		interpret = new Interpreter();
-		//interpret->setVoxelGrid(vg);
-		interpret->setMaxIterations(maxIterations);
-		interpret->interpretFile(infile);
-		interpret->setDisplay(display);
-		interpret->createPrimitives();
-	}
-
 	//voxel grid init
 	vg = new VoxelGrid(voxel_grid_size);
 	vg->setDisplay(display);
@@ -338,11 +324,6 @@ int main(int argc, char** argv)
 	{
 		delete display;
 		display = NULL;
-	}
-	if (interpret != NULL)
-	{
-		delete interpret;
-		interpret = NULL;
 	}
 
 	cout << "\nEND OF PROGRAM\n";

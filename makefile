@@ -4,8 +4,8 @@ CC=g++
 WFLAGS=-Wall -Wextra -g -O2
 PROGRAM_NAME=prototype
 
-all: main.cpp Utility.o VoxelGrid.o InputManager.o OgreDisplay.o DerivationTree.o GrammarRule.o Interpreter.o TriangleMesh.o MeshExtractor.o
-	$(CC) $(WFLAGS) -o $(PROGRAM_NAME) main.cpp VoxelGrid.o InputManager.o OgreDisplay.o GrammarRule.o Interpreter.o DerivationTree.o Utility.o TriangleMesh.o MeshExtractor.o -lOgreMain -lOIS
+all: main.cpp Utility.o VoxelGrid.o InputManager.o OgreDisplay.o TriangleMesh.o MeshExtractor.o
+	$(CC) $(WFLAGS) -o $(PROGRAM_NAME) main.cpp VoxelGrid.o InputManager.o OgreDisplay.o Utility.o TriangleMesh.o MeshExtractor.o -lOgreMain -lOIS
 
 VoxelGrid.o: VoxelGrid.cpp VoxelGrid.h
 	$(CC) $(WFLAGS) -c -o VoxelGrid.o VoxelGrid.cpp
@@ -15,18 +15,6 @@ InputManager.o: InputManager.h InputManager.cpp
 
 OgreDisplay.o: OgreDisplay.h OgreDisplay.cpp
 	$(CC) $(WFLAGS) -c -o OgreDisplay.o OgreDisplay.cpp
-
-Interpreter.o: Interpreter.cpp Interpreter.h lex.yy.c
-	$(CC) $(WFLAGS) -c -o Interpreter.o Interpreter.cpp
-
-GrammarRule.o: GrammarRule.cpp GrammarRule.h
-	$(CC) $(WFLAGS) -c -o GrammarRule.o GrammarRule.cpp
-
-lex.yy.c: parser.l
-	flex parser.l
-
-DerivationTree.o: DerivationTree.cpp DerivationTree.h
-	$(CC) $(WFLAGS) -c -o DerivationTree.o DerivationTree.cpp
 
 Utility.o: Utility.cpp Utility.h
 	$(CC) $(WFLAGS) -c -o Utility.o Utility.cpp
@@ -38,4 +26,4 @@ TriangleMesh.o: TriangleMesh.h TriangleMesh.cpp
 	$(CC) $(WFLAGS) -c -o TriangleMesh.o TriangleMesh.cpp
 
 clean:
-	rm *.o $(PROGRAM_NAME) lex.yy.c
+	rm *.o $(PROGRAM_NAME)
