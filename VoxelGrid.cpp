@@ -9,6 +9,7 @@ VoxelGrid::VoxelGrid()
 	grid = NULL;
 	display = NULL;
 	object_addition_granularity = 1.0;
+	polygonize_chunk_size = 0;
 	shapes = std::vector<Shape>();
 }
 
@@ -17,6 +18,7 @@ VoxelGrid::VoxelGrid(int size)
 	grid = NULL;
 	display = NULL;
 	object_addition_granularity = 1.0;
+	polygonize_chunk_size = 0;
 	shapes = std::vector<Shape>();
 	makeVoxelGrid(size);
 }
@@ -619,4 +621,9 @@ void VoxelGrid::makeCylinder(Ogre::Vector3 pos, Ogre::Vector3 extents, Ogre::Mat
 void VoxelGrid::setAdditionGranularity(double g)
 {
 	object_addition_granularity = g;
+}
+
+void VoxelGrid::setChunkSize(unsigned int s)
+{
+	polygonize_chunk_size = s;
 }

@@ -33,6 +33,7 @@ string infile = "", interpreted_file = "";
 unsigned int voxel_grid_size = 1024;
 bool display_axes = false;
 double grid_granularity = 1.0;
+unsigned int polygonize_chunk_size = 0;
 
 bool cameraLightKeyWasDown = false;
 bool originLightKeyWasDown = false;
@@ -199,6 +200,10 @@ int main(int argc, char** argv)
 		{
 			grid_granularity = atof(argv[++i]);
 		}
+		if (curr == "-c") //grid granularity
+		{
+			polygonize_chunk_size = atoi(argv[++i]);
+		}
 		if (curr == "-h") //display help
 		{
 			cout << "options:\n"
@@ -209,6 +214,7 @@ int main(int argc, char** argv)
 			     << "-x\t\t display the x, y and z axes\n"
 			     << "-b\t\t display the bounding boxes of the octree grid and spacecraft.\n"
 			     << "-g <num>\t the granularity to use when adding stuff to the voxel grid.\n"
+			     << "-c <num>\t the size to make chunks when polygonizing the voxel grid.\n"
 			     << "--scale-shapes\t scale the shapes into the octree's coordinates.\n"
 			     << "\n"
 			     << "-h\t\t display this help information\n\n";
@@ -258,6 +264,12 @@ int main(int argc, char** argv)
 	vg->createShapes();
 	//vg->updateDisplay();
 	std::cout << "Converting voxel grid to a mesh.\n";
+
+	if (polygonize_chunk_size > 0)
+	{
+		vg->setChunkSize(polygonize_chunk_size);
+	}
+	
 	vg->polygonize();
 	//end temp testing
 
