@@ -34,6 +34,7 @@ unsigned int voxel_grid_size = 1024;
 bool display_axes = false;
 double grid_granularity = 1.0;
 unsigned int polygonize_chunk_size = 0;
+bool point_rendering = false;
 
 bool cameraLightKeyWasDown = false;
 bool originLightKeyWasDown = false;
@@ -192,9 +193,13 @@ int main(int argc, char** argv)
 		{
 			scaleShapes = true;
 		}
-		if (curr == "-b") //display axes
+		if (curr == "-b")
 		{
 			drawBoundingBoxes = true;
+		}
+		if (curr == "-p")
+		{
+			point_rendering = true;
 		}
 		if (curr == "-g") //grid granularity
 		{
@@ -208,7 +213,7 @@ int main(int argc, char** argv)
 		{
 			cout << "options:\n"
 			     << "-i <file>\t the input file to interpret and use\n"
-			     << "-m <num>\t the max number of iterations to do when interpreting\n"
+			     << "-p\t\t use point rendering instead of mesh based.\n"
 			     << "-s <num>\t the size to make the voxel grid when doing voxel grid stuff\n"
 			     << "-f <file>\t a file to use that was produced by the python interpreter\n"
 			     << "-x\t\t display the x, y and z axes\n"
@@ -244,13 +249,7 @@ int main(int argc, char** argv)
 	//voxel grid init
 	vg = new VoxelGrid(voxel_grid_size);
 	vg->setDisplay(display);
-
-	//temp testing:
-	// std::cout << vg->getSize() << "\n"; //TEMP 
-	// vg->makeRectangle(Ogre::Vector3(75,75,75), Ogre::Vector3(25,25,25), Ogre::Matrix3(1,0,0,0,1,0,0,0,1) );
-	// vg->makeEllipsoid(Ogre::Vector3(75,75,75), Ogre::Vector3(20,50,20), Ogre::Matrix3(1,0,0,0,1,0,0,0,1) );
-	// vg->makeCylinder(Ogre::Vector3(50,50,50), Ogre::Vector3(5,60,5), Ogre::Matrix3(1,0,0,0,1,0,0,0,1) );
-	// vg->makeCircle(Ogre::Vector3(50,50,50), 40 );
+	
 	std::cout << "Building voxel grid from file.\n";
 	vg->setAdditionGranularity(grid_granularity);
 	vg->readFromFile(interpreted_file);
@@ -262,17 +261,23 @@ int main(int argc, char** argv)
 	}
 	
 	vg->createShapes();
-	//vg->updateDisplay();
+	
 	std::cout << "Converting voxel grid to a mesh.\n";
 
 	if (polygonize_chunk_size > 0)
 	{
 		vg->setChunkSize(polygonize_chunk_size);
 	}
-	
-	vg->polygonize();
-	//end temp testing
 
+	if (point_rendering)
+	{
+		vg->updateDisplay();	
+	}
+	else
+	{
+		vg->polygonize();	
+	}
+		
 	if (drawBoundingBoxes)
 	{
 		//draw octree grid boundaries

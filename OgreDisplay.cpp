@@ -93,6 +93,7 @@ void OgreDisplay::initialize()
 	sceneMgr->getBillboardSet("voxel_grid")->setDefaultDimensions(1.0, 1.0);
 	//enable this to rendering the voxels as points
 	sceneMgr->getBillboardSet("voxel_grid")->setPointRenderingEnabled(true);
+	sceneMgr->getBillboardSet("voxel_grid")->setMaterialName("basic/cube_default");
 
 	//do mesh setup stuff
 	cubeCount = 0;
