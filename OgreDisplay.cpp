@@ -428,3 +428,48 @@ void OgreDisplay::toggleOriginLight()
 		makeOriginLight(ColourValue(1,0,0));
 	}
 }
+
+void OgreDisplay::createTriangleMesh(std::string name, std::string material)
+{
+	Ogre::ManualObject* mesh = this->createManualObject(name);
+	mesh->begin(material, RenderOperation::OT_TRIANGLE_LIST);
+}
+
+
+void OgreDisplay::addToTriangleMesh(std::string name, TriangleMesh* input_mesh, bool finish)
+{
+	assert(sceneMgr->hasManualObject(name));
+	
+	Ogre::ManualObject* mesh = sceneMgr->getManualObject(name);
+
+	if ((input_mesh != NULL)/* && (!input_mesh->isEmpty())*/)
+	{
+		int count = 0;
+		//FIXME: is this winding the triangles in the correct way?
+		for (std::vector<Triangle>::iterator i = input_mesh->triangles.begin(); i != input_mesh->triangles.end(); i++)
+		{
+			mesh->position(input_mesh->vertices[i->a]);
+			mesh->normal(input_mesh->normals[i->na]);
+
+			mesh->position(input_mesh->vertices[i->b]);
+			mesh->normal(input_mesh->normals[i->nb]);
+
+			mesh->position(input_mesh->vertices[i->c]);
+			mesh->normal(input_mesh->normals[i->nc]);
+		
+			count += 3;
+
+			mesh->triangle(count-3,count-2,count-1);
+		}
+	}
+
+	if (finish)
+	{
+		mesh->end();
+		mesh->convertToMesh(name);
+
+		Ogre::Entity* ship = this->getSceneManager()->createEntity(name, name);		
+		Ogre::SceneNode* ship_node = this->getSceneManager()->getRootSceneNode()->createChildSceneNode();
+		ship_node->attachObject(ship);	
+	}
+}

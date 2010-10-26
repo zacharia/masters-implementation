@@ -1,7 +1,7 @@
 # Makefile for Voxel prototype
 
 CC=g++
-WFLAGS=-Wall -Wextra -g -O2
+WFLAGS=-Wall -Wextra -g3 -O3
 PROGRAM_NAME=prototype
 
 all: main.cpp Utility.o VoxelGrid.o InputManager.o OgreDisplay.o TriangleMesh.o MeshExtractor.o

@@ -404,61 +404,81 @@ void VoxelGrid::polygonize()
 	Array2D<OCTREE_TYPE> currSlice;
 	TriangleMesh output_mesh;
 	int temp_size = grid->size();
-	OCTREE_TYPE* input_grid = new OCTREE_TYPE[temp_size * temp_size * temp_size];
 	//FIXME: this might not be big enough for very large arrays?
 	unsigned int array_position;
-	
-	//loop through the whole array
-	for (int k = 0; k < grid->size(); ++k)
+	MeshExtractor extractor;
+
+	if (polygonize_chunk_size == 0)
 	{
-		currSlice = grid->zSlice(k);
-		for (int i = 0; i < grid->size(); ++i)
+		OCTREE_TYPE* input_grid = new OCTREE_TYPE[temp_size * temp_size * temp_size];
+		
+		//loop through the whole array
+		for (int k = 0; k < grid->size(); ++k)
 		{
-			for (int j = 0; j < grid->size(); ++j)
+			currSlice = grid->zSlice(k);
+			for (int i = 0; i < grid->size(); ++i)
 			{
-				//calculate where in the 1D array the current thing belongs
-				//i.e. convert from 3d array into 1d and store that position in array_position
-				array_position = k * grid->size() * grid->size() + i * grid->size() + j;
-				input_grid[array_position] = currSlice.at(i,j);
+				for (int j = 0; j < grid->size(); ++j)
+				{
+					//calculate where in the 1D array the current thing belongs
+					//i.e. convert from 3d array into 1d and store that position in array_position
+					array_position = k * grid->size() * grid->size() + i * grid->size() + j;
+					input_grid[array_position] = currSlice.at(i,j);
+				}
 			}
 		}
+		
+		extractor.extractMesh(&output_mesh, /*(float*)&*/input_grid, false, grid->size(), grid->size(), grid->size(), 1, 0.9);
+		delete [] input_grid;
+
+		display->createTriangleMesh("ship");
+		display->addToTriangleMesh("ship", &output_mesh, true);	
 	}
-
-	MeshExtractor extractor;
-	extractor.extractMesh(&output_mesh, /*(float*)&*/input_grid, false, grid->size(), grid->size(), grid->size(), 1, 0.9);
-	delete input_grid;
-
-	//FIXME: This mesh creation stuff really ought to be put into the OgreDisplay class
-	
-	Ogre::ManualObject* mesh = display->createManualObject("ship_mesh");
-	mesh->begin("basic/backface_culling_off", RenderOperation::OT_TRIANGLE_LIST);
-
-	assert(output_mesh.vertices.size() > 0);
-
-	int count = 0;
-	//FIXME: is this winding the triangles in the correct way?
-	for (std::vector<Triangle>::iterator i = output_mesh.triangles.begin(); i != output_mesh.triangles.end(); i++)
+	else
 	{
-		mesh->position(output_mesh.vertices[i->a]);
-		mesh->normal(output_mesh.normals[i->na]);
-
-		mesh->position(output_mesh.vertices[i->b]);
-		mesh->normal(output_mesh.normals[i->nb]);
-
-		mesh->position(output_mesh.vertices[i->c]);
-		mesh->normal(output_mesh.normals[i->nc]);
+		//FIXME: This code doesn't work, it crashes with segfaults and worse. That's why it's commented
+		//out.
 		
-		count += 3;
+		// OCTREE_TYPE* input_grid = new OCTREE_TYPE[polygonize_chunk_size * polygonize_chunk_size * polygonize_chunk_size];
+		// int num_chunks = temp_size / polygonize_chunk_size;
 
-		mesh->triangle(count-3,count-2,count-1);
-	}
-		
-	mesh->end();
-	mesh->convertToMesh("ship_mesh");
-	Ogre::Entity* ship = display->getSceneManager()->createEntity("le ship", "ship_mesh");
-	//ship->setCastShadows(true);
-	Ogre::SceneNode* ship_node = display->getSceneManager()->getRootSceneNode()->createChildSceneNode();
-	ship_node->attachObject(ship);	
+		// display->createTriangleMesh("ship");
+
+		// for (int i = 0; i < num_chunks; ++i)
+		// {
+		// 	for (int j = 0; j < num_chunks; ++j)
+		// 	{
+		// 		for (int k = 0; k < num_chunks; ++k)
+		// 		{					
+		// 			//find min corner of this chunk
+		// 			int corner_x = i * polygonize_chunk_size;
+		// 			int corner_y = j * polygonize_chunk_size;
+		// 			int corner_z = k * polygonize_chunk_size;
+					
+		// 			for (int z = corner_z; z < corner_z + polygonize_chunk_size; ++z)
+		// 			{
+		// 				//currSlice = grid->zSlice(z);
+		// 				for (int x = corner_x; x < corner_x + polygonize_chunk_size; ++x)
+		// 				{
+		// 					std::cout << x << ": " << this << "\n"; //TEMP 
+							
+		// 					for (int y = corner_y; y < corner_y + polygonize_chunk_size; ++y)
+		// 					{
+		// 						array_position = 0;//z * polygonize_chunk_size * polygonize_chunk_size + x * polygonize_chunk_size + y;
+		// 						input_grid[array_position] = grid->at(x,y,z); //currSlice.at(x,y);
+		// 					}
+		// 				}
+		// 			}
+
+		// 			extractor.extractMesh(&output_mesh, /*(float*)&*/input_grid, false, polygonize_chunk_size, polygonize_chunk_size, polygonize_chunk_size, 1, 0.9);
+		// 			display->addToTriangleMesh("ship", &output_mesh);					
+		// 		}
+		// 	}
+		// }
+
+		//display->addToTriangleMesh("ship", NULL, true);	
+		//delete [] input_grid;
+	}	
 }
 
 

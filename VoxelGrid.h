@@ -66,7 +66,7 @@ class VoxelGrid
 	OCTREE_DEF* grid;
 	OgreDisplay* display;
 	double object_addition_granularity;
-	unsigned int polgonize_chunk_size;
+	unsigned int polygonize_chunk_size;
 
 	//these store the smallest and largest corners of the bounding box of the contents of the voxel grid
 	Ogre::Vector3 bounding_box_min;
