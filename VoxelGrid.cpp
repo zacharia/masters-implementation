@@ -405,82 +405,86 @@ void VoxelGrid::polygonize()
 	TriangleMesh output_mesh;
 	int temp_size = grid->size();
 	//FIXME: this might not be big enough for very large arrays?
-	unsigned int array_position;
 	MeshExtractor extractor;
 
+	//if we're doing it all in one chunk
 	if (polygonize_chunk_size == 0)
 	{
-		OCTREE_TYPE* input_grid = new OCTREE_TYPE[temp_size * temp_size * temp_size];
+		output_mesh = polygonizeBlock(grid->size());
 		
-		//loop through the whole array
-		for (int k = 0; k < grid->size(); ++k)
-		{
-			currSlice = grid->zSlice(k);
-			for (int i = 0; i < grid->size(); ++i)
-			{
-				for (int j = 0; j < grid->size(); ++j)
-				{
-					//calculate where in the 1D array the current thing belongs
-					//i.e. convert from 3d array into 1d and store that position in array_position
-					array_position = k * grid->size() * grid->size() + i * grid->size() + j;
-					input_grid[array_position] = currSlice.at(i,j);
-				}
-			}
-		}
-		
-		extractor.extractMesh(&output_mesh, /*(float*)&*/input_grid, false, grid->size(), grid->size(), grid->size(), 1, 0.9);
-		delete [] input_grid;
-
 		display->createTriangleMesh("ship");
 		display->addToTriangleMesh("ship", &output_mesh, true);	
 	}
+	//otherwise, if we're doing it in multiple chunks
 	else
 	{
-		//FIXME: This code doesn't work, it crashes with segfaults and worse. That's why it's commented
-		//out.
-		
-		// OCTREE_TYPE* input_grid = new OCTREE_TYPE[polygonize_chunk_size * polygonize_chunk_size * polygonize_chunk_size];
-		// int num_chunks = temp_size / polygonize_chunk_size;
+		int num_chunks = temp_size / polygonize_chunk_size;
 
-		// display->createTriangleMesh("ship");
+		display->createTriangleMesh("ship");
 
-		// for (int i = 0; i < num_chunks; ++i)
-		// {
-		// 	for (int j = 0; j < num_chunks; ++j)
-		// 	{
-		// 		for (int k = 0; k < num_chunks; ++k)
-		// 		{					
-		// 			//find min corner of this chunk
-		// 			int corner_x = i * polygonize_chunk_size;
-		// 			int corner_y = j * polygonize_chunk_size;
-		// 			int corner_z = k * polygonize_chunk_size;
+		for (int i = 0; i < num_chunks; ++i)
+		{
+			for (int j = 0; j < num_chunks; ++j)
+			{
+				for (int k = 0; k < num_chunks; ++k)
+				{					
+					//find min corner of this chunk
+					int corner_x = i * polygonize_chunk_size;
+					int corner_y = j * polygonize_chunk_size;
+					int corner_z = k * polygonize_chunk_size;
+
+					output_mesh = polygonizeBlock(polygonize_chunk_size, Ogre::Vector3(corner_x, corner_y, corner_z));
 					
-		// 			for (int z = corner_z; z < corner_z + polygonize_chunk_size; ++z)
-		// 			{
-		// 				//currSlice = grid->zSlice(z);
-		// 				for (int x = corner_x; x < corner_x + polygonize_chunk_size; ++x)
-		// 				{
-		// 					std::cout << x << ": " << this << "\n"; //TEMP 
-							
-		// 					for (int y = corner_y; y < corner_y + polygonize_chunk_size; ++y)
-		// 					{
-		// 						array_position = 0;//z * polygonize_chunk_size * polygonize_chunk_size + x * polygonize_chunk_size + y;
-		// 						input_grid[array_position] = grid->at(x,y,z); //currSlice.at(x,y);
-		// 					}
-		// 				}
-		// 			}
-
-		// 			extractor.extractMesh(&output_mesh, /*(float*)&*/input_grid, false, polygonize_chunk_size, polygonize_chunk_size, polygonize_chunk_size, 1, 0.9);
-		// 			display->addToTriangleMesh("ship", &output_mesh);					
-		// 		}
-		// 	}
-		// }
-
-		//display->addToTriangleMesh("ship", NULL, true);	
-		//delete [] input_grid;
+					for (std::vector<Vec3f>::iterator iter = output_mesh.vertices.begin(); iter != output_mesh.vertices.end(); iter++)
+					{
+						iter->x += corner_x;
+						iter->y += corner_y;
+						iter->z += corner_z;
+					}
+					
+					display->addToTriangleMesh("ship", &output_mesh);					
+				}
+			}
+		}
+				
+		display->addToTriangleMesh("ship", NULL, true);	
 	}	
 }
 
+TriangleMesh VoxelGrid::polygonizeBlock(unsigned int size, Ogre::Vector3 position)
+{
+	assert(grid->size() > 0);
+	assert(size <= grid->size());
+	assert(position.x + size <= grid->size());
+	assert(position.y + size <= grid->size());
+	assert(position.z + size <= grid->size());
+	
+	TriangleMesh ret;
+	OCTREE_TYPE* input_grid = new OCTREE_TYPE[size * size * size];
+	Array2D<OCTREE_TYPE> currSlice;
+	unsigned int array_position;
+	MeshExtractor extractor;
+		
+	//loop through the whole array
+	for (int k = 0; k < size; ++k)
+	{
+		currSlice = grid->zSlice(k + position.z);
+		for (int i = 0; i < size; ++i)
+		{
+			for (int j = 0; j < size; ++j)
+			{
+				//calculate where in the 1D array the current thing belongs
+				//i.e. convert from 3d array into 1d and store that position in array_position
+				array_position = k * size * size + i * size + j;
+				input_grid[array_position] = currSlice.at(i+position.x,j+position.y);
+			}
+		}
+	}	
+		
+	extractor.extractMesh(&ret, input_grid, false, size, size, size, 1, 0.9);
+	delete [] input_grid;
+	return ret;
+}
 
 void VoxelGrid::makeCircle(Ogre::Vector3 pos, int radius, bool add)
 {

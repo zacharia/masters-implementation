@@ -100,6 +100,8 @@ class VoxelGrid
 
 	void polygonize();
 
+	TriangleMesh polygonizeBlock(unsigned int size, Ogre::Vector3 position = Ogre::Vector3::ZERO);
+
 	int getSize();
 
 	Ogre::Vector3 getBoundingBoxMinCorner();
