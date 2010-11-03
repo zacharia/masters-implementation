@@ -38,12 +38,88 @@ void VoxelGrid::makeVoxelGrid(int size)
 	grid = new OCTREE_DEF(size, EMPTY_VAL);
 }
 
+
 //this method displays the voxel grid on the command line
-void VoxelGrid::displayVoxelGrid()
+std::string VoxelGrid::toString()
 {
-	std::cout << "\nTODO\n";
-	//TODO: this needs to be redone, if it's even needed at all
+	assert(grid->size() > 0);
+
+	std::string ret = "";
+	Array2D<OCTREE_TYPE> currSlice;
+	
+	//loop through the whole array
+	for (int k = 0; k < grid->size(); ++k)
+	{
+		currSlice = grid->zSlice(k);
+		for (int i = 0; i < grid->size(); ++i)
+		{
+			for (int j = 0; j < grid->size(); ++j)
+			{
+				if (currSlice.at(i,j) == EMPTY_VAL)
+				{
+					ret += "0";
+				}
+				else
+				{
+					ret += "1";
+				}
+			}
+			ret += "\n";
+		}
+		ret += "\n\n";
+	}
+
+	return ret;
 }
+
+
+std::string VoxelGrid::arrayToString(OCTREE_TYPE* array, unsigned int size)
+{
+	assert(size > 0);
+
+	std::string ret = "";
+		
+	//loop through the whole array
+	
+	for (int i = 0; i < size; ++i)
+	{		
+		for (int j = 0; j < size; ++j)
+		{
+			for (int k = 0; k < size; ++k)			
+			{
+				if ( array[k * size * size + i * size + j] == EMPTY_VAL)
+				{
+					ret += "0";
+				}
+				else
+				{
+					ret += "1";
+				}
+			}
+			ret += "\n";
+		}
+		ret += "\n\n";
+	}
+
+	return ret;	
+}
+
+
+void VoxelGrid::outputString(std::string str, std::string path)
+{
+	ofstream out(path.c_str());
+	if (out)
+	{
+		out << str;
+		out.close();
+	}
+	else
+	{
+		std::cerr << "Failed to create output file: " << path << "\n\n";
+		exit(1);
+	}	
+}
+
 
 int VoxelGrid::getSize()
 {
@@ -418,6 +494,8 @@ void VoxelGrid::polygonize()
 	//otherwise, if we're doing it in multiple chunks
 	else
 	{
+		outputString(this->toString(), "/home/zcrumley/temp/arrays/all.out"); //TEMP
+		
 		int num_chunks = temp_size / polygonize_chunk_size;
 
 		display->createTriangleMesh("ship");
@@ -433,8 +511,11 @@ void VoxelGrid::polygonize()
 					int corner_y = j * polygonize_chunk_size;
 					int corner_z = k * polygonize_chunk_size;
 
-					output_mesh = polygonizeBlock(polygonize_chunk_size, Ogre::Vector3(corner_x, corner_y, corner_z));
+					std::cout << corner_x << " " << corner_y << " " << corner_z << "\n"; //TEMP
 					
+					output_mesh = polygonizeBlock(polygonize_chunk_size, Ogre::Vector3(corner_x, corner_y, corner_z));
+
+					std::cout << output_mesh.vertices.size() << "\n"; //TEMP 
 					for (std::vector<Vec3f>::iterator iter = output_mesh.vertices.begin(); iter != output_mesh.vertices.end(); iter++)
 					{
 						iter->x += corner_x;
@@ -442,7 +523,7 @@ void VoxelGrid::polygonize()
 						iter->z += corner_z;
 					}
 					
-					display->addToTriangleMesh("ship", &output_mesh);					
+					display->addToTriangleMesh("ship", &output_mesh);
 				}
 			}
 		}
@@ -460,10 +541,19 @@ TriangleMesh VoxelGrid::polygonizeBlock(unsigned int size, Ogre::Vector3 positio
 	assert(position.z + size <= grid->size());
 	
 	TriangleMesh ret;
-	OCTREE_TYPE* input_grid = new OCTREE_TYPE[size * size * size];
+
+	unsigned int padding = 0;
+	
+	unsigned int array_size = (size + padding) * (size + padding) * (size + padding);
+	OCTREE_TYPE* input_grid = new OCTREE_TYPE[array_size];
 	Array2D<OCTREE_TYPE> currSlice;
 	unsigned int array_position;
 	MeshExtractor extractor;
+
+	for (int i = 0; i < array_size; ++i)
+	{
+		input_grid[i] = EMPTY_VAL;
+	}
 		
 	//loop through the whole array
 	for (int k = 0; k < size; ++k)
@@ -475,11 +565,13 @@ TriangleMesh VoxelGrid::polygonizeBlock(unsigned int size, Ogre::Vector3 positio
 			{
 				//calculate where in the 1D array the current thing belongs
 				//i.e. convert from 3d array into 1d and store that position in array_position
-				array_position = k * size * size + i * size + j;
+				array_position = (k + (padding / 2)) * size * size + (i + (padding / 2)) * size + (j + (padding / 2));
 				input_grid[array_position] = currSlice.at(i+position.x,j+position.y);
 			}
 		}
-	}	
+	}
+	
+	outputString(arrayToString(input_grid, size+padding), "/home/zcrumley/temp/arrays/" + Utility::numToString(position.x) + "_" + Utility::numToString(position.y) + "_" + Utility::numToString(position.z) + ".out"); //TEMP
 		
 	extractor.extractMesh(&ret, input_grid, false, size, size, size, 1, 0.9);
 	delete [] input_grid;

@@ -84,7 +84,11 @@ class VoxelGrid
 	
 	void makeVoxelGrid(int size);
 
-	void displayVoxelGrid();
+	std::string toString();
+
+	std::string arrayToString(OCTREE_TYPE* array, unsigned int size);
+
+	void outputString(std::string str, std::string path);
 
 	void readFromFile(std::string file);
 
