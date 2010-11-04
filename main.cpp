@@ -43,6 +43,8 @@ bool originLightKeyWasDown = false;
 bool scaleShapes = false;
 bool drawBoundingBoxes = false;
 
+bool verbose = false;
+
 void tick()
 {
 	//keyboard input handling
@@ -209,6 +211,10 @@ int main(int argc, char** argv)
 		{
 			polygonize_chunk_size = atoi(argv[++i]);
 		}
+		if (curr == "-v")
+		{
+			verbose = true;
+		}
 		if (curr == "-h") //display help
 		{
 			cout << "options:\n"
@@ -221,6 +227,7 @@ int main(int argc, char** argv)
 			     << "-g <num>\t the granularity to use when adding stuff to the voxel grid.\n"
 			     << "-c <num>\t the size to make chunks when polygonizing the voxel grid.\n"
 			     << "--scale-shapes\t scale the shapes into the octree's coordinates.\n"
+			     << "-v\t\t Enable verbose output.\n"
 			     << "\n"
 			     << "-h\t\t display this help information\n\n";
 		}
@@ -249,6 +256,9 @@ int main(int argc, char** argv)
 	//voxel grid init
 	vg = new VoxelGrid(voxel_grid_size);
 	vg->setDisplay(display);
+
+	//set the VoxelGrid's output to verbose if the verbose flag was specified
+	vg->setVerbose(verbose);
 	
 	std::cout << "Building voxel grid from file.\n";
 	vg->setAdditionGranularity(grid_granularity);

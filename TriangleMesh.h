@@ -4,11 +4,16 @@
 #include <string>
 #include <iostream>
 #include <vector>
-
+/* #include <QVector2D> */
+/* #include <QVector3D> */
 #include <OGRE/Ogre.h>
+
+/* typedef QVector2D Vec2f; */
+/* typedef QVector3D Vec3f; */
 
 typedef Ogre::Vector2 Vec2f;
 typedef Ogre::Vector3 Vec3f;
+
 
 class Triangle
 {
@@ -51,7 +56,7 @@ public:
 	void addTriangle(Vec3f verta, Vec3f vertb, Vec3f vertc, Vec3f norma,
 			Vec3f normb, Vec3f normc);
 	void addTriangle(int a, int b, int c, int na, int nb, int nc);
-	void centreMesh (int width, int height, int depth);
+	void centreMesh (const int &width, const int& height, const int& depth);
 	void centroidMesh ();
 };
 

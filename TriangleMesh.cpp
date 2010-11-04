@@ -1,13 +1,9 @@
 #include "TriangleMesh.h"
 
-#include <fstream>
-using namespace std;
+using std::vector;
 
 TriangleMesh::TriangleMesh()
 {
-	vertices = std::vector<Vec3f>();
-	triangles = std::vector<Triangle>();
-	normals = std::vector<Vec3f>();
 	clearGeometry();
 }
 
@@ -47,7 +43,7 @@ Vec3f& TriangleMesh::getVert(int tri, int index)
 	return vertices[triangles[0].a];
 }
 
-Vec3f& TriangleMesh::getVert(std::vector<Triangle> trianglesIn, int tri, int index)
+Vec3f& TriangleMesh::getVert(vector<Triangle> trianglesIn, int tri, int index)
 {
 	switch (index)
 	{
@@ -67,7 +63,7 @@ Vec3f& TriangleMesh::getVert(int index)
 	return vertices[index];
 }
 
-Vec3f& TriangleMesh::getNorm(std::vector<Triangle> trianglesIn, int tri, int index)
+Vec3f& TriangleMesh::getNorm(vector<Triangle> trianglesIn, int tri, int index)
 {
 	if (normals.size() != 0)
 		switch (index)
@@ -144,21 +140,21 @@ void TriangleMesh::addTriangle(int a, int b, int c, int na, int nb, int nc)
 void TriangleMesh::centroidMesh ()
 {
 	Vec3f average (0,0,0);
-	for (std::vector<Vec3f>::iterator i = vertices.begin(); i != vertices.end() ; ++i)
+	for (vector<Vec3f>::iterator i = vertices.begin(); i != vertices.end() ; ++i)
 	{
 		average += *i;
 	}
 	average/=vertices.size();
-	for (std::vector<Vec3f>::iterator i = vertices.begin(); i != vertices.end() ; ++i)
+	for (vector<Vec3f>::iterator i = vertices.begin(); i != vertices.end() ; ++i)
 	{
 		*i -= average;
 	}
 }
 
-void TriangleMesh::centreMesh (int width, int height, int depth)
+void TriangleMesh::centreMesh (const int &width, const int& height, const int& depth)
 {
 	Vec3f offset (width/2,height/2,depth/2);
-	for (std::vector<Vec3f>::iterator i = vertices.begin(); i != vertices.end() ; ++i)
+	for (vector<Vec3f>::iterator i = vertices.begin(); i != vertices.end() ; ++i)
 	{
 		*i-=offset;
 	}

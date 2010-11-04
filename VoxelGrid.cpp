@@ -11,6 +11,7 @@ VoxelGrid::VoxelGrid()
 	object_addition_granularity = 1.0;
 	polygonize_chunk_size = 0;
 	shapes = std::vector<Shape>();
+	verbose = false;
 }
 
 VoxelGrid::VoxelGrid(int size)
@@ -21,6 +22,7 @@ VoxelGrid::VoxelGrid(int size)
 	polygonize_chunk_size = 0;
 	shapes = std::vector<Shape>();
 	makeVoxelGrid(size);
+	verbose = false;
 }
 
 VoxelGrid::~VoxelGrid()
@@ -107,7 +109,7 @@ std::string VoxelGrid::arrayToString(OCTREE_TYPE* array, unsigned int size)
 
 void VoxelGrid::outputString(std::string str, std::string path)
 {
-	ofstream out(path.c_str());
+	std::ofstream out(path.c_str());
 	if (out)
 	{
 		out << str;
@@ -316,9 +318,15 @@ Ogre::Vector3 VoxelGrid::getBoundingBoxMaxCorner()
 void VoxelGrid::createShapes()
 {
 	assert(shapes.size() > 0);
+	unsigned int count = 1;
 	
 	for (std::vector<Shape>::iterator i = shapes.begin(); i != shapes.end(); i++)
 	{
+		if (verbose)
+		{
+			std::cout << "Voxelizing shape " << count << " of " << shapes.size() << ". Size: " << i->extents.x * i->extents.y * i->extents.z << "\n";
+			count++;
+		}
 		//create an object
 		if (i->type == "rectangle")
 		{
@@ -482,6 +490,8 @@ void VoxelGrid::polygonize()
 	int temp_size = grid->size();
 	//FIXME: this might not be big enough for very large arrays?
 	MeshExtractor extractor;
+	extractor.setOctree(grid);
+	extractor.setVerbose(verbose);
 
 	//if we're doing it all in one chunk
 	if (polygonize_chunk_size == 0)
@@ -494,7 +504,7 @@ void VoxelGrid::polygonize()
 	//otherwise, if we're doing it in multiple chunks
 	else
 	{
-		outputString(this->toString(), "/home/zcrumley/temp/arrays/all.out"); //TEMP
+		//outputString(this->toString(), "/home/zcrumley/temp/arrays/all.out"); //TEMP
 		
 		int num_chunks = temp_size / polygonize_chunk_size;
 
@@ -542,14 +552,18 @@ TriangleMesh VoxelGrid::polygonizeBlock(unsigned int size, Ogre::Vector3 positio
 	
 	TriangleMesh ret;
 
-	unsigned int padding = 0;
 	
+	MeshExtractor extractor;
+
+	extractor.setOctree(grid);
+	extractor.setVerbose(verbose);
+
+	unsigned int padding = 0;
 	unsigned int array_size = (size + padding) * (size + padding) * (size + padding);
 	OCTREE_TYPE* input_grid = new OCTREE_TYPE[array_size];
 	Array2D<OCTREE_TYPE> currSlice;
 	unsigned int array_position;
-	MeshExtractor extractor;
-
+		
 	for (int i = 0; i < array_size; ++i)
 	{
 		input_grid[i] = EMPTY_VAL;
@@ -573,7 +587,7 @@ TriangleMesh VoxelGrid::polygonizeBlock(unsigned int size, Ogre::Vector3 positio
 	
 	outputString(arrayToString(input_grid, size+padding), "/home/zcrumley/temp/arrays/" + Utility::numToString(position.x) + "_" + Utility::numToString(position.y) + "_" + Utility::numToString(position.z) + ".out"); //TEMP
 		
-	extractor.extractMesh(&ret, input_grid, false, size, size, size, 1, 0.9);
+	extractor.extractMeshWithMarchingTetrahedra/*Cubes*/(input_grid, size, size, size, BOUNDARY_VAL, &ret);
 	delete [] input_grid;
 	return ret;
 }
@@ -742,4 +756,9 @@ void VoxelGrid::setAdditionGranularity(double g)
 void VoxelGrid::setChunkSize(unsigned int s)
 {
 	polygonize_chunk_size = s;
+}
+
+void VoxelGrid::setVerbose(bool v)
+{
+	verbose = v;
 }
