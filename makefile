@@ -2,13 +2,10 @@
 
 CC=g++
 WFLAGS=-Wall -Wextra -g3 -O3
-PROGRAM_NAME=voxel_generator
+PROGRAM_NAME=prototype
 
-$(PROGRAM_NAME): Utility.o VoxelGrid.o InputManager.o OgreDisplay.o TriangleMesh.o MeshExtractor.o main.o
-	$(CC) $(WFLAGS) -o $(PROGRAM_NAME) main.o VoxelGrid.o InputManager.o OgreDisplay.o Utility.o TriangleMesh.o MeshExtractor.o -lOgreMain -lOIS
-
-main.o: main.cpp
-	$(CC) $(WFLAGS) -c -o main.o main.cpp
+all: main.cpp Utility.o VoxelGrid.o InputManager.o OgreDisplay.o TriangleMesh.o MeshExtractor.o
+	$(CC) $(WFLAGS) -o $(PROGRAM_NAME) main.cpp VoxelGrid.o InputManager.o OgreDisplay.o Utility.o TriangleMesh.o MeshExtractor.o -lOgreMain -lOIS
 
 VoxelGrid.o: VoxelGrid.cpp VoxelGrid.h
 	$(CC) $(WFLAGS) -c -o VoxelGrid.o VoxelGrid.cpp
