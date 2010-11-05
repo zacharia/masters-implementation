@@ -12,7 +12,7 @@
 
 //this is for what the octree stores. If this is defined it uses the default thing (unsigned int)
 //otherwise it uses whatever is defined in the else of the macro block
-#define DEFAULT_CONTENTS
+//#define DEFAULT_CONTENTS
 
 #ifdef DEFAULT_CONTENTS
 //standard definition
@@ -26,6 +26,7 @@
 #define OCTREE_TYPE float
 #define EMPTY_VAL 0.0
 #define OCCUPIED_VAL 1.0
+#define BOUNDARY_VAL 0.5
 
 #endif
 

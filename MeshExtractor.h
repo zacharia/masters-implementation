@@ -168,7 +168,7 @@ public:
     };
 
     //ADDED BY ME
-    void setOctree(Octree<int, 32>* in)
+    void setOctree(Octree<float, 32>* in)
     {
 	    octree = in;
     }
@@ -185,7 +185,7 @@ private:
     int height;
     int depth;
 
-    Octree<int, 32>* octree; // ADDED BY ME
+    Octree<float, 32>* octree; // ADDED BY ME
     bool verbose; //ADDED BY ME
 
     /**********     Marching Cubes Methods       ************/
