@@ -558,7 +558,7 @@ TriangleMesh VoxelGrid::polygonizeBlock(unsigned int size, Ogre::Vector3 positio
 	extractor.setOctree(grid);
 	extractor.setVerbose(verbose);
 
-	unsigned int padding = 0;
+	unsigned int padding = 2;
 	unsigned int array_size = (size + padding) * (size + padding) * (size + padding);
 	OCTREE_TYPE* input_grid = new OCTREE_TYPE[array_size];
 	Array2D<OCTREE_TYPE> currSlice;
@@ -587,7 +587,7 @@ TriangleMesh VoxelGrid::polygonizeBlock(unsigned int size, Ogre::Vector3 positio
 	
 	outputString(arrayToString(input_grid, size+padding), "/home/zcrumley/temp/arrays/" + Utility::numToString(position.x) + "_" + Utility::numToString(position.y) + "_" + Utility::numToString(position.z) + ".out"); //TEMP
 		
-	extractor.extractMeshWithMarchingTetrahedra/*Cubes*/(input_grid, size, size, size, BOUNDARY_VAL, &ret);
+	extractor.extractMeshWithMarchingCubes(input_grid, size, size, size, BOUNDARY_VAL, &ret);
 	delete [] input_grid;
 	return ret;
 }
