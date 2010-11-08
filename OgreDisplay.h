@@ -31,7 +31,13 @@ class OgreDisplay
 	Light* cameraLight;	
 	//if this is non-null then it is a light that should be placed at the origin.
 	Light* originLight;
-	
+
+	//This is used as a dummy class to stop ogre from spamming it's log to the command line.
+	class QuietLog : public Ogre::LogListener
+	{
+		void messageLogged(const String& message, LogMessageLevel lml, bool maskDebug, const String& logName);
+	};
+		
 public:
 	OgreDisplay();
 

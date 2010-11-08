@@ -33,6 +33,13 @@ OgreDisplay::~OgreDisplay()
 //does all the initial setup of the window, camera, etc.
 void OgreDisplay::initialize()
 {
+	//This code is used to stop ogre from spamming it's log to the command line.
+	//It works by creating a dummy loglistener that doesn't output anything
+	Ogre::LogManager* logger = new Ogre::LogManager();
+	QuietLog qlog;
+	logger->createLog("ogre/ogre.log", true, false, true);
+	Ogre::LogManager::getSingleton().getDefaultLog()->addListener(&qlog);
+	
 	//use the files given 
 	root = new Root("ogre/plugins.cfg", "ogre/ogre.cfg", "ogre/ogre.log");
 
@@ -472,5 +479,18 @@ void OgreDisplay::addToTriangleMesh(std::string name, TriangleMesh* input_mesh, 
 		Ogre::Entity* ship = this->getSceneManager()->createEntity(name, name);		
 		Ogre::SceneNode* ship_node = this->getSceneManager()->getRootSceneNode()->createChildSceneNode();
 		ship_node->attachObject(ship);	
+	}
+}
+
+void OgreDisplay::QuietLog::messageLogged(const String& message, LogMessageLevel lml, bool maskDebug, const String& logName)
+{
+	switch (lml)
+	{
+	case LML_NORMAL:
+		break;
+	case LML_CRITICAL:
+		break;
+	case LML_TRIVIAL:
+		break;
 	}
 }
