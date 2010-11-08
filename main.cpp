@@ -172,55 +172,44 @@ int main(int argc, char** argv)
 	for (int i = 0; i < argc; i++)
 	{
 		curr = argv[i];
-		/*if (curr == "-i") //the input file to read TO REMOVE
-		{
-			infile = argv[++i];
-		}
-		else if (curr == "-m") //maxIterations for derivation
-		{
-			maxIterations = atoi(argv[++i]);
-		}*/
-		if (curr == "-s") //size of the octree for the voxel grid
+
+		if ((curr == "--grid-size") || (curr == "-s")) //size of the octree for the voxel grid
 		{
 			voxel_grid_size = atoi(argv[++i]);
 		}
-		if (curr == "-f") //the already interpreted (by the python thing) file to use
+		if ((curr == "--input-file") || (curr == "-f")) //the already interpreted (by the python thing) file to use
 		{
 			interpreted_file = argv[++i];
 		}
-		if (curr == "-x") //display axes
+		if ((curr == "--display-axes") || (curr == "-x")) //display axes
 		{
 			display_axes = true;
 		}
-		if (curr == "--scale-shapes") //display axes
+		if ((curr == "--scale-shapes") || (curr == "-s")) //display axes
 		{
 			scaleShapes = true;
 		}
-		if (curr == "-b")
+		if ((curr == "--draw-bounding-boxes") || (curr == "-b"))
 		{
 			drawBoundingBoxes = true;
 		}
-		if (curr == "-p")
+		if ((curr == "--use-point-rendering") || (curr == "-p"))
 		{
 			point_rendering = true;
 		}
-		if (curr == "-g") //grid granularity
+		if ((curr == "--grid-granularity") || (curr == "-g")) //grid granularity
 		{
 			grid_granularity = atof(argv[++i]);
-		}
-		if (curr == "-c") //grid granularity
-		{
-			polygonize_chunk_size = atoi(argv[++i]);
-		}
-		if (curr == "-v")
+		}		
+		if ((curr == "--verbose") || (curr == "-v"))
 		{
 			verbose = true;
 		}
-		if (curr == "-t")
+		if ((curr == "--use-marching-tetrahedra") || (curr == "-t"))
 		{
 			useMarchingCubes = false;
 		}
-		if (curr == "-h") //display help
+		if ((curr == "--help") || (curr == "-h")) //display help
 		{
 			cout << "options:\n"			     
 			     << "-p\t\t use point rendering instead of mesh based.\n"
