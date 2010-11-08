@@ -397,6 +397,8 @@ void VoxelGrid::scaleShapes()
 		scale_ratio = (double)grid->size() / size.z;
 	}
 
+	scale_ratio *= 0.95;
+
 	std::cout << "scale ratio: " << scale_ratio << "\n"; //TEMP 
 	
 	//then scale everything by that factor
@@ -410,7 +412,7 @@ void VoxelGrid::scaleShapes()
 	//then position the scaled stuff so that it's inside the octree space
 	for (std::vector<Shape>::iterator i = shapes.begin(); i != shapes.end(); i++)
 	{
-		i->position = i->position - bounding_box_min;
+		i->position = i->position - bounding_box_min + Vector3(1,1,1);
 	}
 }
 
