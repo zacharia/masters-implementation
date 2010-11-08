@@ -339,8 +339,7 @@ void VoxelGrid::createShapes()
 		//create an object
 		if (i->type == "rectangle")
 		{
-			makeRectangle(i->position, i->extents, i->orientation, i->additive);
-			//std::cout << temp_name << " " << temp_additive << " " << temp_pos.x << " " << temp_pos.y << " " << temp_pos.z << "\n";
+			makeRectangle(i->position, i->extents, i->orientation, i->additive);			
 		}
 		else if (i->type == "cylinder")
 		{
@@ -409,7 +408,10 @@ void VoxelGrid::scaleShapes()
 
 	scale_ratio *= 0.95;
 
-	std::cout << "scale ratio: " << scale_ratio << "\n"; //TEMP 
+	if (verbose)
+	{
+		std::cout << "scale ratio: " << scale_ratio << "\n"; //TEMP 	
+	}	
 	
 	//then scale everything by that factor
 	for (std::vector<Shape>::iterator i = shapes.begin(); i != shapes.end(); i++)
@@ -447,7 +449,11 @@ void VoxelGrid::updateDisplay()
 	//loop through the whole array
 	for (int k = 0; k < grid->size(); ++k)
 	{
-		//std::cout << "doing slice: " << i << "\n"; //TEMP 
+		if (verbose)
+		{
+			std::cout << "doing slice: " << k << " of " << grid->size() << "\n"; //TEMP 	
+		}
+		
 		currSlice = grid->zSlice(k);
 		for (int j = 0; j < grid->size(); ++j)
 		{

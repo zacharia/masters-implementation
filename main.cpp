@@ -162,7 +162,7 @@ void tick()
 
 int main(int argc, char** argv)
 {
-	cout << "Prototype voxel based thing. Cooler than ice.";
+	cout << "VOXEL-SPACE PROCEDURAL SPACESHIP GENERATOR.\n\n";
 
 	// argument handling
 
@@ -185,7 +185,7 @@ int main(int argc, char** argv)
 		{
 			display_axes = true;
 		}
-		if ((curr == "--scale-shapes") || (curr == "-s")) //display axes
+		if ((curr == "--scale-shapes") || (curr == "-q")) //display axes
 		{
 			scaleShapes = true;
 		}
@@ -219,11 +219,11 @@ int main(int argc, char** argv)
 			     << "-b\t\t display the bounding boxes of the octree grid and spacecraft.\n"
 			     << "-g <num>\t the granularity to use when adding stuff to the voxel grid.\n"
 			     << "-c <num>\t the size to make chunks when polygonizing the voxel grid.\n"
-			     << "--scale-shapes\t scale the shapes into the octree's coordinates.\n"
+			     << "-q\t\t scale the shapes into the octree's coordinates.\n"
 			     << "-v\t\t Enable verbose output.\n"
-			     << "-t\t\t Use marching tetrahedra instead of the standard marching cubes.\n"
-			     << "\n"
+			     << "-t\t\t Use marching tetrahedra instead of the standard marching cubes.\n"			     
 			     << "-h\t\t display this help information\n\n";
+			exit(0);
 		}
 	}
 	
@@ -233,8 +233,7 @@ int main(int argc, char** argv)
 	//ogre init
 	display = new OgreDisplay();
 	display->initialize();
-	display->createVoxelMesh();
-
+	
 	if (display_axes)
 	{
 		display->addCube(Ogre::Vector3(0, 0, 0), Ogre::Vector3(0.25, 0.25, 0.25), Ogre::Quaternion::IDENTITY);
@@ -254,25 +253,31 @@ int main(int argc, char** argv)
 	//set the VoxelGrid's output to verbose if the verbose flag was specified
 	vg->setVerbose(verbose);
 	vg->setUseCubes(useMarchingCubes);
+
+	if (verbose)
+	{
+		std::cout << "Building voxel grid from file.\n";	
+	}
 	
-	std::cout << "Building voxel grid from file.\n";
 	vg->setAdditionGranularity(grid_granularity);
 	vg->readFromFile(interpreted_file);
 	vg->getBoundingBoxes();
 
 	if (scaleShapes)
-	{		
+	{
+		if (verbose)
+		{
+			std::cout << "Scaling shapes into grid's boundaries.\n";
+		}
 		vg->scaleShapes();
 	}
 	
 	vg->createShapes();
-	
-	std::cout << "Converting voxel grid to a mesh.\n";
 
-	// if (polygonize_chunk_size > 0)
-	// {
-	// 	vg->setChunkSize(polygonize_chunk_size);
-	// }
+	if (verbose)
+	{
+		std::cout << "Converting voxel grid to a mesh.\n";	
+	}	
 
 	if (point_rendering)
 	{
@@ -329,7 +334,11 @@ int main(int argc, char** argv)
 		//draw frame
 	}
 
-	std::cout << "Cleaning up memory.\n";
+	if (verbose)
+	{
+		std::cout << "Cleaning up memory.\n";	
+	}
+	
 	//memory clean up
 	if (vg != NULL)
 	{
