@@ -69,8 +69,7 @@ class VoxelGrid
 	unsigned int size;
 	OCTREE_DEF* grid;
 	OgreDisplay* display;
-	double object_addition_granularity;
-	unsigned int polygonize_chunk_size;
+	double object_addition_granularity;	
 	bool verbose;
 	bool useMarchingCubes;
 

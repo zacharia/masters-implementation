@@ -9,23 +9,23 @@ VoxelGrid::VoxelGrid()
 	grid = NULL;
 	display = NULL;
 	object_addition_granularity = 1.0;
-	polygonize_chunk_size = 0;
 	shapes = std::vector<Shape>();
 	verbose = false;
 	useMarchingCubes = true;
 }
+
 
 VoxelGrid::VoxelGrid(int size)
 {
 	grid = NULL;
 	display = NULL;
 	object_addition_granularity = 1.0;
-	polygonize_chunk_size = 0;
 	shapes = std::vector<Shape>();
 	makeVoxelGrid(size);
 	verbose = false;
 	useMarchingCubes = true;
 }
+
 
 VoxelGrid::~VoxelGrid()
 {
@@ -34,6 +34,7 @@ VoxelGrid::~VoxelGrid()
 		delete grid;
 	}
 }
+
 
 //this method initializes the actual 3d array that represents the grid.
 void VoxelGrid::makeVoxelGrid(int size)
@@ -130,6 +131,7 @@ int VoxelGrid::getSize()
 	return grid->size();
 }
 
+
 //returns the value at a point in the grid
 OCTREE_TYPE VoxelGrid::getValue(int x, int y, int z)
 {
@@ -143,6 +145,7 @@ OCTREE_TYPE VoxelGrid::getValue(int x, int y, int z)
 		return grid->at(x,y,z);
 	}
 }
+
 
 /*
   This reads the file given as an argument (which should be produced by the python interpreter)
@@ -243,6 +246,7 @@ void VoxelGrid::readFromFile(std::string file)
 	}
 }
 
+
 void VoxelGrid::getBoundingBoxes()
 {
 	assert(shapes.size() > 0);
@@ -307,15 +311,18 @@ void VoxelGrid::getBoundingBoxes()
 	}
 }
 
+
 Ogre::Vector3 VoxelGrid::getBoundingBoxMinCorner()
 {
 	return bounding_box_min;
 }
 
+
 Ogre::Vector3 VoxelGrid::getBoundingBoxMaxCorner()
 {
 	return bounding_box_max;
 }
+
 
 void VoxelGrid::createShapes()
 {
@@ -350,6 +357,7 @@ void VoxelGrid::createShapes()
 		}
 	}
 }
+
 
 /*
   this method scales the shape currently stored in the shapes vector so that the largest dimension
@@ -418,11 +426,13 @@ void VoxelGrid::scaleShapes()
 	}
 }
 
+
 //gives a pointer to the display object that is used to display stuff
 void VoxelGrid::setDisplay(OgreDisplay* d)
 {
 	display = d;
 }
+
 
 //this updates the display object given to display the voxel grid as it currently is.
 void VoxelGrid::updateDisplay()
@@ -497,54 +507,12 @@ void VoxelGrid::polygonize()
 	extractor.setOctree(grid);
 	extractor.setVerbose(verbose);
 
-	//if we're doing it all in one chunk
-	if (polygonize_chunk_size == 0)
-	{
-		output_mesh = polygonizeBlock(grid->size());
+	output_mesh = polygonizeBlock(grid->size());
 		
-		display->createTriangleMesh("ship");
-		display->addToTriangleMesh("ship", &output_mesh, true);	
-	}
-	//otherwise, if we're doing it in multiple chunks
-	else
-	{
-		//outputString(this->toString(), "/home/zcrumley/temp/arrays/all.out"); //TEMP
-		
-		int num_chunks = temp_size / polygonize_chunk_size;
-
-		display->createTriangleMesh("ship");
-
-		for (int i = 0; i < num_chunks; ++i)
-		{
-			for (int j = 0; j < num_chunks; ++j)
-			{
-				for (int k = 0; k < num_chunks; ++k)
-				{					
-					//find min corner of this chunk
-					int corner_x = i * polygonize_chunk_size;
-					int corner_y = j * polygonize_chunk_size;
-					int corner_z = k * polygonize_chunk_size;
-
-					std::cout << corner_x << " " << corner_y << " " << corner_z << "\n"; //TEMP
-					
-					output_mesh = polygonizeBlock(polygonize_chunk_size, Ogre::Vector3(corner_x, corner_y, corner_z));
-
-					std::cout << output_mesh.vertices.size() << "\n"; //TEMP 
-					for (std::vector<Vec3f>::iterator iter = output_mesh.vertices.begin(); iter != output_mesh.vertices.end(); iter++)
-					{
-						iter->x += corner_x;
-						iter->y += corner_y;
-						iter->z += corner_z;
-					}
-					
-					display->addToTriangleMesh("ship", &output_mesh);
-				}
-			}
-		}
-				
-		display->addToTriangleMesh("ship", NULL, true);	
-	}	
+	display->createTriangleMesh("ship");
+	display->addToTriangleMesh("ship", &output_mesh, true);	
 }
+
 
 TriangleMesh VoxelGrid::polygonizeBlock(unsigned int size, Ogre::Vector3 position)
 {
@@ -560,34 +528,10 @@ TriangleMesh VoxelGrid::polygonizeBlock(unsigned int size, Ogre::Vector3 positio
 	extractor.setOctree(grid);
 	extractor.setVerbose(verbose);
 
-	unsigned int padding = 2;
-	unsigned int array_size = (size + padding) * (size + padding) * (size + padding);
-	OCTREE_TYPE* input_grid = new OCTREE_TYPE[array_size];
-	Array2D<OCTREE_TYPE> currSlice;
-	unsigned int array_position;
-		
-	for (int i = 0; i < array_size; ++i)
-	{
-		input_grid[i] = EMPTY_VAL;
-	}
-		
-	//loop through the whole array
-	for (int k = 0; k < size; ++k)
-	{
-		currSlice = grid->zSlice(k + position.z);
-		for (int i = 0; i < size; ++i)
-		{
-			for (int j = 0; j < size; ++j)
-			{
-				//calculate where in the 1D array the current thing belongs
-				//i.e. convert from 3d array into 1d and store that position in array_position
-				array_position = (k + (padding / 2)) * size * size + (i + (padding / 2)) * size + (j + (padding / 2));
-				input_grid[array_position] = currSlice.at(i+position.x,j+position.y);
-			}
-		}
-	}
-	
-	outputString(arrayToString(input_grid, size+padding), "/home/zcrumley/temp/arrays/" + Utility::numToString(position.x) + "_" + Utility::numToString(position.y) + "_" + Utility::numToString(position.z) + ".out"); //TEMP
+	//make a dummy array that doesn't actually contain the grid, but just keeps the extractor methods happy.
+	//this will crash if used, but since the extractor has been changed to only use the octree this won't
+	//be a problem.
+	OCTREE_TYPE* input_grid = new OCTREE_TYPE[10];
 
 	if (useMarchingCubes)
 	{
@@ -601,6 +545,7 @@ TriangleMesh VoxelGrid::polygonizeBlock(unsigned int size, Ogre::Vector3 positio
 	delete [] input_grid;
 	return ret;
 }
+
 
 void VoxelGrid::makeCircle(Ogre::Vector3 pos, int radius, bool add)
 {
@@ -640,6 +585,7 @@ void VoxelGrid::makeCircle(Ogre::Vector3 pos, int radius, bool add)
 	}
 }
 
+
 //pos is the centre of the rectangle, extents are the dimensions from the centre to the edges
 void VoxelGrid::makeRectangle(Ogre::Vector3 pos, Ogre::Vector3 extents, Ogre::Matrix3 orientation, bool add)
 {
@@ -676,6 +622,7 @@ void VoxelGrid::makeRectangle(Ogre::Vector3 pos, Ogre::Vector3 extents, Ogre::Ma
 		}
 	}
 }
+
 
 //pos is the centre of the ellipsoid, extents are the dimensions from the centre to the edges
 void VoxelGrid::makeEllipsoid(Ogre::Vector3 pos, Ogre::Vector3 extents, Ogre::Matrix3 orientation, bool add)
@@ -716,6 +663,7 @@ void VoxelGrid::makeEllipsoid(Ogre::Vector3 pos, Ogre::Vector3 extents, Ogre::Ma
 		}
 	}
 }
+
 
 //pos is the centre of the ellipsoid, extents are the dimensions from the centre to the edges.
 //orientation is either x, y or z and indicates which axis the cylinder runs parallel to
@@ -758,20 +706,18 @@ void VoxelGrid::makeCylinder(Ogre::Vector3 pos, Ogre::Vector3 extents, Ogre::Mat
 	}
 }
 
+
 void VoxelGrid::setAdditionGranularity(double g)
 {
 	object_addition_granularity = g;
 }
 
-void VoxelGrid::setChunkSize(unsigned int s)
-{
-	polygonize_chunk_size = s;
-}
 
 void VoxelGrid::setVerbose(bool v)
 {
 	verbose = v;
 }
+
 
 void VoxelGrid::setUseCubes(bool v)
 {

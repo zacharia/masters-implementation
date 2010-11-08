@@ -29,7 +29,7 @@ int mouseDeltaX = 0, mouseDeltaY = 0;
 int maxIterations = -1;
 
 //argument variables
-string infile = "", interpreted_file = "";
+string interpreted_file = "";
 unsigned int voxel_grid_size = 1024;
 bool display_axes = false;
 double grid_granularity = 1.0;
@@ -172,15 +172,15 @@ int main(int argc, char** argv)
 	for (int i = 0; i < argc; i++)
 	{
 		curr = argv[i];
-		if (curr == "-i") //the input file to read
+		/*if (curr == "-i") //the input file to read TO REMOVE
 		{
 			infile = argv[++i];
 		}
 		else if (curr == "-m") //maxIterations for derivation
 		{
 			maxIterations = atoi(argv[++i]);
-		}
-		else if (curr == "-s") //size of the octree for the voxel grid
+		}*/
+		if (curr == "-s") //size of the octree for the voxel grid
 		{
 			voxel_grid_size = atoi(argv[++i]);
 		}
@@ -222,8 +222,7 @@ int main(int argc, char** argv)
 		}
 		if (curr == "-h") //display help
 		{
-			cout << "options:\n"
-			     << "-i <file>\t the input file to interpret and use\n"
+			cout << "options:\n"			     
 			     << "-p\t\t use point rendering instead of mesh based.\n"
 			     << "-s <num>\t the size to make the voxel grid when doing voxel grid stuff\n"
 			     << "-f <file>\t a file to use that was produced by the python interpreter\n"
@@ -281,10 +280,10 @@ int main(int argc, char** argv)
 	
 	std::cout << "Converting voxel grid to a mesh.\n";
 
-	if (polygonize_chunk_size > 0)
-	{
-		vg->setChunkSize(polygonize_chunk_size);
-	}
+	// if (polygonize_chunk_size > 0)
+	// {
+	// 	vg->setChunkSize(polygonize_chunk_size);
+	// }
 
 	if (point_rendering)
 	{
@@ -309,10 +308,10 @@ int main(int argc, char** argv)
 		Ogre::Vector3 box_size = max_corn - min_corn;
 		Ogre::Vector3 mid_point = box_size * 0.5;
 
-		std::cout << min_corn.x << " " << min_corn.y << " " << min_corn.z << "\n"; //TEMP
-		std::cout << max_corn.x << " " << max_corn.y << " " << max_corn.z << "\n"; //TEMP
-		std::cout << box_size.x << " " << box_size.y << " " << box_size.z << "\n"; //TEMP
-		std::cout << mid_point.x << " " << mid_point.y << " " << mid_point.z << "\n"; //TEMP 
+		// std::cout << min_corn.x << " " << min_corn.y << " " << min_corn.z << "\n"; //TEMP
+		// std::cout << max_corn.x << " " << max_corn.y << " " << max_corn.z << "\n"; //TEMP
+		// std::cout << box_size.x << " " << box_size.y << " " << box_size.z << "\n"; //TEMP
+		// std::cout << mid_point.x << " " << mid_point.y << " " << mid_point.z << "\n"; //TEMP 
 		
 		// display->addCube(Ogre::Vector3(mid_point.x, max_corn.y, min_corn.z), Ogre::Vector3(box_size.x / 2.0, 0.25, 0.25), Ogre::Quaternion::IDENTITY);
 		// display->addCube(Ogre::Vector3(mid_point.x, max_corn.y, max_corn.z), Ogre::Vector3(box_size.x / 2.0, 0.25, 0.25), Ogre::Quaternion::IDENTITY);
