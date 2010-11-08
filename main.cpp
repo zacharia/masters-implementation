@@ -44,6 +44,7 @@ bool scaleShapes = false;
 bool drawBoundingBoxes = false;
 
 bool verbose = false;
+bool useMarchingCubes = true;
 
 void tick()
 {
@@ -215,6 +216,10 @@ int main(int argc, char** argv)
 		{
 			verbose = true;
 		}
+		if (curr == "-t")
+		{
+			useMarchingCubes = false;
+		}
 		if (curr == "-h") //display help
 		{
 			cout << "options:\n"
@@ -228,6 +233,7 @@ int main(int argc, char** argv)
 			     << "-c <num>\t the size to make chunks when polygonizing the voxel grid.\n"
 			     << "--scale-shapes\t scale the shapes into the octree's coordinates.\n"
 			     << "-v\t\t Enable verbose output.\n"
+			     << "-t\t\t Use marching tetrahedra instead of the standard marching cubes.\n"
 			     << "\n"
 			     << "-h\t\t display this help information\n\n";
 		}
@@ -259,6 +265,7 @@ int main(int argc, char** argv)
 
 	//set the VoxelGrid's output to verbose if the verbose flag was specified
 	vg->setVerbose(verbose);
+	vg->setUseCubes(useMarchingCubes);
 	
 	std::cout << "Building voxel grid from file.\n";
 	vg->setAdditionGranularity(grid_granularity);

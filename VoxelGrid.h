@@ -72,6 +72,7 @@ class VoxelGrid
 	double object_addition_granularity;
 	unsigned int polygonize_chunk_size;
 	bool verbose;
+	bool useMarchingCubes;
 
 	//these store the smallest and largest corners of the bounding box of the contents of the voxel grid
 	Ogre::Vector3 bounding_box_min;
@@ -132,6 +133,8 @@ class VoxelGrid
 	void setChunkSize(unsigned int s);
 
 	void setVerbose(bool v);
+
+	void setUseCubes(bool v);
 };
 
 #endif

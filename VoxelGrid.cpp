@@ -12,6 +12,7 @@ VoxelGrid::VoxelGrid()
 	polygonize_chunk_size = 0;
 	shapes = std::vector<Shape>();
 	verbose = false;
+	useMarchingCubes = true;
 }
 
 VoxelGrid::VoxelGrid(int size)
@@ -23,6 +24,7 @@ VoxelGrid::VoxelGrid(int size)
 	shapes = std::vector<Shape>();
 	makeVoxelGrid(size);
 	verbose = false;
+	useMarchingCubes = true;
 }
 
 VoxelGrid::~VoxelGrid()
@@ -552,9 +554,7 @@ TriangleMesh VoxelGrid::polygonizeBlock(unsigned int size, Ogre::Vector3 positio
 	assert(position.y + size <= grid->size());
 	assert(position.z + size <= grid->size());
 	
-	TriangleMesh ret;
-
-	
+	TriangleMesh ret;	
 	MeshExtractor extractor;
 
 	extractor.setOctree(grid);
@@ -588,8 +588,16 @@ TriangleMesh VoxelGrid::polygonizeBlock(unsigned int size, Ogre::Vector3 positio
 	}
 	
 	outputString(arrayToString(input_grid, size+padding), "/home/zcrumley/temp/arrays/" + Utility::numToString(position.x) + "_" + Utility::numToString(position.y) + "_" + Utility::numToString(position.z) + ".out"); //TEMP
-		
-	extractor.extractMeshWithMarchingCubes(input_grid, size, size, size, BOUNDARY_VAL, &ret);
+
+	if (useMarchingCubes)
+	{
+		extractor.extractMeshWithMarchingCubes(input_grid, size, size, size, BOUNDARY_VAL, &ret);	
+	}
+	else
+	{
+		extractor.extractMeshWithMarchingTetrahedra(input_grid, size, size, size, BOUNDARY_VAL, &ret);
+	}
+	
 	delete [] input_grid;
 	return ret;
 }
@@ -763,4 +771,9 @@ void VoxelGrid::setChunkSize(unsigned int s)
 void VoxelGrid::setVerbose(bool v)
 {
 	verbose = v;
+}
+
+void VoxelGrid::setUseCubes(bool v)
+{
+	useMarchingCubes = v;
 }
