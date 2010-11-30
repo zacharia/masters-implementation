@@ -424,7 +424,7 @@ void VoxelGrid::scaleShapes()
 	//then position the scaled stuff so that it's inside the octree space
 	for (std::vector<Shape>::iterator i = shapes.begin(); i != shapes.end(); i++)
 	{
-		i->position = i->position - bounding_box_min + Vector3(1,1,1);
+		i->position = i->position - bounding_box_min + Vector3(2,2,2);
 	}
 }
 
