@@ -213,9 +213,9 @@ void VoxelGrid::readFromFile(std::string file)
 			else if (curr_type == "orientation")
 			{
 				Ogre::Real temp_arr[3][3];
-				for (int i = 0; i < 4; ++i)
+				for (int i = 0; i < 3; ++i)
 				{
-					for (int j = 0; j < 4; ++j)
+					for (int j = 0; j < 3; ++j)
 					{
 						in >> temp >> std::ws;
 						if ((i != 3) && (j != 3))
