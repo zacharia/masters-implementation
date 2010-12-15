@@ -258,7 +258,7 @@ void VoxelGrid::getBoundingBoxes()
 	for (std::vector<Shape>::iterator s = shapes.begin(); s != shapes.end(); s++)
 	{
 		//FIXME: add the rest of the types in here as they're added to the program.
-		if ( (s->type == "rectangle") ||  (s->type == "circle") || (s->type == "ellipsoid") || (s->type == "cylinder") )
+		if ( ( (s->type == "rectangle") ||  (s->type == "circle") || (s->type == "ellipsoid") || (s->type == "cylinder") ) && (s->additive) )
 		{
 			s->orientation.Orthonormalize();
 			Ogre::Vector3 vertex;//vertices[8];
