@@ -63,6 +63,15 @@ class VoxelGrid
 		Ogre::Vector3 position;
 		Ogre::Vector3 extents;
 		Ogre::Matrix3 orientation;
+		int priority;
+	};
+
+	struct ShapeComparisionObject
+	{
+		bool operator()(const Shape a, const Shape b) const
+		{
+			return a.priority < b.priority;
+		}
 	};
 	
 	int gridSize;
@@ -72,6 +81,7 @@ class VoxelGrid
 	double object_addition_granularity;	
 	bool verbose;
 	bool useMarchingCubes;
+	bool usePriorities;
 
 	//these store the smallest and largest corners of the bounding box of the contents of the voxel grid
 	Ogre::Vector3 bounding_box_min;
@@ -134,6 +144,8 @@ class VoxelGrid
 	void setVerbose(bool v);
 
 	void setUseCubes(bool v);
+
+	void setUsePriorities(bool v);
 };
 
 #endif

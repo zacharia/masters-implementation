@@ -46,6 +46,8 @@ bool drawBoundingBoxes = false;
 bool verbose = false;
 bool useMarchingCubes = true;
 
+bool usePriorities = true;
+
 void tick()
 {
 	//keyboard input handling
@@ -209,6 +211,10 @@ int main(int argc, char** argv)
 		{
 			useMarchingCubes = false;
 		}
+		if ((curr == "--ignore-priorities") || (curr == "-n"))
+		{
+			usePriorities = false;
+		}
 		if ((curr == "--help") || (curr == "-h")) //display help
 		{
 			cout << "options:\n"			     
@@ -221,7 +227,8 @@ int main(int argc, char** argv)
 			     << "-c <num>\t the size to make chunks when polygonizing the voxel grid.\n"
 			     << "-q\t\t scale the shapes into the octree's coordinates.\n"
 			     << "-v\t\t Enable verbose output.\n"
-			     << "-t\t\t Use marching tetrahedra instead of the standard marching cubes.\n"			     
+			     << "-t\t\t Use marching tetrahedra instead of the standard marching cubes.\n"
+			     << "-n\t\t Ignore shape priorities when voxelizing them.\n"
 			     << "-h\t\t display this help information\n\n";
 			exit(0);
 		}
@@ -249,6 +256,7 @@ int main(int argc, char** argv)
 	//voxel grid init
 	vg = new VoxelGrid(voxel_grid_size);
 	vg->setDisplay(display);
+	vg->setUsePriorities(usePriorities);
 
 	//set the VoxelGrid's output to verbose if the verbose flag was specified
 	vg->setVerbose(verbose);

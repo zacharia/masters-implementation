@@ -12,6 +12,7 @@ VoxelGrid::VoxelGrid()
 	shapes = std::vector<Shape>();
 	verbose = false;
 	useMarchingCubes = true;
+	usePriorities = true;
 }
 
 
@@ -24,6 +25,7 @@ VoxelGrid::VoxelGrid(int size)
 	makeVoxelGrid(size);
 	verbose = false;
 	useMarchingCubes = true;
+	usePriorities = true;
 }
 
 
@@ -226,10 +228,15 @@ void VoxelGrid::readFromFile(std::string file)
 				}
 				temp_shape.orientation = Ogre::Matrix3(temp_arr);
 			}
+			else if (curr_type == "priority")
+			{
+				in >> temp >> std::ws;
+				temp_shape.priority = atoi(temp.c_str());
+			}
 			else if (curr_type == "#")
 			{
 				shapes.push_back(temp_shape);
-												
+				
 				//reset the stuff
 				temp_shape.type = curr_type = "";
 				temp_shape.additive = true;
@@ -328,32 +335,74 @@ void VoxelGrid::createShapes()
 {
 	assert(shapes.size() > 0);
 	unsigned int count = 1;
-	
-	for (std::vector<Shape>::iterator i = shapes.begin(); i != shapes.end(); i++)
+
+	if (usePriorities)
 	{
-		if (verbose)
+		std::priority_queue<Shape, std::vector<Shape>, ShapeComparisionObject> shapes_priority_queue;
+		for (std::vector<Shape>::iterator i = shapes.begin(); i != shapes.end(); i++)
 		{
-			std::cout << "Voxelizing shape " << count << " of " << shapes.size() << ". Size: " << i->extents.x * i->extents.y * i->extents.z << "\n";
-			count++;
+			shapes_priority_queue.push(*i);
 		}
-		//create an object
-		if (i->type == "rectangle")
+		
+		while (!shapes_priority_queue.empty())
 		{
-			makeRectangle(i->position, i->extents, i->orientation, i->additive);			
+			Shape queue_top = shapes_priority_queue.top();
+			
+			if (verbose)
+			{
+				std::cout << "Voxelizing shape. " << shapes_priority_queue.size() << " remain. Size: " << queue_top.extents.x * queue_top.extents.y * queue_top.extents.z << "\n";
+			}
+			
+			//create an object
+			if (queue_top.type == "rectangle")
+			{
+				makeRectangle(queue_top.position, queue_top.extents, queue_top.orientation, queue_top.additive);			
+			}
+			else if (queue_top.type == "cylinder")
+			{
+				makeCylinder(queue_top.position, queue_top.extents, queue_top.orientation, queue_top.additive);
+			}
+			else if (queue_top.type == "circle")
+			{
+				//FIXME: get a better solution for circles not having all attributes
+				makeCircle(queue_top.position, queue_top.extents.x, queue_top.additive);
+			}
+			else if (queue_top.type == "ellipsoid")
+			{
+				makeEllipsoid(queue_top.position, queue_top.extents, queue_top.orientation, queue_top.additive);
+			}
+
+			shapes_priority_queue.pop();
 		}
-		else if (i->type == "cylinder")
+	}
+	else
+	{
+		for (std::vector<Shape>::iterator i = shapes.begin(); i != shapes.end(); i++)
 		{
-			makeCylinder(i->position, i->extents, i->orientation, i->additive);
-		}
-		else if (i->type == "circle")
-		{
-			//FIXME: get a better solution for circles not having all attributes
-			makeCircle(i->position, i->extents.x, i->additive);
-		}
-		else if (i->type == "ellipsoid")
-		{
-			makeEllipsoid(i->position, i->extents, i->orientation, i->additive);
-		}
+			if (verbose)
+			{
+				std::cout << "Voxelizing shape " << count << " of " << shapes.size() << ". Size: " << i->extents.x * i->extents.y * i->extents.z << "\n";
+				count++;
+			}
+			//create an object
+			if (i->type == "rectangle")
+			{
+				makeRectangle(i->position, i->extents, i->orientation, i->additive);			
+			}
+			else if (i->type == "cylinder")
+			{
+				makeCylinder(i->position, i->extents, i->orientation, i->additive);
+			}
+			else if (i->type == "circle")
+			{
+				//FIXME: get a better solution for circles not having all attributes
+				makeCircle(i->position, i->extents.x, i->additive);
+			}
+			else if (i->type == "ellipsoid")
+			{
+				makeEllipsoid(i->position, i->extents, i->orientation, i->additive);
+			}
+		}	
 	}
 }
 
@@ -728,4 +777,9 @@ void VoxelGrid::setVerbose(bool v)
 void VoxelGrid::setUseCubes(bool v)
 {
 	useMarchingCubes = v;
+}
+
+void VoxelGrid::setUsePriorities(bool v)
+{
+	usePriorities = v;
 }
