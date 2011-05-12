@@ -12,6 +12,7 @@
 //standard library inclusions
 #include <cstddef>
 #include <cassert>
+#include <OGRE/OgreVector3.h>
 
 //project inclusions
 // HERE
@@ -37,33 +38,53 @@ public:
 	NodeInformation();
 
 	~NodeInformation();
+
+	bool operator==(NodeInformation& in);
+
+	bool operator!=(NodeInformation& in);
 };
 
 
 class OctreeNode
 {
 private:
-	//the node's children
+	
+public:
+        //the node's children
 	OctreeNode* children[2][2][2];
+	OctreeNode* parent;
+	
+	//more stuff
+	NodeInformation info;
 
 	//the max size in one dimension that this node can have.
 	int nodeSize;
 
-public:
-	//more stuff
-	NodeInformation info;
-
 	OctreeNode();
 
-	OctreeNode(int in_maxSize, NodeInformation in_info);
+	OctreeNode(int in_maxSize, OctreeNode* in_parent);
 
-	void createNode(int in_maxSize, NodeInformation in_info);
+	OctreeNode(int in_maxSize, NodeInformation in_info, OctreeNode* in_parent);
+
+	void createNode(int in_maxSize, NodeInformation in_info, OctreeNode* in_parent);
 
 	~OctreeNode();
 
 	void setNodeSize(int in);
 
 	int getNodeSize();
+	
+	NodeInformation at(int x, int y, int z, int currSize);
+
+	void set(int x, int y, int z, NodeInformation value, int currSize);
+
+	void setRange(int x1, int y1, int z1, int x2, int y2, int z2, NodeInformation value);
+
+	void erase(int x, int y, int z, int currSize);
+
+	void eraseRange(int x1, int y1, int z1, int x2, int y2, int z2);
+
+	void optimizeNode();
 };
 
 
