@@ -15,27 +15,26 @@
 #include <OGRE/OgreVector3.h>
 
 //project inclusions
-// HERE
+#include "Utility.h"
 
-//these are used in the NodeInformation class to represent if a node is solid or empty.
-#define NODE_EMPTY NodeInformation::SpaceState::SPACE_EMPTY
-#define NODE_SOLID NodeInformation::SpaceState::SPACE_SOLID
+
+enum SpaceState
+{
+	SPACE_EMPTY = 0,
+	SPACE_SOLID = 1
+};
 
 
 class NodeInformation
 {
 public:
-	enum SpaceState
-	{
-		SPACE_EMPTY = 0,
-		SPACE_SOLID = 1
-	};
-
 	//stores the physical state of the node, i.e. empty or solid
 	char solid;
 
 	//default constructor - makes a totally empty node with nothing in it and not tags
 	NodeInformation();
+
+	NodeInformation(int in_solid);
 
 	~NodeInformation();
 
@@ -52,7 +51,6 @@ private:
 public:
         //the node's children
 	OctreeNode* children[2][2][2];
-	OctreeNode* parent;
 	
 	//more stuff
 	NodeInformation info;
@@ -62,11 +60,11 @@ public:
 
 	OctreeNode();
 
-	OctreeNode(int in_maxSize, OctreeNode* in_parent);
+	OctreeNode(int in_maxSize);
 
-	OctreeNode(int in_maxSize, NodeInformation in_info, OctreeNode* in_parent);
+	OctreeNode(int in_maxSize, NodeInformation in_info);
 
-	void createNode(int in_maxSize, NodeInformation in_info, OctreeNode* in_parent);
+	void createNode(int in_maxSize, NodeInformation in_info);
 
 	~OctreeNode();
 
@@ -78,13 +76,15 @@ public:
 
 	void set(int x, int y, int z, NodeInformation value, int currSize);
 
-	void setRange(int x1, int y1, int z1, int x2, int y2, int z2, NodeInformation value);
+	void setRange(Ogre::Vector3 lower, Ogre::Vector3 upper, Ogre::Vector3 node_center, NodeInformation value);
 
 	void erase(int x, int y, int z, int currSize);
 
-	void eraseRange(int x1, int y1, int z1, int x2, int y2, int z2);
+	void eraseRange(Ogre::Vector3 lower, Ogre::Vector3 upper, Ogre::Vector3 node_center);
 
 	void optimizeNode();
+
+	std::string printNode(int depth = 0);
 };
 
 
@@ -114,11 +114,15 @@ public:
 
 	void set(int x, int y, int z, NodeInformation value);
 
-	void setRange(int x1, int y1, int z1, int x2, int y2, int z2, NodeInformation value);
+	void setRange(Ogre::Vector3 lower, Ogre::Vector3 upper, NodeInformation value);
 
 	void erase(int x, int y, int z);
 
-	void eraseRange(int x1, int y1, int z1, int x2, int y2, int z2);
+	void eraseRange(Ogre::Vector3 lower, Ogre::Vector3 upper);
+
+	void optimizeTree();
+
+	std::string printTree();
 };
 
 #endif
