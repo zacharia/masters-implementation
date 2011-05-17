@@ -36,8 +36,8 @@ void Octree::createOctree(int in_size)
 	//set the size
 	this->setSize(in_size);
 
-	//make a default NodeInformation Object to initialize the octree to (empty)
-	NodeInformation temp_info;
+	//make a default VoxelInformation Object to initialize the octree to (empty)
+	VoxelInformation temp_info;
 
 	//create the root node.
 	this->root = new OctreeNode(this->getSize(), temp_info);
@@ -88,7 +88,7 @@ int Octree::getSize()
 }
 
 
-NodeInformation Octree::at(int x, int y, int z)
+VoxelInformation Octree::at(int x, int y, int z)
 {
 	assert(x >= 0 && x < this->size);
 	assert(y >= 0 && y < this->size);
@@ -102,7 +102,7 @@ NodeInformation Octree::at(int x, int y, int z)
 }
 
 
-void Octree::set(int x, int y, int z, NodeInformation value)
+void Octree::set(int x, int y, int z, VoxelInformation value)
 {
 	assert(x >= 0 && x < this->size);
 	assert(y >= 0 && y < this->size);
@@ -123,7 +123,7 @@ void Octree::set(int x, int y, int z, NodeInformation value)
 //This method sets all values of an axis-aligned rectangle in the
 //octree, smallest and largest corners given as args, to the value
 //given as an arg.
-void Octree::setRange(Ogre::Vector3 lower, Ogre::Vector3 upper, NodeInformation value)
+void Octree::setRange(Ogre::Vector3 lower, Ogre::Vector3 upper, VoxelInformation value)
 {
 	root->setRange(lower, upper, Ogre::Vector3(this->size / 2), value);
 }
@@ -175,7 +175,7 @@ std::string Octree::printTree()
 //default constructor.
 OctreeNode::OctreeNode()
 {
-	NodeInformation temp;
+	VoxelInformation temp;
 	this->createNode(1, temp);
 }
 
@@ -198,12 +198,12 @@ OctreeNode::~OctreeNode()
 
 OctreeNode::OctreeNode(int in_maxSize)
 {
-	NodeInformation temp;
+	VoxelInformation temp;
 	this->createNode(in_maxSize, temp);
 }
 
 
-OctreeNode::OctreeNode(int in_maxSize, NodeInformation in_info)
+OctreeNode::OctreeNode(int in_maxSize, VoxelInformation in_info)
 {
 	this->createNode(in_maxSize, in_info);
 }
@@ -211,7 +211,7 @@ OctreeNode::OctreeNode(int in_maxSize, NodeInformation in_info)
 
 //this is the method that's actually used by the constructors to make
 //the node.
-void OctreeNode::createNode(int in_maxSize, NodeInformation in_info)
+void OctreeNode::createNode(int in_maxSize, VoxelInformation in_info)
 {
 	this->nodeSize = in_maxSize;
 	this->info = in_info;
@@ -245,7 +245,7 @@ int OctreeNode::getNodeSize()
 
 //Recursive method for retrieving a value from the octree.
 //currSize is used for choosing the node to recurse to.
-NodeInformation OctreeNode::at(int x, int y, int z, int currSize)
+VoxelInformation OctreeNode::at(int x, int y, int z, int currSize)
 {
 	//if we're at a node with no children
 	if ((this->children[0][0][0] == NULL) &&
@@ -257,7 +257,7 @@ NodeInformation OctreeNode::at(int x, int y, int z, int currSize)
 	    (this->children[1][1][0] == NULL) &&
 	    (this->children[1][1][1] == NULL))
 	{
-		//return the current node's NodeInformation
+		//return the current node's VoxelInformation
 		return this->info;
 	}
 	//otherwise if there are children
@@ -280,7 +280,7 @@ NodeInformation OctreeNode::at(int x, int y, int z, int currSize)
 
 //A recursive method for setting a value. It avoids creating
 //unnecessary nodes, where possible.
-void OctreeNode::set(int x, int y, int z, NodeInformation value, int currSize)
+void OctreeNode::set(int x, int y, int z, VoxelInformation value, int currSize)
 {
 	//if we're at a leaf node
 	if (currSize == 1)
@@ -327,7 +327,7 @@ void OctreeNode::set(int x, int y, int z, NodeInformation value, int currSize)
 
 
 //recursive method for setting an axis-aligned rectangle of values in the octree.
-void OctreeNode::setRange(Ogre::Vector3 lower, Ogre::Vector3 upper, Ogre::Vector3 node_center, NodeInformation value)
+void OctreeNode::setRange(Ogre::Vector3 lower, Ogre::Vector3 upper, Ogre::Vector3 node_center, VoxelInformation value)
 {
 	for (int i = 0; i < 2; ++i)
 		for (int j = 0; j < 2; ++j)
@@ -351,7 +351,7 @@ void OctreeNode::setRange(Ogre::Vector3 lower, Ogre::Vector3 upper, Ogre::Vector
 
 
 //A recursive method for deleting a node. This means removing it from
-//the tree, not just changing it's NodeInformation to empty.
+//the tree, not just changing it's VoxelInformation to empty.
 void OctreeNode::erase(int x, int y, int z, int currSize)
 {
         //if we're at a node with no children
@@ -401,8 +401,8 @@ void OctreeNode::eraseRange(Ogre::Vector3 lower, Ogre::Vector3 upper, Ogre::Vect
 
 //This method does a postorder walk of the tree, removing redundant
 //nodes. If all children of a node are non-NULL and they all have the
-//same NodeInformation, they can be deleted and the parent's
-//NodeInformation changed to theirs.
+//same VoxelInformation, they can be deleted and the parent's
+//VoxelInformation changed to theirs.
 void OctreeNode::optimizeNode()
 {
 	//first recurse on all children.
@@ -443,7 +443,7 @@ void OctreeNode::optimizeNode()
 			//NB: we know that all children are non-NULL
 		       
 			//comp_value stores info of the first child. if any of the other children have a different ->info, we can't coalesce
-			NodeInformation comp_value = this->children[0][0][0]->info;
+			VoxelInformation comp_value = this->children[0][0][0]->info;
 			
 			bool can_coalesce = true;
 
@@ -572,33 +572,33 @@ std::string OctreeNode::printNode(int depth)
 }
 
 
-//=================NodeInformation methods========================
+//=================VoxelInformation methods========================
 
-NodeInformation::NodeInformation()
+VoxelInformation::VoxelInformation()
 {
 	solid = SPACE_EMPTY;
 }
 
 
-NodeInformation::NodeInformation(int in_solid)
+VoxelInformation::VoxelInformation(int in_solid)
 {
 	solid = in_solid;
 }
 
 
-NodeInformation::~NodeInformation()
+VoxelInformation::~VoxelInformation()
 {
 
 }
 
 
-bool NodeInformation::operator==(NodeInformation& in)
+bool VoxelInformation::operator==(VoxelInformation& in)
 {
 	return ( (this->solid == in.solid) );
 }
 
 
-bool NodeInformation::operator!=(NodeInformation& in)
+bool VoxelInformation::operator!=(VoxelInformation& in)
 {
 	return !( (this->solid == in.solid) );
 }

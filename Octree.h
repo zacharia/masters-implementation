@@ -25,22 +25,22 @@ enum SpaceState
 };
 
 
-class NodeInformation
+class VoxelInformation
 {
 public:
 	//stores the physical state of the node, i.e. empty or solid
 	char solid;
 
 	//default constructor - makes a totally empty node with nothing in it and not tags
-	NodeInformation();
+	VoxelInformation();
 
-	NodeInformation(int in_solid);
+	VoxelInformation(int in_solid);
 
-	~NodeInformation();
+	~VoxelInformation();
 
-	bool operator==(NodeInformation& in);
+	bool operator==(VoxelInformation& in);
 
-	bool operator!=(NodeInformation& in);
+	bool operator!=(VoxelInformation& in);
 };
 
 
@@ -53,7 +53,7 @@ public:
 	OctreeNode* children[2][2][2];
 	
 	//more stuff
-	NodeInformation info;
+	VoxelInformation info;
 
 	//the max size in one dimension that this node can have.
 	int nodeSize;
@@ -62,9 +62,9 @@ public:
 
 	OctreeNode(int in_maxSize);
 
-	OctreeNode(int in_maxSize, NodeInformation in_info);
+	OctreeNode(int in_maxSize, VoxelInformation in_info);
 
-	void createNode(int in_maxSize, NodeInformation in_info);
+	void createNode(int in_maxSize, VoxelInformation in_info);
 
 	~OctreeNode();
 
@@ -72,11 +72,11 @@ public:
 
 	int getNodeSize();
 	
-	NodeInformation at(int x, int y, int z, int currSize);
+	VoxelInformation at(int x, int y, int z, int currSize);
 
-	void set(int x, int y, int z, NodeInformation value, int currSize);
+	void set(int x, int y, int z, VoxelInformation value, int currSize);
 
-	void setRange(Ogre::Vector3 lower, Ogre::Vector3 upper, Ogre::Vector3 node_center, NodeInformation value);
+	void setRange(Ogre::Vector3 lower, Ogre::Vector3 upper, Ogre::Vector3 node_center, VoxelInformation value);
 
 	void erase(int x, int y, int z, int currSize);
 
@@ -95,7 +95,7 @@ private:
 	OctreeNode* root;
 	unsigned int size;
 
-	//NB: null does not necessarily imply that a node is empty. The NodeInformation is used for that.
+	//NB: null does not necessarily imply that a node is empty. The VoxelInformation is used for that.
         
 public:
 	//these variables store information about auto-optimizing the tree after every N calls of the set method.
@@ -115,11 +115,11 @@ public:
 
 	int getSize();
 
-	NodeInformation at(int x, int y, int z);
+	VoxelInformation at(int x, int y, int z);
 
-	void set(int x, int y, int z, NodeInformation value);
+	void set(int x, int y, int z, VoxelInformation value);
 
-	void setRange(Ogre::Vector3 lower, Ogre::Vector3 upper, NodeInformation value);
+	void setRange(Ogre::Vector3 lower, Ogre::Vector3 upper, VoxelInformation value);
 
 	void erase(int x, int y, int z);
 
