@@ -41,6 +41,11 @@ void Octree::createOctree(int in_size)
 
 	//create the root node.
 	this->root = new OctreeNode(this->getSize(), temp_info);
+
+	//set up the default auto_optimize values.
+	this->auto_optimize_on = true;
+	this->auto_optimize_interval = in_size * in_size;
+	this->auto_optimize_counter = 0;
 }
 
 
@@ -105,6 +110,13 @@ void Octree::set(int x, int y, int z, NodeInformation value)
 
 	//TODO: iterative way of doing this, instead of recursive.
 	root->set(x,y,z, value, this->size);
+
+	this->auto_optimize_counter++;
+	if ((this->auto_optimize_on) && (this->auto_optimize_counter >= this->auto_optimize_interval))
+	{
+		this->optimizeTree();
+		this->auto_optimize_counter = 0;
+	}
 }
 
 
@@ -126,6 +138,13 @@ void Octree::erase(int x, int y, int z)
 
 	//TODO: iterative way of doing this.
 	root->erase(x,y,z, this->size);
+
+	this->auto_optimize_counter++;
+	if ((this->auto_optimize_on) && (this->auto_optimize_counter >= this->auto_optimize_interval))
+	{
+		this->optimizeTree();
+		this->auto_optimize_counter = 0;
+	}
 }
 
 
@@ -421,10 +440,11 @@ void OctreeNode::optimizeNode()
 		    (this->children[1][1][1] != NULL))
 		{
 			//then check if they all have the same info.
-			//comp_value stores info of the first non-null child we come across. if any of the other children have a different ->info, we can't coalesce
-			NodeInformation comp_value;
-			//this indicates whether comp_value has been set or not.
-			bool got_val = false;
+			//NB: we know that all children are non-NULL
+		       
+			//comp_value stores info of the first child. if any of the other children have a different ->info, we can't coalesce
+			NodeInformation comp_value = this->children[0][0][0]->info;
+			
 			bool can_coalesce = true;
 
 			//loop through all children
@@ -432,19 +452,26 @@ void OctreeNode::optimizeNode()
 				for (int j = 0; j < 2; ++j)
 					for (int k = 0; k < 2; ++k)
 					{
-						//if we haven't got a comp_value, and this child is non-null
-						if ( (!got_val) && (this->children[i][j][k] != NULL) )
-						{
-							//then set comp_value to the child's ->info
-							comp_value = this->children[i][j][k]->info;
-							got_val = true;
-						}
-						//if they don't all have the same info
-						if ((this->children[i][j][k] != NULL) && (this->children[i][j][k]->info != comp_value))
+						//if any of the children of the child currently being examined are non-NULL, we can't optimize away this node.
+						if ((this->children[i][j][k]->children[0][0][0] != NULL) ||
+						    (this->children[i][j][k]->children[0][0][1] != NULL) ||
+						    (this->children[i][j][k]->children[0][1][0] != NULL) ||
+						    (this->children[i][j][k]->children[0][1][1] != NULL) ||
+						    (this->children[i][j][k]->children[1][0][0] != NULL) ||
+						    (this->children[i][j][k]->children[1][0][1] != NULL) ||
+						    (this->children[i][j][k]->children[1][1][0] != NULL) ||
+						    (this->children[i][j][k]->children[1][1][1] != NULL))
 						{
 							//return, since this node can't be optimized.
 							can_coalesce = false;
-							return;
+							break;
+						}
+						//if they don't all have the same info
+						if (this->children[i][j][k]->info != comp_value)
+						{
+							//return, since this node can't be optimized.
+							can_coalesce = false;
+							break;
 						}
 					}
 

@@ -95,9 +95,14 @@ private:
 	OctreeNode* root;
 	unsigned int size;
 
-	//NB: empty value is null.
-
+	//NB: null does not necessarily imply that a node is empty. The NodeInformation is used for that.
+        
 public:
+	//these variables store information about auto-optimizing the tree after every N calls of the set method.
+	bool auto_optimize_on;
+	int auto_optimize_interval;
+	int auto_optimize_counter;
+	
 	Octree();
 
 	Octree(int size);
