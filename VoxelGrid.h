@@ -18,8 +18,8 @@
 //standard definition
 #define OCTREE_TYPE /*unsigned*/ int
 #define EMPTY_VAL 0 //0x00000000
-#define OCCUPIED_VAL 10 //0xffffffff
-#define BOUNDARY_VAL 5
+#define OCCUPIED_VAL 1000 //0xffffffff
+#define BOUNDARY_VAL 500
 
 #else
 //experimental types for trying to get Duncan's marching cubes stuff to work
@@ -41,6 +41,7 @@
 #include <OGRE/Ogre.h>
 
 #include "octree/octree.h"
+//#include "Octree.h"
 #include "OgreDisplay.h"
 
 #include "MeshExtractor.h"
