@@ -580,7 +580,7 @@ VoxelInformation::VoxelInformation()
 }
 
 
-VoxelInformation::VoxelInformation(int in_solid)
+VoxelInformation::VoxelInformation(SPACE_TYPE in_solid)
 {
 	solid = in_solid;
 }

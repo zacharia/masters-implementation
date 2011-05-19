@@ -20,41 +20,34 @@
 
 //this is for what the octree stores. If this is defined it uses the default thing (unsigned int)
 //otherwise it uses whatever is defined in the else of the macro block
-#define DEFAULT_CONTENTS
+//#define DEFAULT_CONTENTS
 
 #ifdef DEFAULT_CONTENTS
 //standard definition
-#define OCTREE_TYPE char
-#define EMPTY_VAL NodeInformation() 
-#define OCCUPIED_VAL NodeInformation(255)
-#define BOUNDARY_VAL NodeInformation(128)
+#define SPACE_TYPE int
+#define SPACE_EMPTY 0
+#define SPACE_SOLID 1000
+#define SPACE_BOUNDARY_VAL 500
 
 #else
 //experimental types for trying to get Duncan's marching cubes stuff to work
-#define OCTREE_TYPE float
-#define EMPTY_VAL 0.0
-#define OCCUPIED_VAL 1.0
-#define BOUNDARY_VAL 0.5
+#define SPACE_TYPE float
+#define SPACE_EMPTY 0.0
+#define SPACE_SOLID 1.0
+#define SPACE_BOUNDARY_VAL 0.5
 
 #endif
-
-//a macro for easily changing the octree's definition
-#define OCTREE_DEF Octree
-
-//these are the the solid variable in the VoxelInformation class
-#define SPACE_EMPTY 0
-#define SPACE_SOLID 1
 
 class VoxelInformation
 {
 public:
 	//stores the physical state of the node, i.e. empty or solid
-	char solid;
+	SPACE_TYPE solid;
 
 	//default constructor - makes a totally empty node with nothing in it and not tags
 	VoxelInformation();
 
-	VoxelInformation(int in_solid);
+	VoxelInformation(SPACE_TYPE in_solid);
 
 	~VoxelInformation();
 

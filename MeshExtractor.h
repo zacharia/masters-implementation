@@ -168,7 +168,7 @@ public:
     };
 
     //ADDED BY ME
-    void setOctree(OCTREE_DEF* in)
+    void setOctree(Octree* in)
     {
 	    octree = in;
     }
@@ -185,7 +185,7 @@ private:
     int height;
     int depth;
 
-    OCTREE_DEF* octree; // ADDED BY ME
+    Octree* octree; // ADDED BY ME
     bool verbose; //ADDED BY ME
 
     /**********     Marching Cubes Methods       ************/
@@ -392,13 +392,13 @@ private:
 	    }
 	    else
 	    {		    
-		    if ((x >= octree->size()) || (y >= octree->size()) || (z >= octree->size()) || (x < 0) || (y < 0) || (z < 0))
+		    if ((x >= octree->getSize()) || (y >= octree->getSize()) || (z >= octree->getSize()) || (x < 0) || (y < 0) || (z < 0))
 		    {
-			    return EMPTY_VAL;
+			    return SPACE_EMPTY;
 		    }
 		    else
 		    {
-			    return octree->at(x,y,z);	    
+			    return octree->at(x,y,z).solid;
 		    }		    
 	    }    	
     };

@@ -10,29 +10,6 @@
 #ifndef _VOXEL_GRID_H
 #define _VOXEL_GRID_H
 
-//this is for what the octree stores. If this is defined it uses the default thing (unsigned int)
-//otherwise it uses whatever is defined in the else of the macro block
-//#define DEFAULT_CONTENTS
-
-#ifdef DEFAULT_CONTENTS
-//standard definition
-#define OCTREE_TYPE /*unsigned*/ int
-#define EMPTY_VAL 0 //0x00000000
-#define OCCUPIED_VAL 1000 //0xffffffff
-#define BOUNDARY_VAL 500
-
-#else
-//experimental types for trying to get Duncan's marching cubes stuff to work
-#define OCTREE_TYPE float
-#define EMPTY_VAL 0.0
-#define OCCUPIED_VAL 1.0
-#define BOUNDARY_VAL 0.5
-
-#endif
-
-//a macro for easily changing the octree's definition
-#define OCTREE_DEF Octree<OCTREE_TYPE, 32>
-
 
 #include <iostream>
 #include <fstream>
@@ -40,8 +17,8 @@
 #include <math.h>
 #include <OGRE/Ogre.h>
 
-#include "octree/octree.h"
-//#include "Octree.h"
+
+#include "Octree.h"
 #include "OgreDisplay.h"
 
 #include "MeshExtractor.h"
@@ -77,7 +54,7 @@ class VoxelGrid
 	
 	int gridSize;
 	unsigned int size;
-	OCTREE_DEF* grid;
+	Octree* grid;
 	OgreDisplay* display;
 	double object_addition_granularity;	
 	bool verbose;
@@ -101,8 +78,6 @@ class VoxelGrid
 	void makeVoxelGrid(int size);
 
 	std::string toString();
-
-	std::string arrayToString(OCTREE_TYPE* array, unsigned int size);
 
 	void outputString(std::string str, std::string path);
 
@@ -128,7 +103,7 @@ class VoxelGrid
 
 	Ogre::Vector3 getBoundingBoxMaxCorner();
 
-	OCTREE_TYPE getValue(int x, int y, int z);
+	SPACE_TYPE getValue(int x, int y, int z);
 
 	void makeCircle(Ogre::Vector3 pos, int radius, bool add = true);
 

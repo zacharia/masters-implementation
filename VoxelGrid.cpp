@@ -42,74 +42,19 @@ VoxelGrid::~VoxelGrid()
 void VoxelGrid::makeVoxelGrid(int size)
 {
 	//TODO: parametize this correctly
-	grid = new OCTREE_DEF(size, EMPTY_VAL);
+	grid = new Octree(size);
 }
 
 
 //this method displays the voxel grid on the command line
 std::string VoxelGrid::toString()
 {
-	assert(grid->size() > 0);
+	assert(grid->getSize() > 0);
 
-	std::string ret = "";
-	Array2D<OCTREE_TYPE> currSlice;
-	
-	//loop through the whole array
-	for (int k = 0; k < grid->size(); ++k)
-	{
-		currSlice = grid->zSlice(k);
-		for (int i = 0; i < grid->size(); ++i)
-		{
-			for (int j = 0; j < grid->size(); ++j)
-			{
-				if (currSlice.at(i,j) == EMPTY_VAL)
-				{
-					ret += "0";
-				}
-				else
-				{
-					ret += "1";
-				}
-			}
-			ret += "\n";
-		}
-		ret += "\n\n";
-	}
-
-	return ret;
+	return grid->printTree();
 }
 
 
-std::string VoxelGrid::arrayToString(OCTREE_TYPE* array, unsigned int size)
-{
-	assert(size > 0);
-
-	std::string ret = "";
-		
-	//loop through the whole array
-	
-	for (int i = 0; i < size; ++i)
-	{		
-		for (int j = 0; j < size; ++j)
-		{
-			for (int k = 0; k < size; ++k)			
-			{
-				if ( array[k * size * size + i * size + j] == EMPTY_VAL)
-				{
-					ret += "0";
-				}
-				else
-				{
-					ret += "1";
-				}
-			}
-			ret += "\n";
-		}
-		ret += "\n\n";
-	}
-
-	return ret;	
-}
 
 
 void VoxelGrid::outputString(std::string str, std::string path)
@@ -130,21 +75,21 @@ void VoxelGrid::outputString(std::string str, std::string path)
 
 int VoxelGrid::getSize()
 {
-	return grid->size();
+	return grid->getSize();
 }
 
 
 //returns the value at a point in the grid
-OCTREE_TYPE VoxelGrid::getValue(int x, int y, int z)
+SPACE_TYPE VoxelGrid::getValue(int x, int y, int z)
 {
 	//if the requested position is invalid, return 0xff
-	if ((x < 0) || (y < 0) || (z < 0) || (x > grid->size()) || (y > grid->size()) || (z > grid->size()))
+	if ((x < 0) || (y < 0) || (z < 0) || (x > grid->getSize()) || (y > grid->getSize()) || (z > grid->getSize()))
 	{
-		return EMPTY_VAL;
+		return SPACE_EMPTY;
 	}
 	else
 	{
-		return grid->at(x,y,z);
+		return grid->at(x,y,z).solid;
 	}
 }
 
@@ -414,7 +359,7 @@ void VoxelGrid::createShapes()
 void VoxelGrid::scaleShapes()
 {
 	//check everything is legit.
-	assert(grid->size() > 0);
+	assert(grid->getSize() > 0);
 	assert(shapes.size() > 0);
 	assert(bounding_box_min.x < MAX_DOUBLE_VAL);
 	assert(bounding_box_max.x > -MAX_DOUBLE_VAL);
@@ -444,15 +389,15 @@ void VoxelGrid::scaleShapes()
 	double scale_ratio;
 	if (biggest_side == 'x')
 	{
-		scale_ratio = (double)grid->size() / size.x;
+		scale_ratio = (double)grid->getSize() / size.x;
 	}
 	if (biggest_side == 'y')
 	{
-		scale_ratio = (double)grid->size() / size.y;
+		scale_ratio = (double)grid->getSize() / size.y;
 	}
 	if (biggest_side == 'z')
 	{
-		scale_ratio = (double)grid->size() / size.z;
+		scale_ratio = (double)grid->getSize() / size.z;
 	}
 
 	scale_ratio *= 0.95;
@@ -490,54 +435,49 @@ void VoxelGrid::updateDisplay()
 {
 	//do some sanity checks
 	assert(display != NULL);
-	assert(grid->size() > 0);
-
-	//make a slice for use in slicing stuff
-	Array2D<OCTREE_TYPE> currSlice;
+	assert(grid->getSize() > 0);
 
 	//loop through the whole array
-	for (int k = 0; k < grid->size(); ++k)
+	for (int k = 0; k < grid->getSize(); ++k)
 	{
 		if (verbose)
 		{
-			std::cout << "doing slice: " << k << " of " << grid->size() << "\n"; //TEMP 	
+			std::cout << "doing slice: " << k << " of " << grid->getSize() << "\n"; //TEMP 	
 		}
 		
-		currSlice = grid->zSlice(k);
-		for (int j = 0; j < grid->size(); ++j)
+		for (int j = 0; j < grid->getSize(); ++j)
 		{
-			for (int i = 0; i < grid->size(); ++i)
+			for (int i = 0; i < grid->getSize(); ++i)
 			{
 				//if a voxel is 'on'
-				if (currSlice.at(j,i) == OCCUPIED_VAL)
+				if (grid->at(i,j,k).solid == SPACE_SOLID)
 				{
 #ifdef HIDE_VOXELS
 					//then check if it's actually visible
 					//this is a very cheap conservative hack at the moment
-					if (((k == grid->size() - 1) ||
+					if (((k == grid->getSize() - 1) ||
 					    (k == 0) ||
-					    (j == grid->size() - 1) ||
+					    (j == grid->getSize() - 1) ||
 					    (j == 0) ||
-					    (i == grid->size() - 1) ||
+					    (i == grid->getSize() - 1) ||
 					    (i == 0))
 					    ||
 					    //actual visibility check
-					    ((grid->at(i+1,j,k) == EMPTY_VAL) ||
-					    (grid->at(i-1,j,k) == EMPTY_VAL) ||
-					    (grid->at(i,j+1,k) == EMPTY_VAL) ||
-					    (grid->at(i,j-1,k) == EMPTY_VAL) ||
-					    (grid->at(i,j,k+1) == EMPTY_VAL) ||
-					    (grid->at(i,j,k-1) == EMPTY_VAL))
+					    ((grid->at(i+1,j,k).solid == SPACE_EMPTY) ||
+					    (grid->at(i-1,j,k).solid == SPACE_EMPTY) ||
+					    (grid->at(i,j+1,k).solid == SPACE_EMPTY) ||
+					    (grid->at(i,j-1,k).solid == SPACE_EMPTY) ||
+					    (grid->at(i,j,k+1).solid) == SPACE_EMPTY) ||
+					    (grid->at(i,j,k-1).solid == SPACE_EMPTY))
 
-					    /*!((grid->at(i+1,j,k) == OCCUPIED_VAL) &&
-					     (grid->at(i-1,j,k) == OCCUPIED_VAL) &&
-					     (grid->at(i,j+1,k) == OCCUPIED_VAL) &&
-					     (grid->at(i,j-1,k) == OCCUPIED_VAL) &&
-					     (grid->at(i,j,k+1) == OCCUPIED_VAL) &&
-					     (grid->at(i,j,k-1) == OCCUPIED_VAL))*/
-						)
+					    /*!((grid->at(i+1,j,k).solid == SPACE_SOLID) &&
+					     (grid->at(i-1,j,k).solid == SPACE_SOLID) &&
+					     (grid->at(i,j+1,k).solid == SPACE_SOLID) &&
+					     (grid->at(i,j-1,k).solid == SPACE_SOLID) &&
+					     (grid->at(i,j,k+1).solid == SPACE_SOLID) &&
+					     (grid->at(i,j,k-1).solid == SPACE_SOLID))*/
 #endif
-					{						
+					{
 						display->addVoxelBillboard(Ogre::Vector3(i,j,k));	
 					}					
 				}
@@ -551,18 +491,18 @@ void VoxelGrid::polygonize()
 {
 	//do some sanity checks
 	assert(display != NULL);
-	assert(grid->size() > 0);
-
-	//make a slice for use in slicing stuff
-	Array2D<OCTREE_TYPE> currSlice;
+	assert(grid->getSize() > 0);
+	
 	TriangleMesh output_mesh;
-	int temp_size = grid->size();
+	
 	//FIXME: this might not be big enough for very large arrays?
 	MeshExtractor extractor;
 	extractor.setOctree(grid);
 	extractor.setVerbose(verbose);
 
-	output_mesh = polygonizeBlock(grid->size());
+	output_mesh = polygonizeBlock(grid->getSize());
+
+	assert(!output_mesh.isEmpty());
 		
 	display->createTriangleMesh("ship");
 	display->addToTriangleMesh("ship", &output_mesh, true);	
@@ -571,11 +511,11 @@ void VoxelGrid::polygonize()
 
 TriangleMesh VoxelGrid::polygonizeBlock(unsigned int size, Ogre::Vector3 position)
 {
-	assert(grid->size() > 0);
-	assert(size <= grid->size());
-	assert(position.x + size <= grid->size());
-	assert(position.y + size <= grid->size());
-	assert(position.z + size <= grid->size());
+	assert(grid->getSize() > 0);
+	assert(size <= grid->getSize());
+	assert(position.x + size <= grid->getSize());
+	assert(position.y + size <= grid->getSize());
+	assert(position.z + size <= grid->getSize());
 	
 	TriangleMesh ret;	
 	MeshExtractor extractor;
@@ -586,15 +526,15 @@ TriangleMesh VoxelGrid::polygonizeBlock(unsigned int size, Ogre::Vector3 positio
 	//make a dummy array that doesn't actually contain the grid, but just keeps the extractor methods happy.
 	//this will crash if used, but since the extractor has been changed to only use the octree this won't
 	//be a problem.
-	OCTREE_TYPE* input_grid = new OCTREE_TYPE[10];
+	SPACE_TYPE* input_grid = new SPACE_TYPE[10];
 
 	if (useMarchingCubes)
 	{
-		extractor.extractMeshWithMarchingCubes(input_grid, size, size, size, BOUNDARY_VAL, &ret);	
+		extractor.extractMeshWithMarchingCubes(input_grid, size, size, size, (SPACE_TYPE)SPACE_BOUNDARY_VAL, &ret);	
 	}
 	else
 	{
-		extractor.extractMeshWithMarchingTetrahedra(input_grid, size, size, size, BOUNDARY_VAL, &ret);
+		extractor.extractMeshWithMarchingTetrahedra(input_grid, size, size, size, (SPACE_TYPE)SPACE_BOUNDARY_VAL, &ret);
 	}
 	
 	delete [] input_grid;
@@ -616,22 +556,22 @@ void VoxelGrid::makeCircle(Ogre::Vector3 pos, int radius, bool add)
 			{
 				currpos = pos + Ogre::Vector3(i,j,k);
 				//check the current voxel is in bounds
-				if ((currpos.x < grid->size()) &&
+				if ((currpos.x < grid->getSize()) &&
 				    (currpos.x >= 0) &&
-				    (currpos.y < grid->size()) &&
+				    (currpos.y < grid->getSize()) &&
 				    (currpos.y >= 0) &&
-				    (currpos.z < grid->size()) &&
+				    (currpos.z < grid->getSize()) &&
 				    (currpos.z >= 0))
 				{					
 					if (pow(i , 2) + pow(j, 2) + pow(k, 2) <= pow(radius,2))
 					{
 						if (add)
 						{
-							grid->set(currpos.x, currpos.y, currpos.z, OCCUPIED_VAL);
+							grid->set(currpos.x, currpos.y, currpos.z, VoxelInformation(SPACE_SOLID));
 						}
 						else
 						{
-							grid->set(currpos.x, currpos.y, currpos.z, EMPTY_VAL);
+							grid->set(currpos.x, currpos.y, currpos.z, VoxelInformation(SPACE_EMPTY));
 						}
 					}
 				}
@@ -657,20 +597,20 @@ void VoxelGrid::makeRectangle(Ogre::Vector3 pos, Ogre::Vector3 extents, Ogre::Ma
 					(orientation.GetColumn(1) * j) +
 					(orientation.GetColumn(2) * k);
 				//check the current voxel is in bounds
-				if ((currpos.x < grid->size()) &&
+				if ((currpos.x < grid->getSize()) &&
 				    (currpos.x >= 0) &&
-				    (currpos.y < grid->size()) &&
+				    (currpos.y < grid->getSize()) &&
 				    (currpos.y >= 0) &&
-				    (currpos.z < grid->size()) &&
+				    (currpos.z < grid->getSize()) &&
 				    (currpos.z >= 0))
 				{
 					if (add)
 					{
-						grid->set(currpos.x, currpos.y, currpos.z, OCCUPIED_VAL);
+						grid->set(currpos.x, currpos.y, currpos.z, VoxelInformation(SPACE_SOLID));
 					}
 					else
 					{
-						grid->set(currpos.x, currpos.y, currpos.z, EMPTY_VAL);
+						grid->set(currpos.x, currpos.y, currpos.z, VoxelInformation(SPACE_EMPTY));
 					}
 				}
 			}
@@ -695,22 +635,22 @@ void VoxelGrid::makeEllipsoid(Ogre::Vector3 pos, Ogre::Vector3 extents, Ogre::Ma
 					(orientation.GetColumn(1) * j) +
 					(orientation.GetColumn(2) * k);
 				//check the current voxel is in bounds
-				if ((currpos.x < grid->size()) &&
+				if ((currpos.x < grid->getSize()) &&
 				    (currpos.x >= 0) &&
-				    (currpos.y < grid->size()) &&
+				    (currpos.y < grid->getSize()) &&
 				    (currpos.y >= 0) &&
-				    (currpos.z < grid->size()) &&
+				    (currpos.z < grid->getSize()) &&
 				    (currpos.z >= 0))
 				{
 					if (pow((i) / (float)extents.x, 2) + pow((j) / (double)extents.y, 2) + pow((k) / (double)extents.z, 2) <= 1)
 					{
 						if (add)
 						{
-							grid->set(currpos.x, currpos.y, currpos.z, OCCUPIED_VAL);
+							grid->set(currpos.x, currpos.y, currpos.z, VoxelInformation(SPACE_SOLID));
 						}
 						else
 						{
-							grid->set(currpos.x, currpos.y, currpos.z, EMPTY_VAL);
+							grid->set(currpos.x, currpos.y, currpos.z, VoxelInformation(SPACE_EMPTY));
 						}
 					}
 				}
@@ -737,22 +677,22 @@ void VoxelGrid::makeCylinder(Ogre::Vector3 pos, Ogre::Vector3 extents, Ogre::Mat
 					(orientation.GetColumn(1) * j) +
 					(orientation.GetColumn(2) * k);
 				//check the current voxel is in bounds
-				if ((currpos.x < grid->size()) &&
+				if ((currpos.x < grid->getSize()) &&
 				    (currpos.x >= 0) &&
-				    (currpos.y < grid->size()) &&
+				    (currpos.y < grid->getSize()) &&
 				    (currpos.y >= 0) &&
-				    (currpos.z < grid->size()) &&
+				    (currpos.z < grid->getSize()) &&
 				    (currpos.z >= 0))
 				{
 					if (pow((i) / (double)extents.x, 2) + pow((k) / (double)extents.z, 2) <= 1)
 					{
 						if (add)
 						{
-							grid->set(currpos.x, currpos.y, currpos.z, OCCUPIED_VAL);
+							grid->set(currpos.x, currpos.y, currpos.z, VoxelInformation(SPACE_SOLID));
 						}
 						else
 						{
-							grid->set(currpos.x, currpos.y, currpos.z, EMPTY_VAL);
+							grid->set(currpos.x, currpos.y, currpos.z, VoxelInformation(SPACE_EMPTY));
 						}
 					}
 				}
