@@ -12,6 +12,7 @@
 //standard library inclusions
 #include <sstream>
 #include <string>
+#include <OGRE/Ogre.h>
 
 //project inclusions
 // HERE
@@ -29,6 +30,10 @@ public:
 	static std::string numToString(int in);
 
 	static std::string numToString(double in);
+
+	static std::string ogreVector3ToString(Ogre::Vector3 in);
+
+	static std::string ogreMatrix3ToString(Ogre::Matrix3 in, bool on_one_line = false);
 };
 
 #endif
