@@ -21,7 +21,7 @@
 #include "OGRE/Ogre.h"
 
 //project inclusions
-// HERE
+#include "Octree.h"
 
 //Tables used in the marching X algorithms to do stuff with.
 
@@ -409,13 +409,16 @@ int a2iTriangleConnectionTable[256][16] =
 class MeshGenerator
 {
 private:
-	static const float fTargetValue = 48.0;
-	static const int iDataSetSize = 16;
-	static const float fStepSize = 1.0/iDataSetSize;
+	float fTargetValue;
+	float fStepSize;
+
+	Octree* voxel_grid;
+
+	bool verbose;
 
 	float fGetOffset(float fValue1, float fValue2, float fValueDesired);
 
-	Ogre::Vector3 vGetColor(Ogre::Vector3 &rfPosition, Ogre::Vector3 &rfNormal);
+	Ogre::ColourValue vGetColor(Ogre::Vector3 &rfPosition, Ogre::Vector3 &rfNormal);
 
 	void vMarchTetrahedron(Ogre::Vector3 *pasTetrahedronPosition, float *pafTetrahedronValue);
 
@@ -437,6 +440,18 @@ public:
 	void vMarchingCubes();
 
 	void vMarchingTetrahedrons();
+
+	void setTargetValue(float in);
+	
+	float getTargetValue();
+	
+	void setStepSize(float in);
+	
+	float getStepSize();
+
+	void setOctree(Octree* in);
+
+	void setVerbose(bool in);
 };
 
 #endif

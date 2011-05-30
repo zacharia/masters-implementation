@@ -5,13 +5,57 @@
 
 MeshGenerator::MeshGenerator()
 {
-	
+	voxel_grid = NULL;
+	fTargetValue = 5.0;
+	fStepSize = 1.0;
+	verbose = true;
 }
 
 
 MeshGenerator::~MeshGenerator()
 {
 	
+}
+
+
+//get set methods for the parameters of the mesh generation.
+
+void MeshGenerator::setTargetValue(float in)
+{
+	fTargetValue = in;
+}
+
+
+float MeshGenerator::getTargetValue()
+{
+	return fTargetValue;
+}
+
+
+void MeshGenerator::setStepSize(float in)
+{
+	fStepSize = in;
+}
+
+
+float MeshGenerator::getStepSize()
+{
+	return fStepSize;
+}
+
+
+//sets the pointer to the octree object we're running the mesh generation on.
+void MeshGenerator::setOctree(Octree* in)
+{
+	assert(in != NULL);
+	
+	voxel_grid = in;
+}
+
+
+void MeshGenerator::setVerbose(bool in)
+{
+	verbose = in;
 }
 
 
@@ -30,53 +74,25 @@ float MeshGenerator::fGetOffset(float fValue1, float fValue2, float fValueDesire
 
 
 //vGetColor generates a color from a given position and normal of a point
-Ogre::Vector3 MeshGenerator::vGetColor(Ogre::Vector3 &rfPosition, Ogre::Vector3 &rfNormal)
+Ogre::ColourValue MeshGenerator::vGetColor(Ogre::Vector3 &rfPosition, Ogre::Vector3 &rfNormal)
 {
-	Ogre::Vector3 rfColor;
+	Ogre::ColourValue rfColor;
 	
         float fX = rfNormal.x;
         float fY = rfNormal.y;
         float fZ = rfNormal.z;
-        rfColor.x = (fX > 0.0 ? fX : 0.0) + (fY < 0.0 ? -0.5*fY : 0.0) + (fZ < 0.0 ? -0.5*fZ : 0.0);
-        rfColor.y = (fY > 0.0 ? fY : 0.0) + (fZ < 0.0 ? -0.5*fZ : 0.0) + (fX < 0.0 ? -0.5*fX : 0.0);
-        rfColor.z = (fZ > 0.0 ? fZ : 0.0) + (fX < 0.0 ? -0.5*fX : 0.0) + (fY < 0.0 ? -0.5*fY : 0.0);
+        rfColor.r = (fX > 0.0 ? fX : 0.0) + (fY < 0.0 ? -0.5*fY : 0.0) + (fZ < 0.0 ? -0.5*fZ : 0.0);
+        rfColor.g = (fY > 0.0 ? fY : 0.0) + (fZ < 0.0 ? -0.5*fZ : 0.0) + (fX < 0.0 ? -0.5*fX : 0.0);
+        rfColor.b = (fZ > 0.0 ? fZ : 0.0) + (fX < 0.0 ? -0.5*fX : 0.0) + (fY < 0.0 ? -0.5*fY : 0.0);
 
 	return rfColor;
 }
 
 
-Ogre::Vector3 MeshGenerator::vNormalizeVector(Ogre::Vector3 &rfVectorSource)
-{
-        float fOldLength;
-        float fScale;
-
-	Ogre::Vector3 rfVectorResult;
-
-        fOldLength = sqrtf( (rfVectorSource.x * rfVectorSource.x) +
-                            (rfVectorSource.y * rfVectorSource.y) +
-                            (rfVectorSource.z * rfVectorSource.z) );
-
-        if(fOldLength == 0.0)
-        {
-                rfVectorResult.x = rfVectorSource.x;
-                rfVectorResult.y = rfVectorSource.y;
-                rfVectorResult.z = rfVectorSource.z;
-        }
-        else
-        {
-                fScale = 1.0/fOldLength;
-                rfVectorResult.x = rfVectorSource.x*fScale;
-                rfVectorResult.y = rfVectorSource.y*fScale;
-                rfVectorResult.z = rfVectorSource.z*fScale;
-        }
-
-	return rfVectorResult;
-}
-
-
 float MeshGenerator::fSample(float fX, float fY, float fZ)
 {
-	return 0;
+	//FIXME: this should take other NodeInformation factors into account.
+	return voxel_grid->at(fX, fY, fZ).solid;
 }
 
 
@@ -89,7 +105,7 @@ Ogre::Vector3 MeshGenerator::vGetNormal(float fX, float fY, float fZ)
         rfNormal.x = fSample(fX-0.01, fY, fZ) - fSample(fX+0.01, fY, fZ);
         rfNormal.y = fSample(fX, fY-0.01, fZ) - fSample(fX, fY+0.01, fZ);
         rfNormal.z = fSample(fX, fY, fZ-0.01) - fSample(fX, fY, fZ+0.01);
-        vNormalizeVector(rfNormal);
+        rfNormal.normalise();;
 
 	return rfNormal;
 }
@@ -103,7 +119,7 @@ void MeshGenerator::vMarchCube1(float fX, float fY, float fZ, float fScale)
 
         int iCorner, iVertex, iVertexTest, iEdge, iTriangle, iFlagIndex, iEdgeFlags;
         float fOffset;
-        Ogre::Vector3 sColor;
+        Ogre::ColourValue sColor;
         float afCubeValue[8];
         Ogre::Vector3 asEdgeVertex[12];
         Ogre::Vector3 asEdgeNorm[12];
@@ -181,7 +197,7 @@ void MeshGenerator::vMarchTetrahedron(Ogre::Vector3 *pasTetrahedronPosition, flo
         float fOffset, fInvOffset, fValue = 0.0;
         Ogre::Vector3 asEdgeVertex[6];
         Ogre::Vector3 asEdgeNorm[6];
-        Ogre::Vector3 sColor;
+        Ogre::ColourValue sColor;
 
         //Find which vertices are inside of the surface and which are outside
         for(iVertex = 0; iVertex < 4; iVertex++)
@@ -279,24 +295,54 @@ void MeshGenerator::vMarchCube2(float fX, float fY, float fZ, float fScale)
 //vMarchingCubes iterates over the entire dataset, calling vMarchCube on each cube
 void MeshGenerator::vMarchingCubes()
 {
+	assert(voxel_grid != NULL);
+
+	int iDataSetSize = voxel_grid->getSize();
+	
         int iX, iY, iZ;
+
+	//ogre draw begin
+	
         for(iX = 0; iX < iDataSetSize; iX++)
+
+		if (this->verbose)
+		{
+			std::cout << "doing slice " << iX << " of " << iDataSetSize << "\n";
+		}
+		
 		for(iY = 0; iY < iDataSetSize; iY++)
 			for(iZ = 0; iZ < iDataSetSize; iZ++)
 			{
 				vMarchCube1(iX*fStepSize, iY*fStepSize, iZ*fStepSize, fStepSize);
 			}
+
+	//ogre draw end
 }
 
 
 //vMarchingCubes iterates over the entire dataset, calling vMarchCube on each cube
 void MeshGenerator::vMarchingTetrahedrons()
 {
+	assert(voxel_grid != NULL);
+
+	int iDataSetSize = voxel_grid->getSize();
+	
         int iX, iY, iZ;
+
+	//ogre draw begin
+	
         for(iX = 0; iX < iDataSetSize; iX++)
+
+		if (this->verbose)
+		{
+			std::cout << "doing slice " << iX << " of " << iDataSetSize << "\n";
+		}
+		
 		for(iY = 0; iY < iDataSetSize; iY++)
 			for(iZ = 0; iZ < iDataSetSize; iZ++)
 			{
 				vMarchCube2(iX*fStepSize, iY*fStepSize, iZ*fStepSize, fStepSize);
 			}
+
+	//ogre draw end
 }
