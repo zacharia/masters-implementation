@@ -25,7 +25,6 @@
 #include "OgreDisplay.h"
 
 
-
 class MeshGenerator
 {
 private:

@@ -23,6 +23,7 @@ OgreDisplay::OgreDisplay()
 	verbose = false;
 }
 
+
 //deletes root.
 OgreDisplay::~OgreDisplay()
 {
@@ -31,6 +32,7 @@ OgreDisplay::~OgreDisplay()
 		delete root;
 	}
 }
+
 
 //does all the initial setup of the window, camera, etc.
 void OgreDisplay::initialize()
@@ -113,6 +115,7 @@ void OgreDisplay::initialize()
 	this->createCubeMesh(); //use default arguments to make the default cube
 	this->createCylinderMesh(); //use default arguments to make the default cylinder
 }
+
 
 void OgreDisplay::createCubeMesh(std::string name, std::string material)
 {
@@ -205,6 +208,7 @@ RenderWindow* OgreDisplay::getRenderWindow()
 	return renderWindow;
 }
 
+
 //draw one frame
 void OgreDisplay::drawFrame()
 {
@@ -216,6 +220,7 @@ void OgreDisplay::drawFrame()
 	root->renderOneFrame();
 	renderWindow->update();
 }
+
 
 //this makes the cube mesh used to represent a voxel.
 void OgreDisplay::createVoxelMesh()
@@ -244,6 +249,7 @@ void OgreDisplay::createVoxelMesh()
 	manual->convertToMesh("voxel");
 }
 
+
 //this method adds a voxel into the world as an entity
 void OgreDisplay::addVoxel(Vector3 pos)
 {
@@ -253,6 +259,7 @@ void OgreDisplay::addVoxel(Vector3 pos)
 	newVoxel->attachObject(sceneMgr->createEntity(name, /*"voxel"*/ "defaultCubeMesh"));
 	newVoxel->translate(pos.x, pos.y, pos.z);
 }
+
 
 //this method adds a voxel into the world as static geometry
 void OgreDisplay::addVoxelStatic(Vector3 pos)
@@ -267,20 +274,24 @@ void OgreDisplay::addVoxelStatic(Vector3 pos)
 	sceneMgr->getStaticGeometry("voxel_grid")->addSceneNode(newVoxel);
 }
 
+
 void OgreDisplay::buildStaticGeometry()
 {
 	( sceneMgr->getStaticGeometry("voxel_grid") )->build();
 }
+
 
 Camera* OgreDisplay::getCamera()
 {
 	return camera;
 }
 
+
 void OgreDisplay::addVoxelBillboard(Vector3 pos)
 {
 	sceneMgr->getBillboardSet("voxel_grid")->createBillboard(Vector3(pos.x, pos.y, pos.z));
 }
+
 
 /*
   Adds a rectangle to the scene.
@@ -312,6 +323,7 @@ void OgreDisplay::addCube(Vector3 pos, Vector3 scale, Quaternion rot, std::strin
 	node->attachObject(ent);
 }
 
+
 void OgreDisplay::addCylinder(Vector3 pos, Vector3 scale, Quaternion rot, std::string materialName, bool randCol)
 {
 	SceneNode* node = sceneMgr->getRootSceneNode()->createChildSceneNode(pos, rot);
@@ -335,15 +347,18 @@ void OgreDisplay::addCylinder(Vector3 pos, Vector3 scale, Quaternion rot, std::s
 	node->attachObject(ent);
 }
 
+
 ManualObject* OgreDisplay::createManualObject(std::string name)
 {
 	return sceneMgr->createManualObject(name);
 }
 
+
 SceneManager* OgreDisplay::getSceneManager()
 {
 	return sceneMgr;
 }
+
 
 /*
   this method creates a light in the scene, based on the arguments given.
@@ -380,6 +395,7 @@ Light* OgreDisplay::createLight(std::string type, Vector3 pos, ColourValue col, 
 	return light;
 }
 
+
 /*
   this method sets up a light that is centred at the camera.
   if enable is true, the light is created/turned on again.
@@ -397,6 +413,7 @@ void OgreDisplay::makeCameraLight(ColourValue col)
 		cameraLight->setSpecularColour(col);
 	}	
 }
+
 
 /*
   this method sets up a light at the origin.
@@ -416,6 +433,7 @@ void OgreDisplay::makeOriginLight(ColourValue col)
 	}
 }
 
+
 void OgreDisplay::toggleCameraLight()
 {
 	if (cameraLight != NULL)
@@ -428,6 +446,7 @@ void OgreDisplay::toggleCameraLight()
 		makeCameraLight(ColourValue(0,0.7,0.0));
 	}
 }
+
 
 void OgreDisplay::toggleOriginLight()
 {
@@ -442,50 +461,6 @@ void OgreDisplay::toggleOriginLight()
 	}
 }
 
-void OgreDisplay::createTriangleMesh(std::string name, std::string material)
-{
-	Ogre::ManualObject* mesh = this->createManualObject(name);
-	mesh->begin(material, RenderOperation::OT_TRIANGLE_LIST);
-}
-
-
-void OgreDisplay::addToTriangleMesh(std::string name, TriangleMesh* input_mesh, bool finish)
-{
-	assert(sceneMgr->hasManualObject(name));
-	
-	Ogre::ManualObject* mesh = sceneMgr->getManualObject(name);
-
-	if ((input_mesh != NULL)/* && (!input_mesh->isEmpty())*/)
-	{
-		int count = 0;
-		//FIXME: is this winding the triangles in the correct way?
-		for (std::vector<Triangle>::iterator i = input_mesh->triangles.begin(); i != input_mesh->triangles.end(); i++)
-		{
-			mesh->position(input_mesh->vertices[i->a]);
-			mesh->normal(input_mesh->normals[i->na]);
-
-			mesh->position(input_mesh->vertices[i->b]);
-			mesh->normal(input_mesh->normals[i->nb]);
-
-			mesh->position(input_mesh->vertices[i->c]);
-			mesh->normal(input_mesh->normals[i->nc]);
-		
-			count += 3;
-
-			mesh->triangle(count-3,count-2,count-1);
-		}
-	}
-
-	if (finish)
-	{
-		mesh->end();
-		mesh->convertToMesh(name);
-
-		Ogre::Entity* ship = this->getSceneManager()->createEntity(name, name);		
-		Ogre::SceneNode* ship_node = this->getSceneManager()->getRootSceneNode()->createChildSceneNode();
-		ship_node->attachObject(ship);	
-	}
-}
 
 void OgreDisplay::QuietLog::messageLogged(const String& message, LogMessageLevel lml, bool maskDebug, const String& logName)
 {

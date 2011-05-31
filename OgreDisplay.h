@@ -10,7 +10,6 @@
 
 //project inclusions
 #include "Utility.h"
-#include "TriangleMesh.h"
 
 using namespace Ogre;
 
@@ -84,10 +83,6 @@ public:
 	void toggleCameraLight();
 
 	void toggleOriginLight();
-
-	void createTriangleMesh(std::string name, std::string material = "basic/backface_culling_off");
-
-	void addToTriangleMesh(std::string name, TriangleMesh* input_mesh, bool finish = false);
 
 	void setVerbose(bool v);
 };
