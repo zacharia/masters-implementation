@@ -493,10 +493,12 @@ float MeshGenerator::fSample(float fX, float fY, float fZ)
 Ogre::Vector3 MeshGenerator::vGetNormal(float fX, float fY, float fZ)
 {
 	Ogre::Vector3 rfNormal;
+
+	float delta = 1.0;
 	
-        rfNormal.x = fSample(fX-0.01, fY, fZ) - fSample(fX+0.01, fY, fZ);
-        rfNormal.y = fSample(fX, fY-0.01, fZ) - fSample(fX, fY+0.01, fZ);
-        rfNormal.z = fSample(fX, fY, fZ-0.01) - fSample(fX, fY, fZ+0.01);
+        rfNormal.x = fSample(fX-delta, fY, fZ) - fSample(fX+delta, fY, fZ);
+        rfNormal.y = fSample(fX, fY-delta, fZ) - fSample(fX, fY+delta, fZ);
+        rfNormal.z = fSample(fX, fY, fZ-delta) - fSample(fX, fY, fZ+delta);
         rfNormal.normalise();;
 
 	return rfNormal;
