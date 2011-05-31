@@ -6,6 +6,7 @@
 MeshGenerator::MeshGenerator()
 {
 	voxel_grid = NULL;
+	display = NULL;
 	fTargetValue = 5.0;
 	fStepSize = 1.0;
 	verbose = true;
@@ -52,6 +53,13 @@ void MeshGenerator::setOctree(Octree* in)
 	voxel_grid = in;
 }
 
+
+void MeshGenerator::setOgreDisplay(OgreDisplay* in)
+{
+	assert(in != NULL);
+	
+	display = in;	
+}
 
 void MeshGenerator::setVerbose(bool in)
 {
@@ -177,12 +185,20 @@ void MeshGenerator::vMarchCube1(float fX, float fY, float fZ, float fScale)
                 for(iCorner = 0; iCorner < 3; iCorner++)
                 {
                         iVertex = a2iTriangleConnectionTable[iFlagIndex][3*iTriangle+iCorner];
+			
+			ship_mesh->position(asEdgeVertex[iVertex].x, asEdgeVertex[iVertex].y, asEdgeVertex[iVertex].z);
+			ship_mesh->normal(asEdgeNorm[iVertex].x,   asEdgeNorm[iVertex].y,   asEdgeNorm[iVertex].z);
+			ship_mesh->colour( vGetColor(asEdgeVertex[iVertex], asEdgeNorm[iVertex]) );
+                        //up the vertex count by one.
+			mesh_vertex_count++;
 
-                        sColor = vGetColor(asEdgeVertex[iVertex], asEdgeNorm[iVertex]);
+                        // sColor = 
                         // glColor3f(sColor.x, sColor.y, sColor.z);
                         // glNormal3f(asEdgeNorm[iVertex].x,   asEdgeNorm[iVertex].y,   asEdgeNorm[iVertex].z);
                         // glVertex3f(asEdgeVertex[iVertex].x, asEdgeVertex[iVertex].y, asEdgeVertex[iVertex].z);
                 }
+
+		ship_mesh->triangle(mesh_vertex_count-3, mesh_vertex_count-2, mesh_vertex_count-1);
         }
 }
 
@@ -243,11 +259,20 @@ void MeshGenerator::vMarchTetrahedron(Ogre::Vector3 *pasTetrahedronPosition, flo
                 {
                         iVertex = a2iTetrahedronTriangles[iFlagIndex][3*iTriangle+iCorner];
 
-                        sColor = vGetColor(asEdgeVertex[iVertex], asEdgeNorm[iVertex]);
+			//make a vertex with the appropriate position, normal and colour
+			ship_mesh->position(asEdgeVertex[iVertex].x, asEdgeVertex[iVertex].y, asEdgeVertex[iVertex].z);
+			ship_mesh->normal(asEdgeNorm[iVertex].x,   asEdgeNorm[iVertex].y,   asEdgeNorm[iVertex].z);
+			ship_mesh->colour( vGetColor(asEdgeVertex[iVertex], asEdgeNorm[iVertex]) );
+			//up the vertex count by one.
+			mesh_vertex_count++;
+
+                        // sColor = 
                         // glColor3f(sColor.x, sColor.y, sColor.z);
                         // glNormal3f(asEdgeNorm[iVertex].x,   asEdgeNorm[iVertex].y,   asEdgeNorm[iVertex].z);
                         // glVertex3f(asEdgeVertex[iVertex].x, asEdgeVertex[iVertex].y, asEdgeVertex[iVertex].z);
                 }
+
+		ship_mesh->triangle(mesh_vertex_count-3, mesh_vertex_count-2, mesh_vertex_count-1);
         }
 }
 
@@ -297,14 +322,22 @@ void MeshGenerator::vMarchingCubes()
 {
 	assert(voxel_grid != NULL);
 
+	//size of the octree's dimensions
 	int iDataSetSize = voxel_grid->getSize();
 	
         int iX, iY, iZ;
 
-	//ogre draw begin
+	//ogre object drawing code.
+	assert(display != NULL);
+	std::string name = "ship";
+	std::string material = "basic/backface_culling_off";
+	ship_mesh = display->createManualObject(name);
+	ship_mesh->begin(material, RenderOperation::OT_TRIANGLE_LIST);
+	//this variable tracks how many vertices have been added, for the purposes of connecting them into triangles.
+	mesh_vertex_count = 0;
 	
         for(iX = 0; iX < iDataSetSize; iX++)
-
+	{
 		if (this->verbose)
 		{
 			std::cout << "doing slice " << iX << " of " << iDataSetSize << "\n";
@@ -315,8 +348,15 @@ void MeshGenerator::vMarchingCubes()
 			{
 				vMarchCube1(iX*fStepSize, iY*fStepSize, iZ*fStepSize, fStepSize);
 			}
-
+	}
+	
 	//ogre draw end
+	ship_mesh->end();
+	ship_mesh->convertToMesh(name);
+
+	Ogre::Entity* ship = display->getSceneManager()->createEntity(name, name);		
+	Ogre::SceneNode* ship_node = display->getSceneManager()->getRootSceneNode()->createChildSceneNode();
+	ship_node->attachObject(ship);
 }
 
 
@@ -330,9 +370,16 @@ void MeshGenerator::vMarchingTetrahedrons()
         int iX, iY, iZ;
 
 	//ogre draw begin
-	
+	assert(display != NULL);
+	std::string name = "ship";
+	std::string material = "basic/backface_culling_off";
+	ship_mesh = display->createManualObject(name);
+	ship_mesh->begin(material, RenderOperation::OT_TRIANGLE_LIST);
+	//this variable tracks how many vertices have been added, for the purposes of connecting them into triangles.
+	mesh_vertex_count = 0;
+		
         for(iX = 0; iX < iDataSetSize; iX++)
-
+	{
 		if (this->verbose)
 		{
 			std::cout << "doing slice " << iX << " of " << iDataSetSize << "\n";
@@ -343,6 +390,13 @@ void MeshGenerator::vMarchingTetrahedrons()
 			{
 				vMarchCube2(iX*fStepSize, iY*fStepSize, iZ*fStepSize, fStepSize);
 			}
-
+	}
+	
 	//ogre draw end
+	ship_mesh->end();
+	ship_mesh->convertToMesh(name);
+
+	Ogre::Entity* ship = display->getSceneManager()->createEntity(name, name);		
+	Ogre::SceneNode* ship_node = display->getSceneManager()->getRootSceneNode()->createChildSceneNode();
+	ship_node->attachObject(ship);
 }

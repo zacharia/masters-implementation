@@ -22,6 +22,7 @@
 
 //project inclusions
 #include "Octree.h"
+#include "OgreDisplay.h"
 
 //Tables used in the marching X algorithms to do stuff with.
 
@@ -409,10 +410,19 @@ int a2iTriangleConnectionTable[256][16] =
 class MeshGenerator
 {
 private:
+	//threshold value which separates empty and solid space for the algorithm.
 	float fTargetValue;
+	//size of steps when doing the marching X algorithm
 	float fStepSize;
 
 	Octree* voxel_grid;
+
+	OgreDisplay* display;
+
+	//this is the manual object used for making meshes for the ships
+	Ogre::ManualObject* ship_mesh;
+
+	int mesh_vertex_count;
 
 	bool verbose;
 
@@ -450,6 +460,8 @@ public:
 	float getStepSize();
 
 	void setOctree(Octree* in);
+
+	void setOgreDisplay(OgreDisplay* in);
 
 	void setVerbose(bool in);
 };
