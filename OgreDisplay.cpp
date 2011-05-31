@@ -18,7 +18,9 @@ OgreDisplay::OgreDisplay()
 	lightCount = 0;
 
 	cameraLight = NULL;
-	originLight = NULL;	
+	originLight = NULL;
+
+	verbose = false;
 }
 
 //deletes root.
@@ -38,8 +40,11 @@ void OgreDisplay::initialize()
 	Ogre::LogManager* logger = new Ogre::LogManager();
 	QuietLog qlog;
 	logger->createLog("ogre/ogre.log", true, false, true);
-	Ogre::LogManager::getSingleton().getDefaultLog()->addListener(&qlog);
-	
+	if (!verbose)
+	{
+		Ogre::LogManager::getSingleton().getDefaultLog()->addListener(&qlog);	
+	}
+		
 	//use the files given 
 	root = new Root("ogre/plugins.cfg", "ogre/ogre.cfg", "ogre/ogre.log");
 
@@ -493,4 +498,10 @@ void OgreDisplay::QuietLog::messageLogged(const String& message, LogMessageLevel
 	case LML_TRIVIAL:
 		break;
 	}
+}
+
+
+void OgreDisplay::setVerbose(bool v)
+{
+	verbose = v;
 }

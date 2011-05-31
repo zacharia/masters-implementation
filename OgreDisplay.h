@@ -32,12 +32,14 @@ class OgreDisplay
 	//if this is non-null then it is a light that should be placed at the origin.
 	Light* originLight;
 
+	bool verbose;
+
 	//This is used as a dummy class to stop ogre from spamming it's log to the command line.
 	class QuietLog : public Ogre::LogListener
 	{
 		void messageLogged(const String& message, LogMessageLevel lml, bool maskDebug, const String& logName);
 	};
-		
+	
 public:
 	OgreDisplay();
 
@@ -86,6 +88,8 @@ public:
 	void createTriangleMesh(std::string name, std::string material = "basic/backface_culling_off");
 
 	void addToTriangleMesh(std::string name, TriangleMesh* input_mesh, bool finish = false);
+
+	void setVerbose(bool v);
 };
 
 #endif
