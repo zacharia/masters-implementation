@@ -239,6 +239,7 @@ int main(int argc, char** argv)
 		
 	//ogre init
 	display = new OgreDisplay();
+	display->setVerbose(true);
 	display->initialize();
 	
 	if (display_axes)
