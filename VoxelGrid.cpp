@@ -55,8 +55,6 @@ std::string VoxelGrid::toString()
 }
 
 
-
-
 void VoxelGrid::outputString(std::string str, std::string path)
 {
 	std::ofstream out(path.c_str());
@@ -493,52 +491,18 @@ void VoxelGrid::polygonize()
 	assert(display != NULL);
 	assert(grid->getSize() > 0);
 	
-	TriangleMesh output_mesh;
-	
-	//FIXME: this might not be big enough for very large arrays?
-	MeshExtractor extractor;
-	extractor.setOctree(grid);
-	extractor.setVerbose(verbose);
-
-	output_mesh = polygonizeBlock(grid->getSize());
-
-	assert(!output_mesh.isEmpty());
-		
-	display->createTriangleMesh("ship");
-	display->addToTriangleMesh("ship", &output_mesh, true);	
-}
-
-
-TriangleMesh VoxelGrid::polygonizeBlock(unsigned int size, Ogre::Vector3 position)
-{
-	assert(grid->getSize() > 0);
-	assert(size <= grid->getSize());
-	assert(position.x + size <= grid->getSize());
-	assert(position.y + size <= grid->getSize());
-	assert(position.z + size <= grid->getSize());
-	
-	TriangleMesh ret;	
-	MeshExtractor extractor;
-
-	extractor.setOctree(grid);
-	extractor.setVerbose(verbose);
-
-	//make a dummy array that doesn't actually contain the grid, but just keeps the extractor methods happy.
-	//this will crash if used, but since the extractor has been changed to only use the octree this won't
-	//be a problem.
-	SPACE_TYPE* input_grid = new SPACE_TYPE[10];
-
+	MeshGenerator mesh_generator;
+	mesh_generator.setVerbose(verbose);
+	mesh_generator.setOctree(grid);
+	mesh_generator.setOgreDisplay(display);
 	if (useMarchingCubes)
 	{
-		extractor.extractMeshWithMarchingCubes(input_grid, size, size, size, (SPACE_TYPE)SPACE_BOUNDARY_VAL, &ret);	
+		mesh_generator.vMarchingCubes();
 	}
 	else
 	{
-		extractor.extractMeshWithMarchingTetrahedra(input_grid, size, size, size, (SPACE_TYPE)SPACE_BOUNDARY_VAL, &ret);
+		mesh_generator.vMarchingTetrahedrons();
 	}
-	
-	delete [] input_grid;
-	return ret;
 }
 
 

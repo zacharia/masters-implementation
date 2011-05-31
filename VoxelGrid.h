@@ -21,9 +21,7 @@
 #include "Octree.h"
 #include "OgreDisplay.h"
 
-#include "MeshExtractor.h"
-#include "TriangleMesh.h"
-
+#include "MeshGenerator.h"
 
 //this is for an optimization when displaying the voxels.
 #define HIDE_VOXELS
@@ -94,8 +92,6 @@ class VoxelGrid
 	void updateDisplay();
 
 	void polygonize();
-
-	TriangleMesh polygonizeBlock(unsigned int size, Ogre::Vector3 position = Ogre::Vector3::ZERO);
 
 	int getSize();
 

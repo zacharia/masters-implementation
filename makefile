@@ -4,8 +4,8 @@ CC=g++
 WFLAGS=-Wall -Wextra -g3 -O3
 PROGRAM_NAME=voxel_generator
 
-$(PROGRAM_NAME): Utility.o Octree.o MeshGenerator.o VoxelGrid.o InputManager.o OgreDisplay.o TriangleMesh.o MeshExtractor.o main.o
-	$(CC) $(WFLAGS) -o $(PROGRAM_NAME) main.o Octree.o MeshGenerator.o VoxelGrid.o InputManager.o OgreDisplay.o Utility.o TriangleMesh.o MeshExtractor.o -lOgreMain -lOIS
+$(PROGRAM_NAME): Utility.o Octree.o MeshGenerator.o VoxelGrid.o InputManager.o OgreDisplay.o main.o
+	$(CC) $(WFLAGS) -o $(PROGRAM_NAME) main.o Octree.o MeshGenerator.o VoxelGrid.o InputManager.o OgreDisplay.o Utility.o -lOgreMain -lOIS
 
 main.o: main.cpp
 	$(CC) $(WFLAGS) -c -o main.o main.cpp
@@ -21,12 +21,6 @@ OgreDisplay.o: OgreDisplay.h OgreDisplay.cpp
 
 Utility.o: Utility.cpp Utility.h
 	$(CC) $(WFLAGS) -c -o Utility.o Utility.cpp
-
-MeshExtractor.o: MeshExtractor.h MeshExtractor.cpp
-	$(CC) $(WFLAGS) -c -o MeshExtractor.o MeshExtractor.cpp
-
-TriangleMesh.o: TriangleMesh.h TriangleMesh.cpp
-	$(CC) $(WFLAGS) -c -o TriangleMesh.o TriangleMesh.cpp
 
 Octree.o: Octree.cpp Octree.h
 	$(CC) $(WFLAGS) -c -o Octree.o Octree.cpp
