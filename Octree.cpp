@@ -90,9 +90,15 @@ int Octree::getSize()
 
 VoxelInformation Octree::at(int x, int y, int z)
 {
-	assert(x >= 0 && x < this->size);
-	assert(y >= 0 && y < this->size);
-	assert(z >= 0 && z < this->size);
+	// I commented these out in favour of just returning an empty value when asking for something outside the octree
+	// assert(x >= 0 && x < this->size);
+	// assert(y >= 0 && y < this->size);
+	// assert(z >= 0 && z < this->size);
+
+	if ( (x < 0) || (x > this->size) || (y < 0) || (y > this->size) || (z < 0) || (z > this->size) )
+	{
+		return VoxelInformation(SPACE_EMPTY);
+	}
 
 	//TODO: code an iterative way of doing this method, for
 	//efficiency. This current way is because it's more
