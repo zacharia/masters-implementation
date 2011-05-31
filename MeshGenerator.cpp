@@ -391,7 +391,7 @@ MeshGenerator::MeshGenerator()
 {
 	voxel_grid = NULL;
 	display = NULL;
-	fTargetValue = 5.0;
+	fTargetValue = SPACE_BOUNDARY_VAL;
 	fStepSize = 1.0;
 	verbose = true;
 }
@@ -476,7 +476,7 @@ Ogre::ColourValue MeshGenerator::vGetColor(Ogre::Vector3 &rfPosition, Ogre::Vect
         rfColor.r = (fX > 0.0 ? fX : 0.0) + (fY < 0.0 ? -0.5*fY : 0.0) + (fZ < 0.0 ? -0.5*fZ : 0.0);
         rfColor.g = (fY > 0.0 ? fY : 0.0) + (fZ < 0.0 ? -0.5*fZ : 0.0) + (fX < 0.0 ? -0.5*fX : 0.0);
         rfColor.b = (fZ > 0.0 ? fZ : 0.0) + (fX < 0.0 ? -0.5*fX : 0.0) + (fY < 0.0 ? -0.5*fY : 0.0);
-
+       
 	return rfColor;
 }
 
