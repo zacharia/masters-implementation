@@ -425,7 +425,7 @@ void OgreDisplay::toggleCameraLight()
 	}
 	else
 	{
-		makeCameraLight(ColourValue(0,1,0));
+		makeCameraLight(ColourValue(0,0.7,0.0));
 	}
 }
 
@@ -438,7 +438,7 @@ void OgreDisplay::toggleOriginLight()
 	}
 	else
 	{
-		makeOriginLight(ColourValue(1,0,0));
+		makeOriginLight(ColourValue(0.7,0,0));
 	}
 }
 

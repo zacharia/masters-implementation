@@ -710,7 +710,7 @@ void MeshGenerator::vMarchingCubes()
 	//ogre object drawing code.
 	assert(display != NULL);
 	std::string name = "ship";
-	std::string material = "basic/backface_culling_off";
+	std::string material = "basic/vertex_colour_lighting";
 	ship_mesh = display->createManualObject(name);
 	ship_mesh->begin(material, RenderOperation::OT_TRIANGLE_LIST);
 	//this variable tracks how many vertices have been added, for the purposes of connecting them into triangles.

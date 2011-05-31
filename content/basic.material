@@ -43,4 +43,23 @@ material basic/backface_culling_off
 	}
 }
 
-
+material basic/vertex_colour_lighting
+{
+	technique
+	{
+		pass
+		{
+			cull_hardware none
+			cull_software none
+			
+			ambient vertexcolour
+			diffuse vertexcolour
+			specular vertexcolour
+		
+			//texture_unit
+			//{
+			//	colour_op_ex source1 src_manual src_current 1 1 1
+			//}
+		}
+	}
+}
