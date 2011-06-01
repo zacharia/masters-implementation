@@ -394,6 +394,7 @@ MeshGenerator::MeshGenerator()
 	fTargetValue = SPACE_BOUNDARY_VAL;
 	fStepSize = 1.0;
 	verbose = true;
+	onlyMarchSurfaceVoxels = true;
 }
 
 
@@ -719,24 +720,55 @@ void MeshGenerator::vMarch(bool useMarchingCubes)
 	ship_mesh->begin(material, RenderOperation::OT_TRIANGLE_LIST);
 	//this variable tracks how many vertices have been added, for the purposes of connecting them into triangles.
 	mesh_vertex_count = 0;
-	
-	for(iX = 0; iX < iDataSetSize; iX++)
+
+	if (onlyMarchSurfaceVoxels)
 	{
-		if (this->verbose)
+		std::vector<Ogre::Vector3> edge_voxels = voxel_grid->getSurfaceVoxels();
+	
+		Ogre::Vector3 temp_pos;
+		for (std::vector<Ogre::Vector3>::iterator a = edge_voxels.begin(); a != edge_voxels.end(); a++)
 		{
-			std::cout << "doing slice " << iX << " of " << iDataSetSize << "\n";
+			if (useMarchingCubes)
+				vMarchCube1(a->x, a->y, a->z, fStepSize);
+			else
+				vMarchCube2(a->x, a->y, a->z, fStepSize);
+
+			//this code means the entire correct mesh is created, but repeating voxels means it makes way too many redundant triangles
+		
+			// for (int i = -1; i <= 1; ++i)
+			// {
+			// 	for (int j = -1; j <= 1; ++j)
+			// 	{
+			// 		for (int k = -1; k <= 1; ++k)
+			// 		{
+			// 			temp_pos = Ogre::Vector3(a->x + i, a->y + j, a->z + k);
+								       
+			// 			vMarchCube1(temp_pos.x, temp_pos.y, temp_pos.z, fStepSize);
+			// 		}
+			// 	}
+			// }	
 		}
-		
-		for(iY = 0; iY < iDataSetSize; iY++)
-			for(iZ = 0; iZ < iDataSetSize; iZ++)
-			{
-				if (useMarchingCubes)
-					vMarchCube1(iX*fStepSize, iY*fStepSize, iZ*fStepSize, fStepSize);	
-				else
-					vMarchCube2(iX*fStepSize, iY*fStepSize, iZ*fStepSize, fStepSize);
-			}
 	}
+	else
+	{
+		for(iX = 0; iX < iDataSetSize; iX++)
+		{
+			if (this->verbose)
+			{
+				std::cout << "doing slice " << iX << " of " << iDataSetSize << "\n";
+			}
 		
+			for(iY = 0; iY < iDataSetSize; iY++)
+				for(iZ = 0; iZ < iDataSetSize; iZ++)
+				{
+					if (useMarchingCubes)
+						vMarchCube1(iX*fStepSize, iY*fStepSize, iZ*fStepSize, fStepSize);	
+					else
+						vMarchCube2(iX*fStepSize, iY*fStepSize, iZ*fStepSize, fStepSize);
+				}
+		}
+	}
+	
 	//ogre draw end
 	ship_mesh->end();
 	ship_mesh->convertToMesh(name);
