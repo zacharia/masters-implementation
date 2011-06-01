@@ -700,10 +700,9 @@ void MeshGenerator::vMarchCube2(float fX, float fY, float fZ, float fScale)
                 vMarchTetrahedron(asTetrahedronPosition, afTetrahedronValue);
         }
 }
-        
 
-//vMarchingCubes iterates over the entire dataset, calling vMarchCube on each cube
-void MeshGenerator::vMarchingCubes()
+
+void MeshGenerator::vMarch(bool useMarchingCubes)
 {
 	assert(voxel_grid != NULL);
 
@@ -731,7 +730,10 @@ void MeshGenerator::vMarchingCubes()
 		for(iY = 0; iY < iDataSetSize; iY++)
 			for(iZ = 0; iZ < iDataSetSize; iZ++)
 			{
-				vMarchCube1(iX*fStepSize, iY*fStepSize, iZ*fStepSize, fStepSize);
+				if (useMarchingCubes)
+					vMarchCube1(iX*fStepSize, iY*fStepSize, iZ*fStepSize, fStepSize);	
+				else
+					vMarchCube2(iX*fStepSize, iY*fStepSize, iZ*fStepSize, fStepSize);
 			}
 	}
 		
@@ -741,47 +743,19 @@ void MeshGenerator::vMarchingCubes()
 
 	Ogre::Entity* ship = display->getSceneManager()->createEntity(name, name);		
 	Ogre::SceneNode* ship_node = display->getSceneManager()->getRootSceneNode()->createChildSceneNode();
-	ship_node->attachObject(ship);
+	ship_node->attachObject(ship);	
+}
+
+
+//vMarchingCubes iterates over the entire dataset, calling vMarchCube on each cube
+void MeshGenerator::vMarchingCubes()
+{
+	vMarch(true);
 }
 
 
 //vMarchingCubes iterates over the entire dataset, calling vMarchCube on each cube
 void MeshGenerator::vMarchingTetrahedrons()
 {
-	assert(voxel_grid != NULL);
-
-	int iDataSetSize = voxel_grid->getSize();
-	
-        int iX, iY, iZ;
-
-	//ogre draw begin
-	assert(display != NULL);
-	std::string name = "ship";
-	std::string material = "basic/backface_culling_off";
-	ship_mesh = display->createManualObject(name);
-	ship_mesh->begin(material, RenderOperation::OT_TRIANGLE_LIST);
-	//this variable tracks how many vertices have been added, for the purposes of connecting them into triangles.
-	mesh_vertex_count = 0;
-		
-        for(iX = 0; iX < iDataSetSize; iX++)
-	{
-		if (this->verbose)
-		{
-			std::cout << "doing slice " << iX << " of " << iDataSetSize << "\n";
-		}
-		
-		for(iY = 0; iY < iDataSetSize; iY++)
-			for(iZ = 0; iZ < iDataSetSize; iZ++)
-			{
-				vMarchCube2(iX*fStepSize, iY*fStepSize, iZ*fStepSize, fStepSize);
-			}
-	}
-	
-	//ogre draw end
-	ship_mesh->end();
-	ship_mesh->convertToMesh(name);
-
-	Ogre::Entity* ship = display->getSceneManager()->createEntity(name, name);		
-	Ogre::SceneNode* ship_node = display->getSceneManager()->getRootSceneNode()->createChildSceneNode();
-	ship_node->attachObject(ship);
+	vMarch(false);
 }
