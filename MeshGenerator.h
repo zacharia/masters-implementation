@@ -71,6 +71,8 @@ private:
 
 	void vMarchCube2(float fX, float fY, float fZ, float fScale);
 
+	void vMarch(bool useMarchingCubes);
+
 public:
 	MeshGenerator();
 
