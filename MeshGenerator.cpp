@@ -451,6 +451,11 @@ void MeshGenerator::setVerbose(bool in)
 }
 
 
+void MeshGenerator::setOnlyMarchSurfaceVoxels(bool in)
+{
+	onlyMarchSurfaceVoxels = in;
+}
+
 //fGetOffset finds the approximate point of intersection of the surface
 // between two points with the values fValue1 and fValue2
 float MeshGenerator::fGetOffset(float fValue1, float fValue2, float fValueDesired)
@@ -716,7 +721,7 @@ void MeshGenerator::vMarchingCubes()
 	//this variable tracks how many vertices have been added, for the purposes of connecting them into triangles.
 	mesh_vertex_count = 0;
 	
-        for(iX = 0; iX < iDataSetSize; iX++)
+	for(iX = 0; iX < iDataSetSize; iX++)
 	{
 		if (this->verbose)
 		{
@@ -729,7 +734,7 @@ void MeshGenerator::vMarchingCubes()
 				vMarchCube1(iX*fStepSize, iY*fStepSize, iZ*fStepSize, fStepSize);
 			}
 	}
-	
+		
 	//ogre draw end
 	ship_mesh->end();
 	ship_mesh->convertToMesh(name);

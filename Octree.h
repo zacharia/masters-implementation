@@ -13,6 +13,7 @@
 #include <cstddef>
 #include <cassert>
 #include <OGRE/OgreVector3.h>
+#include <vector>
 
 //project inclusions
 #include "Utility.h"
@@ -56,10 +57,13 @@ public:
 	bool operator!=(VoxelInformation& in);
 };
 
+//this is here to allow the OctreeNode class to have a pointer to the Octree object for checking edge nodes.
+class Octree;
 
 class OctreeNode
 {
 private:
+	bool allChildrenNull();
 	
 public:
         //the node's children
@@ -98,6 +102,8 @@ public:
 	void optimizeNode();
 
 	std::string printNode(int depth = 0);
+
+	std::vector<Ogre::Vector3> getSurfaceVoxels(Ogre::Vector3 corner, int currSize, Octree* tree);
 };
 
 
@@ -141,6 +147,10 @@ public:
 	void optimizeTree();
 
 	std::string printTree();
+
+	std::vector<Ogre::Vector3> getSurfaceVoxels();
+
+	bool isEdgeVoxel(Ogre::Vector3 pos, char connectivity);
 };
 
 #endif
