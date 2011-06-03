@@ -721,18 +721,22 @@ void MeshGenerator::vMarch(bool useMarchingCubes)
 	//this variable tracks how many vertices have been added, for the purposes of connecting them into triangles.
 	mesh_vertex_count = 0;
 
+	//if we're only using surface voxels
 	if (onlyMarchSurfaceVoxels)
 	{
-		std::vector<Ogre::Vector3> edge_voxels = voxel_grid->getSurfaceVoxels();
+		//get the surface voxels from the octree
+		std::vector<Ogre::Vector3> edge_voxels = voxel_grid->getSurfaceVoxels(true);
 	
 		Ogre::Vector3 temp_pos;
+		
+		//and iterate over them, marching on each of them.
 		for (std::vector<Ogre::Vector3>::iterator a = edge_voxels.begin(); a != edge_voxels.end(); a++)
 		{
 			if (useMarchingCubes)
 				vMarchCube1(a->x, a->y, a->z, fStepSize);
 			else
 				vMarchCube2(a->x, a->y, a->z, fStepSize);
-
+			
 			//this code means the entire correct mesh is created, but repeating voxels means it makes way too many redundant triangles
 		
 			// for (int i = -1; i <= 1; ++i)
@@ -751,6 +755,7 @@ void MeshGenerator::vMarch(bool useMarchingCubes)
 	}
 	else
 	{
+		//iterate over the entire octree's space, marching on each element.
 		for(iX = 0; iX < iDataSetSize; iX++)
 		{
 			if (this->verbose)

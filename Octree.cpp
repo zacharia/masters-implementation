@@ -175,22 +175,101 @@ std::string Octree::printTree()
 }
 
 
-std::vector<Ogre::Vector3> Octree::getSurfaceVoxels()
+std::vector<Ogre::Vector3> Octree::getSurfaceVoxels(bool emptyVoxelsToo)
 {
 	std::vector<Ogre::Vector3> ret;
 
-	ret = root->getSurfaceVoxels(Ogre::Vector3(0.0), this->size, this);
+	ret = root->getSurfaceVoxels(Ogre::Vector3(0.0), this->size, this, emptyVoxelsToo);
 
 	return ret;
 }
 
 
-bool Octree::isEdgeVoxel(Ogre::Vector3 pos, char connectivity)
+bool Octree::isEdgeVoxel(Ogre::Vector3 pos, char connectivity, bool emptyVoxelsToo)
 {
+	//if we've got an empty voxel
 	if (this->at(pos.x, pos.y, pos.z).solid == SPACE_EMPTY)
 	{
-		return false;
+		//then, if we're meant to get empty border voxels too, see if it borders a solid space
+		if (emptyVoxelsToo)
+		{
+			if (connectivity == 6)
+			{
+				return ((this->at(pos.x, pos.y, pos.z-1).solid == SPACE_SOLID) ||
+					(this->at(pos.x, pos.y, pos.z+1).solid == SPACE_SOLID) ||
+					(this->at(pos.x, pos.y-1, pos.z).solid == SPACE_SOLID) ||
+					(this->at(pos.x, pos.y+1, pos.z).solid == SPACE_SOLID) ||
+					(this->at(pos.x-1, pos.y, pos.z).solid == SPACE_SOLID) ||
+					(this->at(pos.x+1, pos.y, pos.z).solid == SPACE_SOLID) );
+			}
+			else if (connectivity == 18)
+			{
+				return ((this->at(pos.x, pos.y, pos.z-1).solid == SPACE_SOLID) ||
+					(this->at(pos.x, pos.y, pos.z+1).solid == SPACE_SOLID) ||
+					(this->at(pos.x, pos.y-1, pos.z-1).solid == SPACE_SOLID) ||
+					(this->at(pos.x, pos.y-1, pos.z+1).solid == SPACE_SOLID) ||
+					(this->at(pos.x, pos.y+1, pos.z-1).solid == SPACE_SOLID) ||
+					(this->at(pos.x, pos.y+1, pos.z+1).solid == SPACE_SOLID) ||
+				
+					(this->at(pos.x, pos.y-1, pos.z).solid == SPACE_SOLID) ||
+					(this->at(pos.x, pos.y+1, pos.z).solid == SPACE_SOLID) ||
+					(this->at(pos.x-1, pos.y-1, pos.z).solid == SPACE_SOLID) ||
+					(this->at(pos.x-1, pos.y+1, pos.z).solid == SPACE_SOLID) ||
+					(this->at(pos.x+1, pos.y-1, pos.z).solid == SPACE_SOLID) ||
+					(this->at(pos.x+1, pos.y+1, pos.z).solid == SPACE_SOLID) ||
+				
+					(this->at(pos.x-1, pos.y, pos.z).solid == SPACE_SOLID) ||
+					(this->at(pos.x+1, pos.y, pos.z).solid == SPACE_SOLID) ||
+					(this->at(pos.x-1, pos.y, pos.z-1).solid == SPACE_SOLID) ||
+					(this->at(pos.x+1, pos.y, pos.z-1).solid == SPACE_SOLID) ||
+					(this->at(pos.x-1, pos.y, pos.z+1).solid == SPACE_SOLID) ||
+					(this->at(pos.x+1, pos.y, pos.z+1).solid == SPACE_SOLID) );
+			}
+			else
+			{
+				//default case is 26
+
+				//the 18 case...
+				return ((this->at(pos.x, pos.y, pos.z-1).solid == SPACE_SOLID) ||
+					(this->at(pos.x, pos.y, pos.z+1).solid == SPACE_SOLID) ||
+					(this->at(pos.x, pos.y-1, pos.z-1).solid == SPACE_SOLID) ||
+					(this->at(pos.x, pos.y-1, pos.z+1).solid == SPACE_SOLID) ||
+					(this->at(pos.x, pos.y+1, pos.z-1).solid == SPACE_SOLID) ||
+					(this->at(pos.x, pos.y+1, pos.z+1).solid == SPACE_SOLID) ||
+				
+					(this->at(pos.x, pos.y-1, pos.z).solid == SPACE_SOLID) ||
+					(this->at(pos.x, pos.y+1, pos.z).solid == SPACE_SOLID) ||
+					(this->at(pos.x-1, pos.y-1, pos.z).solid == SPACE_SOLID) ||
+					(this->at(pos.x-1, pos.y+1, pos.z).solid == SPACE_SOLID) ||
+					(this->at(pos.x+1, pos.y-1, pos.z).solid == SPACE_SOLID) ||
+					(this->at(pos.x+1, pos.y+1, pos.z).solid == SPACE_SOLID) ||
+				
+					(this->at(pos.x-1, pos.y, pos.z).solid == SPACE_SOLID) ||
+					(this->at(pos.x+1, pos.y, pos.z).solid == SPACE_SOLID) ||
+					(this->at(pos.x-1, pos.y, pos.z-1).solid == SPACE_SOLID) ||
+					(this->at(pos.x+1, pos.y, pos.z-1).solid == SPACE_SOLID) ||
+					(this->at(pos.x-1, pos.y, pos.z+1).solid == SPACE_SOLID) ||
+					(this->at(pos.x+1, pos.y, pos.z+1).solid == SPACE_SOLID) ||
+
+					//and the other 8
+
+					(this->at(pos.x-1, pos.y-1, pos.z-1).solid == SPACE_SOLID) ||
+					(this->at(pos.x-1, pos.y-1, pos.z+1).solid == SPACE_SOLID) ||
+					(this->at(pos.x-1, pos.y+1, pos.z-1).solid == SPACE_SOLID) ||
+					(this->at(pos.x-1, pos.y+1, pos.z+1).solid == SPACE_SOLID) ||
+					(this->at(pos.x+1, pos.y-1, pos.z-1).solid == SPACE_SOLID) ||
+					(this->at(pos.x+1, pos.y-1, pos.z+1).solid == SPACE_SOLID) ||
+					(this->at(pos.x+1, pos.y+1, pos.z-1).solid == SPACE_SOLID) ||
+					(this->at(pos.x+1, pos.y+1, pos.z+1).solid == SPACE_SOLID) );
+			}
+		}
+		//if we're not interested in empty voxels, then return false
+		else
+		{
+			return false;	
+		}
 	}
+	//if it's solid, then check if it borders and empty space.
 	else
 	{
 		if (connectivity == 6)
@@ -669,22 +748,22 @@ std::string OctreeNode::printNode(int depth)
 
 
 //This method returns a vector containing all the surface voxels in the current octree node.
-std::vector<Ogre::Vector3> OctreeNode::getSurfaceVoxels(Ogre::Vector3 corner, int currSize, Octree* tree)
+//if emptyVoxelsToo is true, then empty nodes that border onto solid space are also included.
+std::vector<Ogre::Vector3> OctreeNode::getSurfaceVoxels(Ogre::Vector3 corner, int currSize, Octree* tree, bool emptyVoxelsToo)
 {
 	//this contains the return results, starts off empty.
 	std::vector<Ogre::Vector3> ret;
+	
+	//then check each of it's surface elements for edginess.
+	Ogre::Vector3 curr_pos;
 
-	//if the current node is solid
-	if (this->info.solid == SPACE_SOLID)
-	{
-		//then check each of it's surface elements for edginess.
-		Ogre::Vector3 curr_pos;
-				
+	if ((this->info.solid == SPACE_SOLID) || emptyVoxelsToo)
+	{	
 		for (int a = 0; a < (currSize); ++a)
 			for (int b = 0; b < (currSize); ++b)
 			{
 				curr_pos = corner + Ogre::Vector3(0,a,b);
-				if (tree->isEdgeVoxel(curr_pos, 26))
+				if (tree->isEdgeVoxel(curr_pos, 26, emptyVoxelsToo))
 				{
 					ret.push_back(curr_pos);
 				}
@@ -694,7 +773,7 @@ std::vector<Ogre::Vector3> OctreeNode::getSurfaceVoxels(Ogre::Vector3 corner, in
 			for (int b = 0; b < (currSize); ++b)
 			{
 				curr_pos = corner + Ogre::Vector3(a,0,b);
-				if (tree->isEdgeVoxel(curr_pos, 26))
+				if (tree->isEdgeVoxel(curr_pos, 26, emptyVoxelsToo))
 				{
 					ret.push_back(curr_pos);
 				}
@@ -704,7 +783,7 @@ std::vector<Ogre::Vector3> OctreeNode::getSurfaceVoxels(Ogre::Vector3 corner, in
 			for (int b = 0; b < (currSize); ++b)
 			{
 				curr_pos = corner + Ogre::Vector3(a,b,0);
-				if (tree->isEdgeVoxel(curr_pos, 26))
+				if (tree->isEdgeVoxel(curr_pos, 26, emptyVoxelsToo))
 				{
 					ret.push_back(curr_pos);
 				}
@@ -714,7 +793,7 @@ std::vector<Ogre::Vector3> OctreeNode::getSurfaceVoxels(Ogre::Vector3 corner, in
 			for (int b = 0; b < (currSize); ++b)
 			{
 				curr_pos = corner + Ogre::Vector3(currSize,a,b);
-				if (tree->isEdgeVoxel(curr_pos, 26))
+				if (tree->isEdgeVoxel(curr_pos, 26, emptyVoxelsToo))
 				{
 					ret.push_back(curr_pos);
 				}
@@ -724,7 +803,7 @@ std::vector<Ogre::Vector3> OctreeNode::getSurfaceVoxels(Ogre::Vector3 corner, in
 			for (int b = 0; b < (currSize); ++b)
 			{
 				curr_pos = corner + Ogre::Vector3(a,currSize,b);
-				if (tree->isEdgeVoxel(curr_pos, 26))
+				if (tree->isEdgeVoxel(curr_pos, 26, emptyVoxelsToo))
 				{
 					ret.push_back(curr_pos);
 				}
@@ -734,13 +813,13 @@ std::vector<Ogre::Vector3> OctreeNode::getSurfaceVoxels(Ogre::Vector3 corner, in
 			for (int b = 0; b < (currSize); ++b)
 			{
 				curr_pos = corner + Ogre::Vector3(a,b,currSize);
-				if (tree->isEdgeVoxel(curr_pos, 26))
+				if (tree->isEdgeVoxel(curr_pos, 26, emptyVoxelsToo))
 				{
 					ret.push_back(curr_pos);
 				}
-			}				
+			}
 	}
-
+	
         //loop over the children.
 	for (int i = 0; i < 2; ++i)
 		for (int j = 0; j < 2; ++j)
@@ -756,7 +835,7 @@ std::vector<Ogre::Vector3> OctreeNode::getSurfaceVoxels(Ogre::Vector3 corner, in
 					ret.insert(ret.end(), results.begin(), results.end());	
 				}
 			}
-
+		
 	return ret;	
 }
 

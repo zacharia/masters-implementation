@@ -103,7 +103,7 @@ public:
 
 	std::string printNode(int depth = 0);
 
-	std::vector<Ogre::Vector3> getSurfaceVoxels(Ogre::Vector3 corner, int currSize, Octree* tree);
+	std::vector<Ogre::Vector3> getSurfaceVoxels(Ogre::Vector3 corner, int currSize, Octree* tree, bool emptyVoxelsToo = false);
 };
 
 
@@ -148,9 +148,9 @@ public:
 
 	std::string printTree();
 
-	std::vector<Ogre::Vector3> getSurfaceVoxels();
+	std::vector<Ogre::Vector3> getSurfaceVoxels(bool emptyVoxelsToo = false);
 
-	bool isEdgeVoxel(Ogre::Vector3 pos, char connectivity);
+	bool isEdgeVoxel(Ogre::Vector3 pos, char connectivity, bool emptyVoxelsToo = false);
 };
 
 #endif
