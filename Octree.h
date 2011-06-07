@@ -44,10 +44,13 @@ public:
 	//stores the physical state of the node, i.e. empty or solid
 	SPACE_TYPE solid;
 
+	//stores the tags of the node.
+	std::set<std::string> tags;
+
 	//default constructor - makes a totally empty node with nothing in it and not tags
 	VoxelInformation();
 
-	VoxelInformation(SPACE_TYPE in_solid);
+	VoxelInformation(SPACE_TYPE in_solid, std::set<std::string> in_tags = std::set<std::string>());
 
 	~VoxelInformation();
 

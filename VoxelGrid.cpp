@@ -176,6 +176,15 @@ void VoxelGrid::readFromFile(std::string file)
 				in >> temp >> std::ws;
 				temp_shape.priority = atoi(temp.c_str());
 			}
+			else if (curr_type == "tags_begin")
+			{
+				in >> temp >> std::ws;
+				while (temp != "tags_end")
+				{
+					temp_shape.tags.insert(temp);
+					in >> temp >> std::ws;
+				}
+			}
 			else if (curr_type == "#")
 			{
 				shapes.push_back(temp_shape);
@@ -186,6 +195,7 @@ void VoxelGrid::readFromFile(std::string file)
 				temp_shape.position = Ogre::Vector3(0,0,0);
 				temp_shape.extents = Ogre::Vector3(1,1,1);
 				temp_shape.orientation = Ogre::Matrix3(1,0,0,0,1,0,0,0,1);
+				temp_shape.tags = std::set<std::string>();
 			}
 		}
 	}
@@ -299,20 +309,20 @@ void VoxelGrid::createShapes()
 			//create an object
 			if (queue_top.type == "rectangle")
 			{
-				makeRectangle(queue_top.position, queue_top.extents, queue_top.orientation, queue_top.additive);			
+				makeRectangle(queue_top.position, queue_top.extents, queue_top.orientation, queue_top.additive, queue_top.tags);			
 			}
 			else if (queue_top.type == "cylinder")
 			{
-				makeCylinder(queue_top.position, queue_top.extents, queue_top.orientation, queue_top.additive);
+				makeCylinder(queue_top.position, queue_top.extents, queue_top.orientation, queue_top.additive, queue_top.tags);
 			}
 			else if (queue_top.type == "circle")
 			{
 				//FIXME: get a better solution for circles not having all attributes
-				makeCircle(queue_top.position, queue_top.extents.x, queue_top.additive);
+				makeCircle(queue_top.position, queue_top.extents.x, queue_top.additive, queue_top.tags);
 			}
 			else if (queue_top.type == "ellipsoid")
 			{
-				makeEllipsoid(queue_top.position, queue_top.extents, queue_top.orientation, queue_top.additive);
+				makeEllipsoid(queue_top.position, queue_top.extents, queue_top.orientation, queue_top.additive, queue_top.tags);
 			}
 
 			shapes_priority_queue.pop();
@@ -330,20 +340,20 @@ void VoxelGrid::createShapes()
 			//create an object
 			if (i->type == "rectangle")
 			{
-				makeRectangle(i->position, i->extents, i->orientation, i->additive);			
+				makeRectangle(i->position, i->extents, i->orientation, i->additive, i->tags);
 			}
 			else if (i->type == "cylinder")
 			{
-				makeCylinder(i->position, i->extents, i->orientation, i->additive);
+				makeCylinder(i->position, i->extents, i->orientation, i->additive, i->tags);
 			}
 			else if (i->type == "circle")
 			{
 				//FIXME: get a better solution for circles not having all attributes
-				makeCircle(i->position, i->extents.x, i->additive);
+				makeCircle(i->position, i->extents.x, i->additive, i->tags);
 			}
 			else if (i->type == "ellipsoid")
 			{
-				makeEllipsoid(i->position, i->extents, i->orientation, i->additive);
+				makeEllipsoid(i->position, i->extents, i->orientation, i->additive, i->tags);
 			}
 		}	
 	}
@@ -506,7 +516,7 @@ void VoxelGrid::polygonize()
 }
 
 
-void VoxelGrid::makeCircle(Ogre::Vector3 pos, int radius, bool add)
+void VoxelGrid::makeCircle(Ogre::Vector3 pos, int radius, bool add, std::set<std::string> in_tags)
 {
 	assert(radius >= 1);
 	
@@ -531,11 +541,11 @@ void VoxelGrid::makeCircle(Ogre::Vector3 pos, int radius, bool add)
 					{
 						if (add)
 						{
-							grid->set(currpos.x, currpos.y, currpos.z, VoxelInformation(SPACE_SOLID));
+							grid->set(currpos.x, currpos.y, currpos.z, VoxelInformation(SPACE_SOLID, in_tags));
 						}
 						else
 						{
-							grid->set(currpos.x, currpos.y, currpos.z, VoxelInformation(SPACE_EMPTY));
+							grid->set(currpos.x, currpos.y, currpos.z, VoxelInformation(SPACE_EMPTY, in_tags));
 						}
 					}
 				}
@@ -546,7 +556,7 @@ void VoxelGrid::makeCircle(Ogre::Vector3 pos, int radius, bool add)
 
 
 //pos is the centre of the rectangle, extents are the dimensions from the centre to the edges
-void VoxelGrid::makeRectangle(Ogre::Vector3 pos, Ogre::Vector3 extents, Ogre::Matrix3 orientation, bool add)
+void VoxelGrid::makeRectangle(Ogre::Vector3 pos, Ogre::Vector3 extents, Ogre::Matrix3 orientation, bool add, std::set<std::string> in_tags)
 {
 	Ogre::Vector3 currpos;
 	orientation.Orthonormalize();
@@ -570,11 +580,11 @@ void VoxelGrid::makeRectangle(Ogre::Vector3 pos, Ogre::Vector3 extents, Ogre::Ma
 				{
 					if (add)
 					{
-						grid->set(currpos.x, currpos.y, currpos.z, VoxelInformation(SPACE_SOLID));
+						grid->set(currpos.x, currpos.y, currpos.z, VoxelInformation(SPACE_SOLID, in_tags));
 					}
 					else
 					{
-						grid->set(currpos.x, currpos.y, currpos.z, VoxelInformation(SPACE_EMPTY));
+						grid->set(currpos.x, currpos.y, currpos.z, VoxelInformation(SPACE_EMPTY, in_tags));
 					}
 				}
 			}
@@ -584,7 +594,7 @@ void VoxelGrid::makeRectangle(Ogre::Vector3 pos, Ogre::Vector3 extents, Ogre::Ma
 
 
 //pos is the centre of the ellipsoid, extents are the dimensions from the centre to the edges
-void VoxelGrid::makeEllipsoid(Ogre::Vector3 pos, Ogre::Vector3 extents, Ogre::Matrix3 orientation, bool add)
+void VoxelGrid::makeEllipsoid(Ogre::Vector3 pos, Ogre::Vector3 extents, Ogre::Matrix3 orientation, bool add, std::set<std::string> in_tags)
 {
 	Ogre::Vector3 currpos;
 	orientation.Orthonormalize();
@@ -610,11 +620,11 @@ void VoxelGrid::makeEllipsoid(Ogre::Vector3 pos, Ogre::Vector3 extents, Ogre::Ma
 					{
 						if (add)
 						{
-							grid->set(currpos.x, currpos.y, currpos.z, VoxelInformation(SPACE_SOLID));
+							grid->set(currpos.x, currpos.y, currpos.z, VoxelInformation(SPACE_SOLID, in_tags));
 						}
 						else
 						{
-							grid->set(currpos.x, currpos.y, currpos.z, VoxelInformation(SPACE_EMPTY));
+							grid->set(currpos.x, currpos.y, currpos.z, VoxelInformation(SPACE_EMPTY, in_tags));
 						}
 					}
 				}
@@ -626,7 +636,7 @@ void VoxelGrid::makeEllipsoid(Ogre::Vector3 pos, Ogre::Vector3 extents, Ogre::Ma
 
 //pos is the centre of the ellipsoid, extents are the dimensions from the centre to the edges.
 //orientation is either x, y or z and indicates which axis the cylinder runs parallel to
-void VoxelGrid::makeCylinder(Ogre::Vector3 pos, Ogre::Vector3 extents, Ogre::Matrix3 orientation, bool add)
+void VoxelGrid::makeCylinder(Ogre::Vector3 pos, Ogre::Vector3 extents, Ogre::Matrix3 orientation, bool add, std::set<std::string> in_tags)
 {
 	Ogre::Vector3 currpos;
 	orientation.Orthonormalize();
@@ -652,11 +662,11 @@ void VoxelGrid::makeCylinder(Ogre::Vector3 pos, Ogre::Vector3 extents, Ogre::Mat
 					{
 						if (add)
 						{
-							grid->set(currpos.x, currpos.y, currpos.z, VoxelInformation(SPACE_SOLID));
+							grid->set(currpos.x, currpos.y, currpos.z, VoxelInformation(SPACE_SOLID, in_tags));
 						}
 						else
 						{
-							grid->set(currpos.x, currpos.y, currpos.z, VoxelInformation(SPACE_EMPTY));
+							grid->set(currpos.x, currpos.y, currpos.z, VoxelInformation(SPACE_EMPTY, in_tags));
 						}
 					}
 				}

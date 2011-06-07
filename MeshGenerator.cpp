@@ -499,7 +499,7 @@ Ogre::Vector3 MeshGenerator::vGetNormal(float fX, float fY, float fZ)
         rfNormal.x = fSample(fX-delta, fY, fZ) - fSample(fX+delta, fY, fZ);
         rfNormal.y = fSample(fX, fY-delta, fZ) - fSample(fX, fY+delta, fZ);
         rfNormal.z = fSample(fX, fY, fZ-delta) - fSample(fX, fY, fZ+delta);
-        rfNormal.normalise();;
+        rfNormal.normalise();
 
 	return rfNormal;
 }

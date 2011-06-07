@@ -549,6 +549,11 @@ std::string OctreeNode::printNode(int depth)
 	ret += Utility::numToString(this->nodeSize);
 	ret += " ";
 	ret += Utility::numToString(this->info.solid);
+	ret += " ";
+	for (std::set<std::string>::iterator i = this->info.tags.begin(); i != this->info.tags.end(); i++)
+	{
+		ret = ret + *i + " ";
+	}
 	ret += "\n";
 
 	//if this is not a leaf node
@@ -583,12 +588,14 @@ std::string OctreeNode::printNode(int depth)
 VoxelInformation::VoxelInformation()
 {
 	solid = SPACE_EMPTY;
+	tags = std::set<std::string>();
 }
 
 
-VoxelInformation::VoxelInformation(SPACE_TYPE in_solid)
+VoxelInformation::VoxelInformation(SPACE_TYPE in_solid, std::set<std::string> in_tags)
 {
 	solid = in_solid;
+	tags = std::set<std::string>(in_tags);
 }
 
 
@@ -600,11 +607,11 @@ VoxelInformation::~VoxelInformation()
 
 bool VoxelInformation::operator==(VoxelInformation& in)
 {
-	return ( (this->solid == in.solid) );
+	return ( (this->solid == in.solid) && (this->tags == in.tags) );
 }
 
 
 bool VoxelInformation::operator!=(VoxelInformation& in)
 {
-	return !( (this->solid == in.solid) );
+	return !( (this->solid == in.solid) && (this->tags == in.tags) );
 }
