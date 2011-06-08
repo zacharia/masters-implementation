@@ -466,7 +466,7 @@ float MeshGenerator::fGetOffset(float fValue1, float fValue2, float fValueDesire
 
 
 //vGetColor generates a color from a given position and normal of a point
-Ogre::ColourValue MeshGenerator::vGetColor(Ogre::Vector3 &rfPosition, Ogre::Vector3 &rfNormal)
+Ogre::ColourValue MeshGenerator::vGetColor(Ogre::Vector3 &rfPosition, Ogre::Vector3 &rfNormal, std::set<std::string> in_tags)
 {
 	Ogre::ColourValue rfColor;
 	
@@ -558,6 +558,8 @@ void MeshGenerator::vMarchCube1(float fX, float fY, float fZ, float fScale)
                 }
         }
 
+	//get the tags associated with the current voxel. They're used in coloring and detailing the created mesh.
+	std::set<std::string> voxel_tags = voxel_grid->at(fX, fY, fZ).tags;
 
         //Draw the triangles that were found.  There can be up to five per cube
         for(iTriangle = 0; iTriangle < 5; iTriangle++)
@@ -571,7 +573,7 @@ void MeshGenerator::vMarchCube1(float fX, float fY, float fZ, float fScale)
 			
 			ship_mesh->position(asEdgeVertex[iVertex].x, asEdgeVertex[iVertex].y, asEdgeVertex[iVertex].z);
 			ship_mesh->normal(asEdgeNorm[iVertex].x,   asEdgeNorm[iVertex].y,   asEdgeNorm[iVertex].z);
-			ship_mesh->colour( vGetColor(asEdgeVertex[iVertex], asEdgeNorm[iVertex]) );
+			ship_mesh->colour( vGetColor(asEdgeVertex[iVertex], asEdgeNorm[iVertex], voxel_tags) );
                         //up the vertex count by one.
 			mesh_vertex_count++;
 
