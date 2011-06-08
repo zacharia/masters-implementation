@@ -109,7 +109,7 @@ class Octree
 private:
 	
 	OctreeNode* root;
-	unsigned int size;
+	int size;
 
 	//NB: null does not necessarily imply that a node is empty. The VoxelInformation is used for that.
         

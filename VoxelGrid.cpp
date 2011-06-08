@@ -103,10 +103,8 @@ void VoxelGrid::readFromFile(std::string file)
 	{
 		shapes.clear();
 		//these are temporary variables used to store details when reading in from file
-		std::string /*temp_name = "", */curr_type = "", temp;
-		/*bool temp_additive = true;
-		Ogre::Vector3 temp_pos = Ogre::Vector3(0,0,0), temp_extents = Ogre::Vector3(1,1,1);
-		Ogre::Matrix3 temp_orientation = Ogre::Matrix3(1,0,0,0,1,0,0,0,1);*/
+		std::string curr_type = "", temp;
+
 		Shape temp_shape;
 		
 		while (!in.eof())
@@ -221,7 +219,7 @@ void VoxelGrid::getBoundingBoxes()
 		if ( ( (s->type == "rectangle") ||  (s->type == "circle") || (s->type == "ellipsoid") || (s->type == "cylinder") ) && (s->additive) )
 		{
 			s->orientation.Orthonormalize();
-			Ogre::Vector3 vertex;//vertices[8];
+			Ogre::Vector3 vertex;
 			for (int i = -1; i <= 1; i += 2)
 			{
 				for (int j = -1; j <= 1; j += 2)
@@ -477,13 +475,6 @@ void VoxelGrid::updateDisplay()
 					    (grid->at(i,j-1,k).solid == SPACE_EMPTY) ||
 					    (grid->at(i,j,k+1).solid) == SPACE_EMPTY) ||
 					    (grid->at(i,j,k-1).solid == SPACE_EMPTY))
-
-					    /*!((grid->at(i+1,j,k).solid == SPACE_SOLID) &&
-					     (grid->at(i-1,j,k).solid == SPACE_SOLID) &&
-					     (grid->at(i,j+1,k).solid == SPACE_SOLID) &&
-					     (grid->at(i,j-1,k).solid == SPACE_SOLID) &&
-					     (grid->at(i,j,k+1).solid == SPACE_SOLID) &&
-					     (grid->at(i,j,k-1).solid == SPACE_SOLID))*/
 #endif
 					{
 						display->addVoxelBillboard(Ogre::Vector3(i,j,k));	

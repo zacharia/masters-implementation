@@ -117,6 +117,7 @@ void Octree::set(int x, int y, int z, VoxelInformation value)
 	//TODO: iterative way of doing this, instead of recursive.
 	root->set(x,y,z, value, this->size);
 
+	//this code is so that the tree is optimized every auto_optimize_interval sets/erasures.
 	this->auto_optimize_counter++;
 	if ((this->auto_optimize_on) && (this->auto_optimize_counter >= this->auto_optimize_interval))
 	{
@@ -145,6 +146,7 @@ void Octree::erase(int x, int y, int z)
 	//TODO: iterative way of doing this.
 	root->erase(x,y,z, this->size);
 
+	//this code is so that the tree is optimized every auto_optimize_interval sets/erasures.
 	this->auto_optimize_counter++;
 	if ((this->auto_optimize_on) && (this->auto_optimize_counter >= this->auto_optimize_interval))
 	{
@@ -335,24 +337,7 @@ void OctreeNode::set(int x, int y, int z, VoxelInformation value, int currSize)
 //recursive method for setting an axis-aligned rectangle of values in the octree.
 void OctreeNode::setRange(Ogre::Vector3 lower, Ogre::Vector3 upper, Ogre::Vector3 node_center, VoxelInformation value)
 {
-	for (int i = 0; i < 2; ++i)
-		for (int j = 0; j < 2; ++j)
-			for (int k = 0; k < 2; ++k)
-			{
-				// OctreeNode* curr_child = this->children[i][j][k];
-
-				// Ogre::Vector3 diff;
-				
-				
-				// if ()
-				// {
-					
-				// }
-				// else
-				// {
-					
-				// }
-			}	
+	
 }
 
 
@@ -433,6 +418,7 @@ void OctreeNode::optimizeNode()
 		//then we can't actually do anything with this node.
 		return;
 	}
+	//if the node has children
 	else
 	{
 		//if all the children are non-NULL
@@ -448,7 +434,7 @@ void OctreeNode::optimizeNode()
 			//then check if they all have the same info.
 			//NB: we know that all children are non-NULL
 		       
-			//comp_value stores info of the first child. if any of the other children have a different ->info, we can't coalesce
+			//comp_value stores info of the first child. if any of the other children have a different ->info, we can't coalesce them all into the parent, so we check if any are different to comp_value
 			VoxelInformation comp_value = this->children[0][0][0]->info;
 			
 			bool can_coalesce = true;
@@ -497,6 +483,7 @@ void OctreeNode::optimizeNode()
 						}
 			}
 		}
+		//if the children are a mix of NULL and non-NULL
 		else
 		{
 			//loop through all the children.

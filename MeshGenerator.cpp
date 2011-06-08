@@ -387,6 +387,7 @@ const int MeshGenerator::a2iTriangleConnectionTable[256][16] =
 };
 
 
+//default constructor. Sets everything to default values
 MeshGenerator::MeshGenerator()
 {
 	voxel_grid = NULL;
@@ -397,6 +398,7 @@ MeshGenerator::MeshGenerator()
 }
 
 
+//destructor - no new calls means there's nothing to delete.
 MeshGenerator::~MeshGenerator()
 {
 	
@@ -438,6 +440,7 @@ void MeshGenerator::setOctree(Octree* in)
 }
 
 
+//this gives the MeshGenerator an OgreDisplay object to output the generated mesh to
 void MeshGenerator::setOgreDisplay(OgreDisplay* in)
 {
 	assert(in != NULL);
@@ -445,6 +448,8 @@ void MeshGenerator::setOgreDisplay(OgreDisplay* in)
 	display = in;	
 }
 
+
+//used for toggling verbose output or not.
 void MeshGenerator::setVerbose(bool in)
 {
 	verbose = in;
@@ -466,6 +471,7 @@ float MeshGenerator::fGetOffset(float fValue1, float fValue2, float fValueDesire
 
 
 //vGetColor generates a color from a given position and normal of a point
+//And with the option of using the voxel's tags.
 Ogre::ColourValue MeshGenerator::vGetColor(Ogre::Vector3 &rfPosition, Ogre::Vector3 &rfNormal, std::set<std::string> in_tags)
 {
 	Ogre::ColourValue rfColor;
@@ -481,6 +487,7 @@ Ogre::ColourValue MeshGenerator::vGetColor(Ogre::Vector3 &rfPosition, Ogre::Vect
 }
 
 
+//this is a wrapper method for getting values out of the thing being meshed.
 float MeshGenerator::fSample(float fX, float fY, float fZ)
 {
 	//FIXME: this should take other NodeInformation factors into account.
@@ -570,19 +577,19 @@ void MeshGenerator::vMarchCube1(float fX, float fY, float fZ, float fScale)
                 for(iCorner = 0; iCorner < 3; iCorner++)
                 {
                         iVertex = a2iTriangleConnectionTable[iFlagIndex][3*iTriangle+iCorner];
-			
-			ship_mesh->position(asEdgeVertex[iVertex].x, asEdgeVertex[iVertex].y, asEdgeVertex[iVertex].z);
-			ship_mesh->normal(asEdgeNorm[iVertex].x,   asEdgeNorm[iVertex].y,   asEdgeNorm[iVertex].z);
-			ship_mesh->colour( vGetColor(asEdgeVertex[iVertex], asEdgeNorm[iVertex], voxel_tags) );
-                        //up the vertex count by one.
-			mesh_vertex_count++;
 
-                        // sColor = 
-                        // glColor3f(sColor.x, sColor.y, sColor.z);
-                        // glNormal3f(asEdgeNorm[iVertex].x,   asEdgeNorm[iVertex].y,   asEdgeNorm[iVertex].z);
-                        // glVertex3f(asEdgeVertex[iVertex].x, asEdgeVertex[iVertex].y, asEdgeVertex[iVertex].z);
+			//this code actually makes the vertices
+			//first the vertex's position
+			ship_mesh->position(asEdgeVertex[iVertex].x, asEdgeVertex[iVertex].y, asEdgeVertex[iVertex].z);
+			//then it's normal
+			ship_mesh->normal(asEdgeNorm[iVertex].x,   asEdgeNorm[iVertex].y,   asEdgeNorm[iVertex].z);
+			//then it's colour
+			ship_mesh->colour( vGetColor(asEdgeVertex[iVertex], asEdgeNorm[iVertex], voxel_tags) );
+                        //up the vertex count by one. This is used in joining vertices to make triangles
+			mesh_vertex_count++;
                 }
 
+		//join the last three created vertices up to make them into a triangle.
 		ship_mesh->triangle(mesh_vertex_count-3, mesh_vertex_count-2, mesh_vertex_count-1);
         }
 }
@@ -645,15 +652,11 @@ void MeshGenerator::vMarchTetrahedron(Ogre::Vector3 *pasTetrahedronPosition, flo
 			ship_mesh->position(asEdgeVertex[iVertex].x, asEdgeVertex[iVertex].y, asEdgeVertex[iVertex].z);
 			ship_mesh->normal(asEdgeNorm[iVertex].x,   asEdgeNorm[iVertex].y,   asEdgeNorm[iVertex].z);
 			ship_mesh->colour( vGetColor(asEdgeVertex[iVertex], asEdgeNorm[iVertex]) );
-			//up the vertex count by one.
+			//up the vertex count by one. This is used in joining vertices to make triangles
 			mesh_vertex_count++;
-
-                        // sColor = 
-                        // glColor3f(sColor.x, sColor.y, sColor.z);
-                        // glNormal3f(asEdgeNorm[iVertex].x,   asEdgeNorm[iVertex].y,   asEdgeNorm[iVertex].z);
-                        // glVertex3f(asEdgeVertex[iVertex].x, asEdgeVertex[iVertex].y, asEdgeVertex[iVertex].z);
                 }
 
+		//join the last three created vertices up to make them into a triangle.
 		ship_mesh->triangle(mesh_vertex_count-3, mesh_vertex_count-2, mesh_vertex_count-1);
         }
 }
@@ -699,8 +702,13 @@ void MeshGenerator::vMarchCube2(float fX, float fY, float fZ, float fScale)
 }
 
 
+//this method meshes the octree given by setOctree(), and passes the
+//created triangles to the display object set with
+//setOgreDisplay(). It's argument is whether to do the meshing with
+//marching cubes or tetrahedra.
 void MeshGenerator::vMarch(bool useMarchingCubes)
 {
+	//check that we've actually got an octree to mesh.
 	assert(voxel_grid != NULL);
 
 	//size of the octree's dimensions
@@ -715,10 +723,12 @@ void MeshGenerator::vMarch(bool useMarchingCubes)
 	ship_mesh = display->createManualObject(name);
 	ship_mesh->begin(material, RenderOperation::OT_TRIANGLE_LIST);
 	//this variable tracks how many vertices have been added, for the purposes of connecting them into triangles.
+	//It's a global variable to this Object, and not passed as an argument.
 	mesh_vertex_count = 0;
 	
         for(iX = 0; iX < iDataSetSize; iX++)
 	{
+		//if we're being verbose, have a progress report output.
 		if (this->verbose)
 		{
 			std::cout << "doing slice " << iX << " of " << iDataSetSize << "\n";
@@ -727,6 +737,7 @@ void MeshGenerator::vMarch(bool useMarchingCubes)
 		for(iY = 0; iY < iDataSetSize; iY++)
 			for(iZ = 0; iZ < iDataSetSize; iZ++)
 			{
+				//depending on the argument to this method, use either marching cubes, or marching tetrahedrons.
 				if (useMarchingCubes)
 					vMarchCube1(iX*fStepSize, iY*fStepSize, iZ*fStepSize, fStepSize);	
 				else
@@ -738,6 +749,7 @@ void MeshGenerator::vMarch(bool useMarchingCubes)
 	ship_mesh->end();
 	ship_mesh->convertToMesh(name);
 
+	//actually make an object using the mesh and add it to the display object.
 	Ogre::Entity* ship = display->getSceneManager()->createEntity(name, name);		
 	Ogre::SceneNode* ship_node = display->getSceneManager()->getRootSceneNode()->createChildSceneNode();
 	ship_node->attachObject(ship);	
