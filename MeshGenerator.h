@@ -55,6 +55,9 @@ private:
 
 	bool verbose;
 
+	//this is used in constraining depth when getting values from the octree. It's the biggest a node's size can be before we must stop recursing. A value of 1 means a leaf node, anything less than that is an aggregated node.
+	int node_size_restriction;
+	
 	float fGetOffset(float fValue1, float fValue2, float fValueDesired);
 
 	Ogre::ColourValue vGetColor(Ogre::Vector3 &rfPosition, Ogre::Vector3 &rfNormal, std::set<std::string> in_tags = std::set<std::string>());
@@ -95,6 +98,8 @@ public:
 	void setOgreDisplay(OgreDisplay* in);
 
 	void setVerbose(bool in);
+
+	void setNodeSizeRestriction(int in);
 };
 
 #endif

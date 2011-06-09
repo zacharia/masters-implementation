@@ -47,6 +47,10 @@ public:
 	//stores the tags of the node.
 	std::set<std::string> tags;
 
+	//these store information about this node when it's aggregated.
+	SPACE_TYPE aggregate_solid;
+	std::set<std::string> aggregate_tags;
+
 	//default constructor - makes a totally empty node with nothing in it and not tags
 	VoxelInformation();
 
@@ -88,7 +92,7 @@ public:
 
 	int getNodeSize();
 	
-	VoxelInformation at(int x, int y, int z, int currSize);
+	VoxelInformation at(int x, int y, int z, int currSize, int depth_restriction = 1);
 
 	void set(int x, int y, int z, VoxelInformation value, int currSize);
 
@@ -131,7 +135,7 @@ public:
 
 	int getSize();
 
-	VoxelInformation at(int x, int y, int z);
+	VoxelInformation at(int x, int y, int z, int depth_restriction = 1);
 
 	void set(int x, int y, int z, VoxelInformation value);
 
@@ -144,6 +148,8 @@ public:
 	void optimizeTree();
 
 	std::string printTree();
+
+	void makeAggregateInformation();
 };
 
 #endif

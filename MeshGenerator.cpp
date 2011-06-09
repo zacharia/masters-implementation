@@ -395,6 +395,7 @@ MeshGenerator::MeshGenerator()
 	fTargetValue = SPACE_BOUNDARY_VAL;
 	fStepSize = 1.0;
 	verbose = true;
+	node_size_restriction = 1;
 }
 
 
@@ -491,7 +492,7 @@ Ogre::ColourValue MeshGenerator::vGetColor(Ogre::Vector3 &rfPosition, Ogre::Vect
 float MeshGenerator::fSample(float fX, float fY, float fZ)
 {
 	//FIXME: this should take other NodeInformation factors into account.
-	return voxel_grid->at(fX, fY, fZ).solid;
+	return voxel_grid->at(fX, fY, fZ, node_size_restriction).solid;
 }
 
 
@@ -767,4 +768,10 @@ void MeshGenerator::vMarchingCubes()
 void MeshGenerator::vMarchingTetrahedrons()
 {
 	vMarch(false);
+}
+
+
+void MeshGenerator::setNodeSizeRestriction(int in)
+{
+	node_size_restriction = in;
 }

@@ -88,7 +88,7 @@ int Octree::getSize()
 }
 
 
-VoxelInformation Octree::at(int x, int y, int z)
+VoxelInformation Octree::at(int x, int y, int z, int depth_restriction)
 {
 	// I commented these out in favour of just returning an empty value when asking for something outside the octree
 	// assert(x >= 0 && x < this->size);
@@ -104,7 +104,7 @@ VoxelInformation Octree::at(int x, int y, int z)
 	//efficiency. This current way is because it's more
 	//understandable, but the function calls make it less
 	//efficient.
-	return root->at(x,y,z, this->size);
+	return root->at(x,y,z, this->size, depth_restriction);
 }
 
 
@@ -176,6 +176,12 @@ std::string Octree::printTree()
 	return root->printNode();
 }
 
+
+//This method goes through the tree and populates non-leaf nodes with their aggregate information.
+void Octree::makeAggregateInformation()
+{
+	
+}
 
 //====================OctreeNode method implementations=========================
 
@@ -251,10 +257,20 @@ int OctreeNode::getNodeSize()
 }
 
 
-//Recursive method for retrieving a value from the octree.
-//currSize is used for choosing the node to recurse to.
-VoxelInformation OctreeNode::at(int x, int y, int z, int currSize)
+//Recursive method for retrieving a value from the octree.  currSize
+//is used for choosing the node to recurse to. depth_restriction is a
+//way of constraining the depth in the tree that this method can
+//recurse to. It's the size of the nodes that the method should stop
+//recursing at.
+VoxelInformation OctreeNode::at(int x, int y, int z, int currSize, int depth_restriction)
 {
+	//if we've hit our depth_restriction, then return the current
+	//node's info, and do not recurse any further.
+	if ((depth_restriction > 0) && (currSize <= depth_restriction))
+	{
+		return this->info;
+	}
+	
 	//if we're at a node with no children
 	if ((this->children[0][0][0] == NULL) &&
 	    (this->children[0][0][1] == NULL) &&
@@ -280,7 +296,7 @@ VoxelInformation OctreeNode::at(int x, int y, int z, int currSize)
 		}
 		else
 		{
-			return this->children[!!(x & newSize)][!!(y & newSize)][!!(z & newSize)]->at(x,y,z, newSize);	
+			return this->children[!!(x & newSize)][!!(y & newSize)][!!(z & newSize)]->at(x,y,z, newSize, depth_restriction);
 		}		
 	}
 }

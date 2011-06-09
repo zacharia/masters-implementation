@@ -496,6 +496,7 @@ void VoxelGrid::polygonize()
 	mesh_generator.setVerbose(verbose);
 	mesh_generator.setOctree(grid);
 	mesh_generator.setOgreDisplay(display);
+	mesh_generator.setNodeSizeRestriction(1);
 	if (useMarchingCubes)
 	{
 		mesh_generator.vMarchingCubes();
