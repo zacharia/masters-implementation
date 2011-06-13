@@ -180,7 +180,7 @@ std::string Octree::printTree()
 //This method goes through the tree and populates non-leaf nodes with their aggregate information.
 void Octree::makeAggregateInformation()
 {
-	
+	root->makeAggregateInformation();
 }
 
 //====================OctreeNode method implementations=========================
@@ -585,6 +585,81 @@ std::string OctreeNode::printNode(int depth)
 	return ret;
 }
 
+
+void OctreeNode::makeAggregateInformation()
+{
+        //first recurse on all children.
+	for (int i = 0; i < 2; ++i)
+		for (int j = 0; j < 2; ++j)
+			for (int k = 0; k < 2; ++k)
+			{
+				if (this->children[i][j][k] != NULL)
+					this->children[i][j][k]->makeAggregateInformation();
+			}
+
+	//then get all the tags from the children and include them in this Node
+	for (int i = 0; i < 2; ++i)
+		for (int j = 0; j < 2; ++j)
+			for (int k = 0; k < 2; ++k)
+			{
+				if (this->children[i][j][k] != NULL)
+				{
+					for (std::set<std::string>::iterator a = this->children[i][j][k]->info.aggregate_tags.begin(); a != this->children[i][j][k]->info.aggregate_tags.end(); a++)
+					{
+						this->info.aggregate_tags.insert(*a);
+					}
+				}
+			}
+
+	//then decide whether this aggregate node is solid or not.
+
+	//if all the children are NULL, then just assign the current node's solidness as it's aggregate solidness
+	if ((this->children[0][0][0] == NULL) &&
+	    (this->children[0][0][1] == NULL) &&
+	    (this->children[0][1][0] == NULL) &&
+	    (this->children[0][1][1] == NULL) &&
+	    (this->children[1][0][0] == NULL) &&
+	    (this->children[1][0][1] == NULL) &&
+	    (this->children[1][1][0] == NULL) &&
+	    (this->children[1][1][1] == NULL))
+	{
+		this->info.aggregate_solid = this->info.solid;
+	}
+	else
+	{	
+		//this is currently a *very* simplistic way of doing it, I should probably do a better one later.
+		//this int stores how many of the child nodes have a different solidness from the current node.
+		int solid_children_count = 0;
+		for (int i = 0; i < 2; ++i)
+			for (int j = 0; j < 2; ++j)
+				for (int k = 0; k < 2; ++k)
+				{
+					if (this->children[i][j][k] != NULL)
+					{
+						if (this->children[i][j][k]->info.aggregate_solid == SPACE_SOLID)
+						{
+							solid_children_count++;
+						}
+					}
+					else
+					{
+						if (this->info.solid == SPACE_SOLID)
+						{
+							solid_children_count++;
+						}
+					}
+				}
+
+		if (solid_children_count > 4)
+		{
+			this->info.aggregate_solid = SPACE_SOLID;
+		}
+		else
+		{
+			this->info.aggregate_solid = SPACE_EMPTY;
+		}
+	}
+}
 
 //=================VoxelInformation methods========================
 

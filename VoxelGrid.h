@@ -91,6 +91,8 @@ class VoxelGrid
 
 	void updateDisplay();
 
+	void doSurfaceDetail();
+
 	void polygonize();
 
 	int getSize();

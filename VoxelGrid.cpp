@@ -486,6 +486,15 @@ void VoxelGrid::updateDisplay()
 }
 
 
+//this method calls all the stuff to make the octree aggregate and detail nodes.
+void VoxelGrid::doSurfaceDetail()
+{
+	assert(grid != NULL);
+
+	grid->makeAggregateInformation();
+}
+
+
 void VoxelGrid::polygonize()
 {
 	//do some sanity checks

@@ -105,6 +105,8 @@ public:
 	void optimizeNode();
 
 	std::string printNode(int depth = 0);
+
+	void makeAggregateInformation();
 };
 
 

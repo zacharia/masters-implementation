@@ -286,7 +286,9 @@ int main(int argc, char** argv)
 	if (verbose)
 	{
 		std::cout << "Converting voxel grid to a mesh.\n";	
-	}	
+	}
+
+	vg->doSurfaceDetail();
 
 	if (point_rendering)
 	{
