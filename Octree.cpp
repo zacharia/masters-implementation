@@ -552,8 +552,15 @@ std::string OctreeNode::printNode(int depth)
 	ret += Utility::numToString(this->nodeSize);
 	ret += " ";
 	ret += Utility::numToString(this->info.solid);
-	ret += " ";
+	ret += " | Tags: ";
 	for (std::set<std::string>::iterator i = this->info.tags.begin(); i != this->info.tags.end(); i++)
+	{
+		ret = ret + *i + " ";
+	}
+	ret += " | Aggregate solid: ";
+	ret += Utility::numToString(this->info.aggregate_solid);
+	ret += " | Aggregate Tags: ";
+	for (std::set<std::string>::iterator i = this->info.aggregate_tags.begin(); i != this->info.aggregate_tags.end(); i++)
 	{
 		ret = ret + *i + " ";
 	}
@@ -597,6 +604,9 @@ void OctreeNode::makeAggregateInformation()
 					this->children[i][j][k]->makeAggregateInformation();
 			}
 
+	//copy any tags the node may have into it's aggregate_tags field.
+	this->info.aggregate_tags = std::set<std::string>(this->info.tags);
+	
 	//then get all the tags from the children and include them in this Node
 	for (int i = 0; i < 2; ++i)
 		for (int j = 0; j < 2; ++j)
@@ -650,7 +660,7 @@ void OctreeNode::makeAggregateInformation()
 					}
 				}
 
-		if (solid_children_count > 4)
+		if (solid_children_count > 0)
 		{
 			this->info.aggregate_solid = SPACE_SOLID;
 		}
