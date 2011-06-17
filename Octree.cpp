@@ -175,10 +175,11 @@ std::string Octree::printTree()
 }
 
 
-std::vector<Ogre::Vector3> Octree::getSurfaceVoxels(bool emptyVoxelsToo)
+std::set<Ogre::Vector3, VectorLessThanComparator> Octree::getSurfaceVoxels(bool emptyVoxelsToo)
 {
-	std::vector<Ogre::Vector3> ret;
+	std::set<Ogre::Vector3, VectorLessThanComparator> ret;
 
+	//call the recursive getSurfaceVoxels() method on the root
 	ret = root->getSurfaceVoxels(Ogre::Vector3(0.0), this->size, this, emptyVoxelsToo);
 
 	return ret;
@@ -749,15 +750,18 @@ std::string OctreeNode::printNode(int depth)
 
 //This method returns a vector containing all the surface voxels in the current octree node.
 //if emptyVoxelsToo is true, then empty nodes that border onto solid space are also included.
-std::vector<Ogre::Vector3> OctreeNode::getSurfaceVoxels(Ogre::Vector3 corner, int currSize, Octree* tree, bool emptyVoxelsToo)
+std::set<Ogre::Vector3, VectorLessThanComparator> OctreeNode::getSurfaceVoxels(Ogre::Vector3 corner, int currSize, Octree* tree, bool emptyVoxelsToo)
 {
 	//this contains the return results, starts off empty.
-	std::vector<Ogre::Vector3> ret;
+	std::set<Ogre::Vector3, VectorLessThanComparator> ret;
 	
 	//then check each of it's surface elements for edginess.
 	Ogre::Vector3 curr_pos;
 
-	if ((this->info.solid == SPACE_SOLID) || emptyVoxelsToo)
+	//the number of pixels around the edge pixel to inlcude when returning empty neighbours to edge voxels too
+	int emptyVoxelBorderSize = 1;
+
+	if (this->info.solid == SPACE_SOLID)
 	{	
 		for (int a = 0; a < (currSize); ++a)
 			for (int b = 0; b < (currSize); ++b)
@@ -765,7 +769,24 @@ std::vector<Ogre::Vector3> OctreeNode::getSurfaceVoxels(Ogre::Vector3 corner, in
 				curr_pos = corner + Ogre::Vector3(0,a,b);
 				if (tree->isEdgeVoxel(curr_pos, 26, emptyVoxelsToo))
 				{
-					ret.push_back(curr_pos);
+					if (emptyVoxelsToo)
+					{
+						//add all the surrounding voxels to the return list too
+						for (int i = -emptyVoxelBorderSize; i <= emptyVoxelBorderSize; ++i)
+						{
+							for (int j = -emptyVoxelBorderSize; j <= emptyVoxelBorderSize; ++j)
+							{
+								for (int k = -emptyVoxelBorderSize; k <= emptyVoxelBorderSize; ++k)
+								{
+									ret.insert(curr_pos + Ogre::Vector3(i,j,k));
+								}
+							}
+						}	
+					}
+					else
+					{
+						ret.insert(curr_pos);
+					}
 				}
 			}
 							
@@ -775,7 +796,24 @@ std::vector<Ogre::Vector3> OctreeNode::getSurfaceVoxels(Ogre::Vector3 corner, in
 				curr_pos = corner + Ogre::Vector3(a,0,b);
 				if (tree->isEdgeVoxel(curr_pos, 26, emptyVoxelsToo))
 				{
-					ret.push_back(curr_pos);
+					if (emptyVoxelsToo)
+					{
+						//add all the surrounding voxels to the return list too
+						for (int i = -emptyVoxelBorderSize; i <= emptyVoxelBorderSize; ++i)
+						{
+							for (int j = -emptyVoxelBorderSize; j <= emptyVoxelBorderSize; ++j)
+							{
+								for (int k = -emptyVoxelBorderSize; k <= emptyVoxelBorderSize; ++k)
+								{
+									ret.insert(curr_pos + Ogre::Vector3(i,j,k));
+								}
+							}
+						}	
+					}
+					else
+					{
+						ret.insert(curr_pos);
+					}
 				}
 			}
 							
@@ -785,7 +823,24 @@ std::vector<Ogre::Vector3> OctreeNode::getSurfaceVoxels(Ogre::Vector3 corner, in
 				curr_pos = corner + Ogre::Vector3(a,b,0);
 				if (tree->isEdgeVoxel(curr_pos, 26, emptyVoxelsToo))
 				{
-					ret.push_back(curr_pos);
+					if (emptyVoxelsToo)
+					{
+						//add all the surrounding voxels to the return list too
+						for (int i = -emptyVoxelBorderSize; i <= emptyVoxelBorderSize; ++i)
+						{
+							for (int j = -emptyVoxelBorderSize; j <= emptyVoxelBorderSize; ++j)
+							{
+								for (int k = -emptyVoxelBorderSize; k <= emptyVoxelBorderSize; ++k)
+								{
+									ret.insert(curr_pos + Ogre::Vector3(i,j,k));
+								}
+							}
+						}	
+					}
+					else
+					{
+						ret.insert(curr_pos);
+					}
 				}
 			}
 							
@@ -795,7 +850,24 @@ std::vector<Ogre::Vector3> OctreeNode::getSurfaceVoxels(Ogre::Vector3 corner, in
 				curr_pos = corner + Ogre::Vector3(currSize,a,b);
 				if (tree->isEdgeVoxel(curr_pos, 26, emptyVoxelsToo))
 				{
-					ret.push_back(curr_pos);
+					if (emptyVoxelsToo)
+					{
+						//add all the surrounding voxels to the return list too
+						for (int i = -emptyVoxelBorderSize; i <= emptyVoxelBorderSize; ++i)
+						{
+							for (int j = -emptyVoxelBorderSize; j <= emptyVoxelBorderSize; ++j)
+							{
+								for (int k = -emptyVoxelBorderSize; k <= emptyVoxelBorderSize; ++k)
+								{
+									ret.insert(curr_pos + Ogre::Vector3(i,j,k));
+								}
+							}
+						}	
+					}
+					else
+					{
+						ret.insert(curr_pos);
+					}
 				}
 			}
 							
@@ -805,7 +877,24 @@ std::vector<Ogre::Vector3> OctreeNode::getSurfaceVoxels(Ogre::Vector3 corner, in
 				curr_pos = corner + Ogre::Vector3(a,currSize,b);
 				if (tree->isEdgeVoxel(curr_pos, 26, emptyVoxelsToo))
 				{
-					ret.push_back(curr_pos);
+					if (emptyVoxelsToo)
+					{
+						//add all the surrounding voxels to the return list too
+						for (int i = -emptyVoxelBorderSize; i <= emptyVoxelBorderSize; ++i)
+						{
+							for (int j = -emptyVoxelBorderSize; j <= emptyVoxelBorderSize; ++j)
+							{
+								for (int k = -emptyVoxelBorderSize; k <= emptyVoxelBorderSize; ++k)
+								{
+									ret.insert(curr_pos + Ogre::Vector3(i,j,k));
+								}
+							}
+						}	
+					}
+					else
+					{
+						ret.insert(curr_pos);
+					}
 				}
 			}
 							
@@ -815,7 +904,24 @@ std::vector<Ogre::Vector3> OctreeNode::getSurfaceVoxels(Ogre::Vector3 corner, in
 				curr_pos = corner + Ogre::Vector3(a,b,currSize);
 				if (tree->isEdgeVoxel(curr_pos, 26, emptyVoxelsToo))
 				{
-					ret.push_back(curr_pos);
+					if (emptyVoxelsToo)
+					{
+						//add all the surrounding voxels to the return list too
+						for (int i = -emptyVoxelBorderSize; i <= emptyVoxelBorderSize; ++i)
+						{
+							for (int j = -emptyVoxelBorderSize; j <= emptyVoxelBorderSize; ++j)
+							{
+								for (int k = -emptyVoxelBorderSize; k <= emptyVoxelBorderSize; ++k)
+								{
+									ret.insert(curr_pos + Ogre::Vector3(i,j,k));
+								}
+							}
+						}	
+					}
+					else
+					{
+						ret.insert(curr_pos);
+					}
 				}
 			}
 	}
@@ -831,8 +937,8 @@ std::vector<Ogre::Vector3> OctreeNode::getSurfaceVoxels(Ogre::Vector3 corner, in
 					Ogre::Vector3 child_corner = Ogre::Vector3(corner.x + (i * currSize / 2), corner.y + (j * currSize / 2), corner.z + (k * currSize / 2));
 				
 					//and recurse on them
-					std::vector<Ogre::Vector3> results = this->children[i][j][k]->getSurfaceVoxels(child_corner, currSize / 2, tree);
-					ret.insert(ret.end(), results.begin(), results.end());	
+					std::set<Ogre::Vector3, VectorLessThanComparator> results = this->children[i][j][k]->getSurfaceVoxels(child_corner, currSize / 2, tree, emptyVoxelsToo);
+					ret.insert(results.begin(), results.end());	
 				}
 			}
 		
