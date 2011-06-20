@@ -36,4 +36,20 @@ public:
 	static std::string ogreMatrix3ToString(Ogre::Matrix3 in, bool on_one_line = false);
 };
 
+struct VectorLessThanComparator
+{
+	bool operator()(const Ogre::Vector3 &a, const Ogre::Vector3 &b)
+	{
+		if (a.x == b.x)
+		{
+			if (a.y == b.y)
+			{
+				return a.z < b.z;
+			}
+			return a.y < b.y;
+		}
+		return a.x < b.x;
+	}
+};
+
 #endif
