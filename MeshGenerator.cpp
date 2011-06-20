@@ -725,7 +725,7 @@ void MeshGenerator::vMarch(bool useMarchingCubes)
 	if (onlyMarchSurfaceVoxels)
 	{
 		//get the surface voxels from the octree
-		std::set<Ogre::Vector3, VectorLessThanComparator> edge_voxels = voxel_grid->getSurfaceVoxels(2);
+		std::set<Ogre::Vector3, VectorLessThanComparator> edge_voxels = voxel_grid->getSurfaceVoxels(6, 1);
 	
 		Ogre::Vector3 temp_pos;
 		

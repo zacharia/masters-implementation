@@ -175,12 +175,12 @@ std::string Octree::printTree()
 }
 
 
-std::set<Ogre::Vector3, VectorLessThanComparator> Octree::getSurfaceVoxels(int adjacentVoxelBorderSize)
+std::set<Ogre::Vector3, VectorLessThanComparator> Octree::getSurfaceVoxels(char connectivity, int adjacentVoxelBorderSize)
 {
 	std::set<Ogre::Vector3, VectorLessThanComparator> ret;
 
 	//call the recursive getSurfaceVoxels() method on the root
-	ret = root->getSurfaceVoxels(Ogre::Vector3(0.0), this->size, this, adjacentVoxelBorderSize);
+	ret = root->getSurfaceVoxels(Ogre::Vector3(0.0), this->size, this, connectivity, adjacentVoxelBorderSize);
 
 	return ret;
 }
@@ -676,7 +676,7 @@ std::string OctreeNode::printNode(int depth)
 //region around a surface voxel that should be returned to. It
 //defaults to 0, but to do marchin cubes correctly, neighbouring
 //voxels must be marched as well, which is why this option is included.
-std::set<Ogre::Vector3, VectorLessThanComparator> OctreeNode::getSurfaceVoxels(Ogre::Vector3 corner, int currSize, Octree* tree, int adjacentVoxelBorderSize)
+std::set<Ogre::Vector3, VectorLessThanComparator> OctreeNode::getSurfaceVoxels(Ogre::Vector3 corner, int currSize, Octree* tree, char connectivity, int adjacentVoxelBorderSize)
 {
 	//this contains the return results, starts off empty.
 	std::set<Ogre::Vector3, VectorLessThanComparator> ret;
@@ -690,7 +690,7 @@ std::set<Ogre::Vector3, VectorLessThanComparator> OctreeNode::getSurfaceVoxels(O
 			for (int b = 0; b < (currSize); ++b)
 			{
 				curr_pos = corner + Ogre::Vector3(0,a,b);
-				if (tree->isEdgeVoxel(curr_pos, 26))
+				if (tree->isEdgeVoxel(curr_pos, connectivity))
 				{
 					if (adjacentVoxelBorderSize > 0)
 					{
@@ -717,7 +717,7 @@ std::set<Ogre::Vector3, VectorLessThanComparator> OctreeNode::getSurfaceVoxels(O
 			for (int b = 0; b < (currSize); ++b)
 			{
 				curr_pos = corner + Ogre::Vector3(a,0,b);
-				if (tree->isEdgeVoxel(curr_pos, 26))
+				if (tree->isEdgeVoxel(curr_pos, connectivity))
 				{
 					if (adjacentVoxelBorderSize > 0)
 					{
@@ -744,7 +744,7 @@ std::set<Ogre::Vector3, VectorLessThanComparator> OctreeNode::getSurfaceVoxels(O
 			for (int b = 0; b < (currSize); ++b)
 			{
 				curr_pos = corner + Ogre::Vector3(a,b,0);
-				if (tree->isEdgeVoxel(curr_pos, 26))
+				if (tree->isEdgeVoxel(curr_pos, connectivity))
 				{
 					if (adjacentVoxelBorderSize > 0)
 					{
@@ -771,7 +771,7 @@ std::set<Ogre::Vector3, VectorLessThanComparator> OctreeNode::getSurfaceVoxels(O
 			for (int b = 0; b < (currSize); ++b)
 			{
 				curr_pos = corner + Ogre::Vector3(currSize,a,b);
-				if (tree->isEdgeVoxel(curr_pos, 26))
+				if (tree->isEdgeVoxel(curr_pos, connectivity))
 				{
 					if (adjacentVoxelBorderSize > 0)
 					{
@@ -798,7 +798,7 @@ std::set<Ogre::Vector3, VectorLessThanComparator> OctreeNode::getSurfaceVoxels(O
 			for (int b = 0; b < (currSize); ++b)
 			{
 				curr_pos = corner + Ogre::Vector3(a,currSize,b);
-				if (tree->isEdgeVoxel(curr_pos, 26))
+				if (tree->isEdgeVoxel(curr_pos, connectivity))
 				{
 					if (adjacentVoxelBorderSize > 0)
 					{
@@ -825,7 +825,7 @@ std::set<Ogre::Vector3, VectorLessThanComparator> OctreeNode::getSurfaceVoxels(O
 			for (int b = 0; b < (currSize); ++b)
 			{
 				curr_pos = corner + Ogre::Vector3(a,b,currSize);
-				if (tree->isEdgeVoxel(curr_pos, 26))
+				if (tree->isEdgeVoxel(curr_pos, connectivity))
 				{
 					if (adjacentVoxelBorderSize > 0)
 					{
@@ -860,7 +860,7 @@ std::set<Ogre::Vector3, VectorLessThanComparator> OctreeNode::getSurfaceVoxels(O
 					Ogre::Vector3 child_corner = Ogre::Vector3(corner.x + (i * currSize / 2), corner.y + (j * currSize / 2), corner.z + (k * currSize / 2));
 				
 					//and recurse on them
-					std::set<Ogre::Vector3, VectorLessThanComparator> results = this->children[i][j][k]->getSurfaceVoxels(child_corner, currSize / 2, tree, adjacentVoxelBorderSize);
+					std::set<Ogre::Vector3, VectorLessThanComparator> results = this->children[i][j][k]->getSurfaceVoxels(child_corner, currSize / 2, tree, connectivity, adjacentVoxelBorderSize);
 					ret.insert(results.begin(), results.end());	
 				}
 			}

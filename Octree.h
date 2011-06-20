@@ -103,7 +103,7 @@ public:
 
 	std::string printNode(int depth = 0);
 
-	std::set<Ogre::Vector3, VectorLessThanComparator> getSurfaceVoxels(Ogre::Vector3 corner, int currSize, Octree* tree, int adjacentVoxelBorderSize = 0);
+	std::set<Ogre::Vector3, VectorLessThanComparator> getSurfaceVoxels(Ogre::Vector3 corner, int currSize, Octree* tree, char connectivity = 26, int adjacentVoxelBorderSize = 0);
 };
 
 
@@ -148,7 +148,7 @@ public:
 
 	std::string printTree();
 
-	std::set<Ogre::Vector3, VectorLessThanComparator> getSurfaceVoxels(int adjacentVoxelBorderSize = 0);
+	std::set<Ogre::Vector3, VectorLessThanComparator> getSurfaceVoxels(char connectivity = 26, int adjacentVoxelBorderSize = 0);
 
 	bool isEdgeVoxel(Ogre::Vector3 pos, char connectivity);
 };
