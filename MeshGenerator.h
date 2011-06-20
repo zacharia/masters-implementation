@@ -48,6 +48,8 @@ private:
 
 	OgreDisplay* display;
 
+	bool onlyMarchSurfaceVoxels;
+
 	//this is the manual object used for making meshes for the ships
 	Ogre::ManualObject* ship_mesh;
 
@@ -100,6 +102,8 @@ public:
 	void setVerbose(bool in);
 
 	void setNodeSizeRestriction(int in);
+
+	void setOnlyMarchSurfaceVoxels(bool in);
 };
 
 #endif
