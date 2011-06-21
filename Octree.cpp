@@ -654,6 +654,8 @@ std::string OctreeNode::printNode(int depth)
 	}
 	ret += " | Aggregate solid: ";
 	ret += Utility::numToString(this->info.aggregate_solid);
+	ret += " | Aggregate normal: ";
+	ret += Utility::ogreVector3ToString(this->info.aggregate_normal);
 	ret += " | Aggregate Tags: ";
 	for (std::set<std::string>::iterator i = this->info.aggregate_tags.begin(); i != this->info.aggregate_tags.end(); i++)
 	{
@@ -786,6 +788,20 @@ void OctreeNode::makeAggregateInformation()
 				}
 
 		this->info.aggregate_normal = total / count;
+		this->info.aggregate_normal.normalise();
+
+		//alternatively, we can get a normal by comparing to aggregated neighbours at this resolution.
+		
+		//this is commented out because this method currently
+		//has no way of knowing a node's position. If there
+		//are problems with the averaging method, then add
+		//positional information to this method and adjust the
+		//code below to use it.
+		
+		// temp.aggregate_normal.x = grid->at(i->x - 1, i->y, i->z).solid - grid->at(i->x + 1, i->y, i->z).solid;
+		// temp.aggregate_normal.y = grid->at(i->x, i->y - 1, i->z).solid - grid->at(i->x, i->y + 1, i->z).solid;
+		// temp.aggregate_normal.z = grid->at(i->x, i->y, i->z - 1).solid - grid->at(i->x, i->y, i->z + 1).solid;
+		// temp.aggregate_normal.normalise();
 	}
 }
 

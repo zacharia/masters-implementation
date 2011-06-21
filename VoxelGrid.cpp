@@ -513,6 +513,7 @@ void VoxelGrid::doSurfaceDetail()
 		temp.aggregate_normal.x = grid->at(i->x - 1, i->y, i->z).solid - grid->at(i->x + 1, i->y, i->z).solid;
 		temp.aggregate_normal.y = grid->at(i->x, i->y - 1, i->z).solid - grid->at(i->x, i->y + 1, i->z).solid;
 		temp.aggregate_normal.z = grid->at(i->x, i->y, i->z - 1).solid - grid->at(i->x, i->y, i->z + 1).solid;
+		temp.aggregate_normal.normalise();
 
 		//now add that voxel's information to the surface voxels only octree.
 		surface_voxels_only_octree->set(i->x, i->y, i->z, temp);
