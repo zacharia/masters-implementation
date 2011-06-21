@@ -277,6 +277,7 @@ bool Octree::isEdgeVoxel(Ogre::Vector3 pos, char connectivity)
 	}
 }
 
+
 //====================OctreeNode method implementations=========================
 
 
@@ -754,6 +755,8 @@ void OctreeNode::makeAggregateInformation()
 					}
 				}
 
+		//if even one child is solid, the parent is solid (to
+		//ensure full coverage for the cellular automata.
 		if (solid_children_count > 0)
 		{
 			this->info.aggregate_solid = SPACE_SOLID;
@@ -762,6 +765,27 @@ void OctreeNode::makeAggregateInformation()
 		{
 			this->info.aggregate_solid = SPACE_EMPTY;
 		}
+	}
+
+	//if this is a solid node, then calculate it's aggregate normal.
+	if ((this->nodeSize > 1) && (this->info.aggregate_solid == SPACE_SOLID))
+	{
+		//average the child normals to get this node's normal
+		Ogre::Vector3 total = Ogre::Vector3(0.0);
+		int count = 0;
+		
+		for (int i = 0; i < 2; ++i)
+			for (int j = 0; j < 2; ++j)
+				for (int k = 0; k < 2; ++k)
+				{
+					if (this->children[i][j][k] != NULL)
+					{
+						count++;
+						total += this->children[i][j][k]->info.aggregate_normal;
+					}
+				}
+
+		this->info.aggregate_normal = total / count;
 	}
 }
 
@@ -985,6 +1009,9 @@ VoxelInformation::VoxelInformation()
 {
 	solid = SPACE_EMPTY;
 	tags = std::set<std::string>();
+	aggregate_solid = SPACE_EMPTY;
+	aggregate_tags = std::set<std::string>();
+	aggregate_normal = Ogre::Vector3(0.0);
 }
 
 

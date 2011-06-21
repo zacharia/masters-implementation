@@ -51,6 +51,7 @@ public:
 	//these store information about this node when it's aggregated.
 	SPACE_TYPE aggregate_solid;
 	std::set<std::string> aggregate_tags;
+	Ogre::Vector3 aggregate_normal;
 
 	//default constructor - makes a totally empty node with nothing in it and not tags
 	VoxelInformation();

@@ -489,9 +489,44 @@ void VoxelGrid::updateDisplay()
 //this method calls all the stuff to make the octree aggregate and detail nodes.
 void VoxelGrid::doSurfaceDetail()
 {
+	if (verbose)
+	{
+		std::cout << "Doing surface detailing of the voxel grid." << "\n";
+	}
+	
 	assert(grid != NULL);
 
-	grid->makeAggregateInformation();
+	//get the surface voxels from the octree.
+	std::set<Ogre::Vector3, VectorLessThanComparator> surface_voxels = grid->getSurfaceVoxels(26, 0);
+
+	//make a new empty octree
+	Octree* surface_voxels_only_octree = new Octree(grid->getSize());
+
+	//add the surface voxels to the new octree.
+	VoxelInformation temp;
+	for (std::set<Ogre::Vector3, VectorLessThanComparator>::iterator i = surface_voxels.begin(); i != surface_voxels.end(); i++)
+	{
+		//get the VoxelInformation for each surface voxel from the main octree.
+		temp = grid->at(i->x, i->y, i->z);
+
+		//calculate the normal for that voxel (we only add these to the surface voxels octree to save space)
+		temp.aggregate_normal.x = grid->at(i->x - 1, i->y, i->z).solid - grid->at(i->x + 1, i->y, i->z).solid;
+		temp.aggregate_normal.y = grid->at(i->x, i->y - 1, i->z).solid - grid->at(i->x, i->y + 1, i->z).solid;
+		temp.aggregate_normal.z = grid->at(i->x, i->y, i->z - 1).solid - grid->at(i->x, i->y, i->z + 1).solid;
+
+		//now add that voxel's information to the surface voxels only octree.
+		surface_voxels_only_octree->set(i->x, i->y, i->z, temp);
+	}
+
+	//now aggregate the surface voxels octree.
+	surface_voxels_only_octree->makeAggregateInformation();
+
+	//then run the cellular automata on the aggregated tree.
+
+	//now take the detailing information from the surface voxels tree and put it back into the main octree.
+
+	//delete the surface voxels only octree now that we're done with it.
+	delete surface_voxels_only_octree;
 }
 
 
