@@ -48,6 +48,8 @@ bool useMarchingCubes = true;
 
 bool usePriorities = true;
 
+string automata_rules_file = "";
+
 void tick()
 {
 	//keyboard input handling
@@ -215,6 +217,11 @@ int main(int argc, char** argv)
 		{
 			usePriorities = false;
 		}
+		//the python file that contains the cellular automata rules used to do the surface detailing
+		if ((curr == "--automata-file") || (curr == "-r"))
+		{
+			automata_rules_file = argv[++i];
+		}
 		if ((curr == "--help") || (curr == "-h")) //display help
 		{
 			cout << "options:\n"			     
@@ -229,6 +236,7 @@ int main(int argc, char** argv)
 			     << "-v\t\t Enable verbose output.\n"
 			     << "-t\t\t Use marching tetrahedra instead of the standard marching cubes.\n"
 			     << "-n\t\t Ignore shape priorities when voxelizing them.\n"
+			     << "-r <file>\t the python file containing the automata rule set to use when doing surface detail\n"
 			     << "-h\t\t display this help information\n\n";
 			exit(0);
 		}
@@ -287,6 +295,8 @@ int main(int argc, char** argv)
 	{
 		std::cout << "Converting voxel grid to a mesh.\n";	
 	}
+
+	vg->setAutomataRuleSet(automata_rules_file);
 
 	vg->doSurfaceDetail();
 

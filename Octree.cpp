@@ -278,6 +278,12 @@ bool Octree::isEdgeVoxel(Ogre::Vector3 pos, char connectivity)
 }
 
 
+void Octree::runAutomataRules(std::string rules_file)
+{
+	
+}
+
+
 //====================OctreeNode method implementations=========================
 
 
@@ -1028,6 +1034,7 @@ VoxelInformation::VoxelInformation()
 	aggregate_solid = SPACE_EMPTY;
 	aggregate_tags = std::set<std::string>();
 	aggregate_normal = Ogre::Vector3(0.0);
+	detail_info = std::set<std::string>();
 }
 
 

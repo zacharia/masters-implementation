@@ -13,6 +13,7 @@ VoxelGrid::VoxelGrid()
 	verbose = false;
 	useMarchingCubes = true;
 	usePriorities = true;
+	automata_rules_file = "";
 }
 
 
@@ -26,6 +27,7 @@ VoxelGrid::VoxelGrid(int size)
 	verbose = false;
 	useMarchingCubes = true;
 	usePriorities = true;
+	automata_rules_file = "";
 }
 
 
@@ -523,6 +525,8 @@ void VoxelGrid::doSurfaceDetail()
 	surface_voxels_only_octree->makeAggregateInformation();
 
 	//then run the cellular automata on the aggregated tree.
+	assert(automata_rules_file != "");
+	surface_voxels_only_octree->runAutomataRules(automata_rules_file);
 
 	//now take the detailing information from the surface voxels tree and put it back into the main octree.
 
@@ -730,7 +734,14 @@ void VoxelGrid::setUseCubes(bool v)
 	useMarchingCubes = v;
 }
 
+
 void VoxelGrid::setUsePriorities(bool v)
 {
 	usePriorities = v;
+}
+
+
+void VoxelGrid::setAutomataRuleSet(std::string file)
+{
+	automata_rules_file = file;
 }

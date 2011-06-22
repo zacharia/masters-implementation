@@ -53,6 +53,9 @@ public:
 	std::set<std::string> aggregate_tags;
 	Ogre::Vector3 aggregate_normal;
 
+	//these store information about what detail should be applied to a node.
+	std::set<std::string> detail_info;
+
 	//default constructor - makes a totally empty node with nothing in it and not tags
 	VoxelInformation();
 
@@ -163,6 +166,8 @@ public:
 	std::set<Ogre::Vector3, VectorLessThanComparator> getSurfaceVoxels(char connectivity = 26, int adjacentVoxelBorderSize = 0);
 
 	bool isEdgeVoxel(Ogre::Vector3 pos, char connectivity);
+
+	void runAutomataRules(std::string rules_file);
 };
 
 #endif

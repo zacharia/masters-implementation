@@ -65,6 +65,9 @@ class VoxelGrid
 
 	//a vector that contains the shapes that are read in from file.
 	std::vector<Shape> shapes;
+
+	//the path to the file containing the automata rule set for doing surface detail
+	std::string automata_rules_file;
 		
  public:
 	VoxelGrid();
@@ -120,6 +123,8 @@ class VoxelGrid
 	void setUseCubes(bool v);
 
 	void setUsePriorities(bool v);
+
+	void setAutomataRuleSet(std::string file);
 };
 
 #endif
