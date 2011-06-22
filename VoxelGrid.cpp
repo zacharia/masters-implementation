@@ -495,6 +495,12 @@ void VoxelGrid::doSurfaceDetail()
 	{
 		std::cout << "Doing surface detailing of the voxel grid." << "\n";
 	}
+
+	if (automata_rules_file == "")
+	{
+		std::cout << "warning: no automata rule file specified. No detailing will be done." << "\n";
+		return;
+	}
 	
 	assert(grid != NULL);
 
@@ -525,10 +531,16 @@ void VoxelGrid::doSurfaceDetail()
 	surface_voxels_only_octree->makeAggregateInformation();
 
 	//then run the cellular automata on the aggregated tree.
-	assert(automata_rules_file != "");
 	surface_voxels_only_octree->runAutomataRules(automata_rules_file);
 
 	//now take the detailing information from the surface voxels tree and put it back into the main octree.
+	std::set<Ogre::Vector3, VectorLessThanComparator> detailed_surface_voxels = grid->getAllSolidVoxels();
+	for (std::set<Ogre::Vector3, VectorLessThanComparator>::iterator i = detailed_surface_voxels.begin(); i != detailed_surface_voxels.end(); i++)
+	{
+		VoxelInformation temp = grid->at(i->x, i->y, i->z);
+		temp.detail_info = surface_voxels_only_octree->at(i->x, i->y, i->z).detail_info;
+		grid->set(i->x, i->y, i->z, temp);
+	}
 
 	//delete the surface voxels only octree now that we're done with it.
 	delete surface_voxels_only_octree;

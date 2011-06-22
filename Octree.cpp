@@ -1106,11 +1106,11 @@ VoxelInformation::~VoxelInformation()
 
 bool VoxelInformation::operator==(VoxelInformation& in)
 {
-	return ( (this->solid == in.solid) && (this->tags == in.tags) );
+	return ( (this->solid == in.solid) && (this->tags == in.tags) && (this->detail_info == in.detail_info) );
 }
 
 
 bool VoxelInformation::operator!=(VoxelInformation& in)
 {
-	return !( (this->solid == in.solid) && (this->tags == in.tags) );
+	return !( (this->solid == in.solid) && (this->tags == in.tags) && (this->detail_info == in.detail_info) );
 }
