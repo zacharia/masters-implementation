@@ -681,6 +681,11 @@ std::string OctreeNode::printNode(int depth)
 	{
 		ret = ret + *i + " ";
 	}
+	ret += " | Detailing Info: ";
+	for (std::set<std::string>::iterator i = this->info.detail_info.begin(); i != this->info.detail_info.end(); i++)
+	{
+		ret = ret + *i + " ";
+	}
 	ret += "\n";
 
 	//if this is not a leaf node

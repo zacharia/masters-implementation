@@ -496,6 +496,7 @@ void VoxelGrid::doSurfaceDetail()
 		std::cout << "Doing surface detailing of the voxel grid." << "\n";
 	}
 
+	//if we don't have a rule set to use, then just return from this method.
 	if (automata_rules_file == "")
 	{
 		std::cout << "warning: no automata rule file specified. No detailing will be done." << "\n";
