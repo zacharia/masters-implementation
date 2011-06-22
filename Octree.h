@@ -117,6 +117,8 @@ public:
 	void makeAggregateInformation();
 
 	std::set<Ogre::Vector3, VectorLessThanComparator> getSurfaceVoxels(Ogre::Vector3 corner, int currSize, Octree* tree, char connectivity = 26, int adjacentVoxelBorderSize = 0);
+
+	std::set<Ogre::Vector3, VectorLessThanComparator> getAllSolidVoxels(Ogre::Vector3 corner, int currSize, Octree* tree);
 };
 
 
@@ -168,6 +170,8 @@ public:
 	bool isEdgeVoxel(Ogre::Vector3 pos, char connectivity);
 
 	void runAutomataRules(std::string rules_file);
+
+	std::set<Ogre::Vector3, VectorLessThanComparator> getAllSolidVoxels();
 };
 
 #endif

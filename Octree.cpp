@@ -278,9 +278,23 @@ bool Octree::isEdgeVoxel(Ogre::Vector3 pos, char connectivity)
 }
 
 
+//this method reads in the python file in the argument and runs the
+//rule set contained in it on the Octree.
 void Octree::runAutomataRules(std::string rules_file)
 {
 	
+}
+
+
+//This method returns a set containing the positions of all solid voxels in the grid.
+std::set<Ogre::Vector3, VectorLessThanComparator> Octree::getAllSolidVoxels()
+{
+	std::set<Ogre::Vector3, VectorLessThanComparator> ret;
+
+	//call the recursive getSurfaceVoxels() method on the root
+	ret = root->getSurfaceVoxels(Ogre::Vector3(0.0), this->size, this);
+
+	return ret;	
 }
 
 
@@ -1002,6 +1016,45 @@ std::set<Ogre::Vector3, VectorLessThanComparator> OctreeNode::getSurfaceVoxels(O
 				
 					//and recurse on them
 					std::set<Ogre::Vector3, VectorLessThanComparator> results = this->children[i][j][k]->getSurfaceVoxels(child_corner, currSize / 2, tree, connectivity, adjacentVoxelBorderSize);
+					ret.insert(results.begin(), results.end());	
+				}
+			}
+		
+	return ret;	
+}
+
+
+std::set<Ogre::Vector3, VectorLessThanComparator> OctreeNode::getAllSolidVoxels(Ogre::Vector3 corner, int currSize, Octree* tree)
+{
+	//this contains the return results, starts off empty.
+	std::set<Ogre::Vector3, VectorLessThanComparator> ret;
+
+	if (this->info.solid == SPACE_SOLID)
+	{
+		for (int i = 0; i < currSize; ++i)
+		{
+			for (int j = 0; j < currSize; ++j)
+			{
+				for (int k = 0; k < currSize; ++k)
+				{
+					ret.insert(corner + Ogre::Vector3(i,j,k));
+				}
+			}
+		}
+	}
+		
+        //loop over the children.
+	for (int i = 0; i < 2; ++i)
+		for (int j = 0; j < 2; ++j)
+			for (int k = 0; k < 2; ++k)
+			{
+				if (this->children[i][j][k] != NULL)
+				{
+					//get the (lower) corner of the current node
+					Ogre::Vector3 child_corner = Ogre::Vector3(corner.x + (i * currSize / 2), corner.y + (j * currSize / 2), corner.z + (k * currSize / 2));
+				
+					//and recurse on them
+					std::set<Ogre::Vector3, VectorLessThanComparator> results = this->children[i][j][k]->getSurfaceVoxels(child_corner, currSize / 2, tree);
 					ret.insert(results.begin(), results.end());	
 				}
 			}
