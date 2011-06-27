@@ -282,7 +282,22 @@ bool Octree::isEdgeVoxel(Ogre::Vector3 pos, char connectivity)
 //rule set contained in it on the Octree.
 void Octree::runAutomataRules(std::string rules_file)
 {
+	//initialize the python interpreter
+	Py_Initialize();
+
+	//make the python objects that we need to run the grammar python code.
+	PyObject *p_rule_set_module, *p_rule_file_name;
+
+	//load the file containing the rule set.
+	p_rule_file_name = PyString_FromString(rules_file.c_str());
+	p_rule_set_module = PyImport_Import(p_rule_file_name);
+
+	//dereference the python objects we created
+	Py_DECREF(p_rule_set_module);
+	Py_DECREF(p_rule_file_name);
 	
+	//shut down the python interpreter
+	Py_Finalize();
 }
 
 

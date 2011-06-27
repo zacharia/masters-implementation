@@ -9,6 +9,9 @@
 #ifndef _OCTREE_CLASS_H
 #define _OCTREE_CLASS_H
 
+//the C/python interface for embedding python
+#include <python2.6/Python.h>
+
 //standard library inclusions
 #include <cstddef>
 #include <cassert>

@@ -5,7 +5,7 @@ WFLAGS=-Wall -Wextra -g3 -O3
 PROGRAM_NAME=voxel_generator
 
 $(PROGRAM_NAME): Utility.o Octree.o MeshGenerator.o VoxelGrid.o InputManager.o OgreDisplay.o main.o
-	$(CC) $(WFLAGS) -o $(PROGRAM_NAME) main.o Octree.o MeshGenerator.o VoxelGrid.o InputManager.o OgreDisplay.o Utility.o -lOgreMain -lOIS
+	$(CC) $(WFLAGS) -o $(PROGRAM_NAME) main.o Octree.o MeshGenerator.o VoxelGrid.o InputManager.o OgreDisplay.o Utility.o -lOgreMain -lOIS -lpython2.6
 
 main.o: main.cpp
 	$(CC) $(WFLAGS) -c -o main.o main.cpp
