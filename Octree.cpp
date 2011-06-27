@@ -286,7 +286,7 @@ void Octree::runAutomataRules(std::string rules_file)
 	Py_Initialize();
 
 	//make the python objects that we need to run the grammar python code.
-	PyObject *p_rule_set_module, *p_error_name;
+	PyObject *p_rule_set_module, *p_error_name, *p_rule_set_dictionary, *p_rule_set_function;
 
 	//append the contents folder to the system path so python looks for modules there.
 	PyRun_SimpleString("import sys");
@@ -304,8 +304,30 @@ void Octree::runAutomataRules(std::string rules_file)
 		std::cout << "========================================" << "\n";
 	}
 
+	//now get the number of iterations of the CA to do from the module
+	p_rule_set_dictionary = PyModule_GetDict(p_rule_set_module);
+	p_rule_set_function = PyDict_GetItemString(p_rule_set_dictionary, "num_iterations");
+	int num_iterations = PyInt_AsLong(p_rule_set_function);
+
+	//check if an error occured
+	p_error_name = PyErr_Occurred();
+	if (p_error_name != NULL)
+	{
+		std::cout << "========================================" << "\n";
+		PyErr_Print();
+		std::cout << "========================================" << "\n";
+	}
+
+	//now iterate the number of times specified in the file
+	for (int iteration_count = 1; iteration_count <= num_iterations; ++iteration_count)
+	{
+		
+	}
+	
 	//dereference the python objects we created
 	Py_DECREF(p_rule_set_module);
+	Py_DECREF(p_rule_set_dictionary);
+	Py_DECREF(p_rule_set_function);
 	
 	//shut down the python interpreter
 	Py_Finalize();
