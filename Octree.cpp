@@ -286,15 +286,26 @@ void Octree::runAutomataRules(std::string rules_file)
 	Py_Initialize();
 
 	//make the python objects that we need to run the grammar python code.
-	PyObject *p_rule_set_module, *p_rule_file_name;
+	PyObject *p_rule_set_module, *p_error_name;
+
+	//append the contents folder to the system path so python looks for modules there.
+	PyRun_SimpleString("import sys");
+	PyRun_SimpleString("sys.path.append(\"./content/\")");
 
 	//load the file containing the rule set.
-	p_rule_file_name = PyString_FromString(rules_file.c_str());
-	p_rule_set_module = PyImport_Import(p_rule_file_name);
+	p_rule_set_module = PyImport_ImportModule(rules_file.c_str());
+
+	//check if there was an error importing the file with the rules.
+	p_error_name = PyErr_Occurred();
+	if (p_error_name != NULL)
+	{
+		std::cout << "========================================" << "\n";
+		PyErr_Print();
+		std::cout << "========================================" << "\n";
+	}
 
 	//dereference the python objects we created
 	Py_DECREF(p_rule_set_module);
-	Py_DECREF(p_rule_file_name);
 	
 	//shut down the python interpreter
 	Py_Finalize();

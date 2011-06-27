@@ -293,12 +293,17 @@ int main(int argc, char** argv)
 
 	if (verbose)
 	{
-		std::cout << "Converting voxel grid to a mesh.\n";	
+		std::cout << "Doing the surface detail.\n";	
 	}
 
 	vg->setAutomataRuleSet(automata_rules_file);
 
 	vg->doSurfaceDetail();
+
+	if (verbose)
+	{
+		std::cout << "Converting voxel grid to a mesh.\n";	
+	}
 
 	if (point_rendering)
 	{
@@ -343,10 +348,20 @@ int main(int argc, char** argv)
 		display->addCube(max_corn, Ogre::Vector3(0.25, 1000, 0.25), Ogre::Quaternion::IDENTITY);
 		display->addCube(max_corn, Ogre::Vector3(0.25, 0.25, 1000), Ogre::Quaternion::IDENTITY);
 	}
+
+	if (verbose)
+	{
+		std::cout << "Setting up the OIS input system." << "\n";
+	}
 	
 	//OIS init
 	input = InputManager::getSingletonPtr();
 	input->initialise(display->getRenderWindow());
+
+	if (verbose)
+	{
+		std::cout << "Entering the main loop." << "\n";
+	}
 
 	//main game loop
 	while (run)

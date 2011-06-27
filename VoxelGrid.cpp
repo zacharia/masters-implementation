@@ -491,11 +491,6 @@ void VoxelGrid::updateDisplay()
 //this method calls all the stuff to make the octree aggregate and detail nodes.
 void VoxelGrid::doSurfaceDetail()
 {
-	if (verbose)
-	{
-		std::cout << "Doing surface detailing of the voxel grid." << "\n";
-	}
-
 	//if we don't have a rule set to use, then just return from this method.
 	if (automata_rules_file == "")
 	{
