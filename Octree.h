@@ -91,6 +91,8 @@ public:
 
 	OctreeNode();
 
+	OctreeNode(const OctreeNode& copy_from_me);
+
 	OctreeNode(int in_maxSize);
 
 	OctreeNode(int in_maxSize, VoxelInformation in_info);
@@ -142,6 +144,8 @@ public:
 	
 	Octree();
 
+	Octree(const Octree& copy_from_me);
+	
 	Octree(int size);
 
 	void createOctree(int size);

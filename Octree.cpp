@@ -14,6 +14,17 @@ Octree::Octree()
 }
 
 
+//copy constructor
+Octree::Octree(const Octree& copy_from_me)
+{
+	root = new OctreeNode(*(copy_from_me.root));
+	this->size = copy_from_me.size;
+	this->auto_optimize_on = copy_from_me.auto_optimize_on;
+	this->auto_optimize_interval = copy_from_me.auto_optimize_interval;
+	this->auto_optimize_counter = copy_from_me.auto_optimize_counter;
+}
+
+
 //parameterized constructor, makes octree of size equal to argument's value
 Octree::Octree(int in_size)
 {
@@ -354,6 +365,28 @@ OctreeNode::OctreeNode()
 {
 	VoxelInformation temp;
 	this->createNode(1, temp);
+}
+
+
+//copy constructor.
+OctreeNode::OctreeNode(const OctreeNode& copy_from_me)
+{
+	this->info = copy_from_me.info;
+	this->nodeSize = copy_from_me.nodeSize;
+
+	for (int i = 0; i < 2; ++i)
+		for (int j = 0; j < 2; ++j)
+			for (int k = 0; k < 2; ++k)
+			{
+				if (copy_from_me.children[i][j][k] == NULL)
+				{
+					this->children[i][j][k] = NULL;
+				}
+				else
+				{
+					this->children[i][j][k] = new OctreeNode(*(copy_from_me.children[i][j][k]));
+				}
+			}
 }
 
 
