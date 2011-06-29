@@ -329,11 +329,76 @@ void Octree::runAutomataRules(std::string rules_file)
 		std::cout << "========================================" << "\n";
 	}
 
+	//make a copy of the tree that we can use as a back buffer
+	//when running multiple iterations of the automata.
+	Octree* back_automata_buffer = new Octree(*this);
+	//these pointers are used for switching between the front and
+	//back buffer for doing multiple iterations of the
+	//automata. Data is read from one and written to the other in
+	//each iteration, and between iterations, which is read and
+	//which is written to is swapped.
+	Octree *current_buffer = NULL, *new_buffer = NULL;
+
+	//to make sure that we end up with *this (the Octree this
+	//method was called on) having the final state of the cellular
+	//automata after we're done running the iterations, we need to
+	//assign it either current or new, depending on whether the
+	//number of iterations is odd or even.
+	if (num_iterations % 2 == 0)
+	{
+		new_buffer = back_automata_buffer;
+		current_buffer = this;
+	}
+	else
+	{
+		new_buffer = this;
+		current_buffer = back_automata_buffer;
+	}
+
+	//get the surface voxels from the octree, so we only operate on those.
+	std::set<Ogre::Vector3, VectorLessThanComparator> surface_voxels = this->getSurfaceVoxels(26, 0);
+	//temp variables
+	VoxelInformation curr_voxel;
+
 	//now iterate the number of times specified in the file
 	for (int iteration_count = 1; iteration_count <= num_iterations; ++iteration_count)
 	{
-		
+		//loop over every surface voxel
+		for (std::set<Ogre::Vector3, VectorLessThanComparator>::iterator i = surface_voxels.begin(); i != surface_voxels.end(); i++)
+		{
+			//get the current voxel's information.
+			curr_voxel = current_buffer->at(i->x, i->y, i->z);
+			//put it's neighbours into a python array.
+			for (int x = -1; x <= 1; ++x)
+			{
+				for (int y = -1; y <= 1; ++y)
+				{
+					for (int z = -1; z <= 1; ++z)
+					{
+						
+					}
+				}
+			}
+
+			//feed the current voxel's information to the python rule set
+
+			//run the python rule on it.
+
+			//get the results back from the python rules
+			
+			//assign the rule output to curr_voxel
+
+			//then assign the rule's output to the new_buffer
+			new_buffer->set(i->x, i->y, i->z, curr_voxel);
+		}
+
+		//swap the buffer pointers.
+		Octree* temp = new_buffer;
+		new_buffer = current_buffer;
+		current_buffer = temp;
 	}
+
+	delete back_automata_buffer;
 	
 	//dereference the python objects we created
 	Py_DECREF(p_rule_set_module);
