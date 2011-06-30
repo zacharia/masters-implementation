@@ -369,6 +369,9 @@ void Octree::runAutomataRules(std::string rules_file)
 	//make the python objects that we need to run the grammar python code.
 	PyObject *p_rule_set_module, *p_error_name, *p_rule_set_dictionary, *p_rule_set_function;
 
+	//this stores the integer return values (status/error codes) from the Py*_ methods
+	int status;
+
 	//append the contents folder to the system path so python looks for modules there.
 	PyRun_SimpleString("import sys");
 	PyRun_SimpleString("sys.path.append(\"./content/\")");
@@ -390,6 +393,16 @@ void Octree::runAutomataRules(std::string rules_file)
 	p_rule_set_function = PyDict_GetItemString(p_rule_set_dictionary, "num_iterations");
 	int num_iterations = PyInt_AsLong(p_rule_set_function);
 
+	p_rule_set_function = PyDict_GetItemString(p_rule_set_dictionary, "main");
+	if (!PyCallable_Check(p_rule_set_function))
+	{
+		std::cout << "ERROR: no main function found in the rule set file " << rules_file << "\n";
+		PyErr_Print();
+		std::cout << "no detailing will be done." << "\n";
+		Py_Finalize();
+		return;
+	}
+	
 	//check if an error occured
 	p_error_name = PyErr_Occurred();
 	if (p_error_name != NULL)
@@ -430,36 +443,100 @@ void Octree::runAutomataRules(std::string rules_file)
 	//temp variables
 	VoxelInformation curr_voxel;
 
+	//I've temporarily made this zero to speed things up.
+	int neighbourhood_size = 0;
+
 	//now iterate the number of times specified in the file
 	for (int iteration_count = 1; iteration_count <= num_iterations; ++iteration_count)
 	{
+		std::cout << "surface detail: iteration: " << iteration_count << "\n"; //TEMP
+		int my_count = 0;
+		
 		//loop over every surface voxel
 		for (std::set<Ogre::Vector3, VectorLessThanComparator>::iterator i = surface_voxels.begin(); i != surface_voxels.end(); i++)
 		{
+			my_count++;
+			std::cout << "doing voxel " << my_count << " of " << surface_voxels.size() << "\n"; //TEMP 
+			
 			//get the current voxel's information.
 			curr_voxel = current_buffer->at(i->x, i->y, i->z);
 			//put it's neighbours into a python array.
-			for (int x = -1; x <= 1; ++x)
-			{
-				for (int y = -1; y <= 1; ++y)
+
+			//this will store the neighbourhood around the
+			//voxel of interest, and get given to the
+			//python grammar rule method.
+			PyObject* neighbours = PyList_New(0);
+
+			//temporary variables
+			PyObject *y_row, *z_row;
+
+			//loop over the entire neighbourhood and add each thing to the array.
+			for (int x = -neighbourhood_size; x <= neighbourhood_size; ++x)
+			{				
+				for (int y = -neighbourhood_size; y <= neighbourhood_size; ++y)
 				{
-					for (int z = -1; z <= 1; ++z)
+					y_row = PyList_New(0);
+					
+					for (int z = -neighbourhood_size; z <= neighbourhood_size; ++z)
 					{
-						
+						z_row = PyList_New(0);
+
+						status = PyList_Append(z_row, convertToList(current_buffer->at(i->x + x, i->y + y, i->z + z)));
 					}
+
+					status = PyList_Append(y_row, z_row);		
+				}
+
+				status = PyList_Append(neighbours, y_row);
+			}
+			
+			Py_DECREF(y_row);
+			Py_DECREF(z_row);
+
+			//this is the python list containing the current voxel that gets passed to the python method. It's already contained in the above array, but this is for convenience.
+			PyObject* p_curr_voxel = convertToList(curr_voxel);
+
+			//create the arguments for the python method from the current voxel, and it's neighbours' information
+			PyObject* method_args = PyTuple_New(2);
+			PyTuple_SetItem(method_args, 0, p_curr_voxel);
+			PyTuple_SetItem(method_args, 1, neighbours);
+
+			//run the python rule on it.
+			PyObject* returned_object = PyObject_CallObject(p_rule_set_function, method_args);
+
+			if (returned_object == NULL)
+			{
+				std::cout << "ERROR: could not successfully call python method" << "\n";
+				std::cout << "       skipping on to next voxel." << "\n";
+				continue;
+			}
+			
+			Py_DECREF(method_args);
+			
+			//assign the rule output to curr_voxel
+			//format of returned object is list containing new detail_info tags.
+			if (!PyList_Check(returned_object))
+			{
+				std::cout << "ERROR: object returned from rule set is not a list." << "\n";
+				std::cout << "       Current voxel will not be updated." << "\n";
+			}
+			else
+			{
+				int list_size = PyList_Size(returned_object);
+				curr_voxel.detail_info.clear();
+				for (int j = 0; j < list_size; ++j)
+				{
+					curr_voxel.detail_info.insert( std::string(PyString_AsString( PyList_GetItem(returned_object, j)) ) );
 				}
 			}
 
-			//feed the current voxel's information to the python rule set
-
-			//run the python rule on it.
-
-			//get the results back from the python rules
-			
-			//assign the rule output to curr_voxel
-
 			//then assign the rule's output to the new_buffer
 			new_buffer->set(i->x, i->y, i->z, curr_voxel);
+
+			//DECREF the unneeded objects.
+			Py_DECREF(neighbours);
+			Py_DECREF(p_curr_voxel);
+			Py_DECREF(returned_object);
 		}
 
 		//swap the buffer pointers.

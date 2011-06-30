@@ -1,5 +1,5 @@
-num_iterations = 5
+num_iterations = 1
 
-def getCellTags():
+def main(voxel, neighbourhood):
     ret = "grey"
-    return ret
+    return [ret]
