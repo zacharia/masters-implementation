@@ -176,6 +176,12 @@ public:
 
 	bool isEdgeVoxel(Ogre::Vector3 pos, char connectivity);
 
+	PyObject* convertToList(const VoxelInformation& in);
+
+	PyObject* convertToList(const std::set<std::string>& in);
+
+	PyObject* convertToList(const Ogre::Vector3& in);
+
 	void runAutomataRules(std::string rules_file);
 
 	std::set<Ogre::Vector3, VectorLessThanComparator> getAllSolidVoxels();

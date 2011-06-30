@@ -289,6 +289,76 @@ bool Octree::isEdgeVoxel(Ogre::Vector3 pos, char connectivity)
 }
 
 
+//converts a set of strings into a python list
+PyObject* Octree::convertToList(const std::set<std::string>& in)
+{	
+        //the list object we're adding stuff to.
+	PyObject* ret = PyList_New(0);
+
+	//used for storing return status codes of the adding methods.
+	int status;
+
+	//go through all the strings in the set and add them to the list
+	for (std::set<std::string>::iterator i = in.begin(); i != in.end(); i++)
+	{
+		status = PyList_Append(ret, PyString_FromString(i->c_str()));
+
+		//if an error occurs output a warning message
+		if (status != 0)
+		{
+			std::cout << "ERROR: An error occured during list appending." << "\n";
+		}
+	}
+
+	return ret;
+}
+
+
+//convert a Vector3 into a list representation.
+PyObject* Octree::convertToList(const Ogre::Vector3& in)
+{
+        //the list object we're adding stuff to.
+	PyObject* ret = PyList_New(0);
+
+	//used for storing return status codes of the adding methods.
+	int status;
+
+	//add the three components to the list
+	status = PyList_Append(ret, PyFloat_FromDouble(in.x));
+	status = PyList_Append(ret, PyFloat_FromDouble(in.y));
+	status = PyList_Append(ret, PyFloat_FromDouble(in.z));
+	
+	return ret;	
+}
+
+
+//this method takes a VoxelInformation object and returns a python list representation of it.
+PyObject* Octree::convertToList(const VoxelInformation& in)
+{
+	//the list object we're adding stuff to.
+	PyObject* ret = PyList_New(0);
+
+	//used for storing return status codes of the adding methods.
+	int status;
+
+	//now go through each of the things in the VoxelInformation and add them to the list.
+	
+	status = PyList_Append(ret, PyBool_FromLong(in.solid));
+
+	status = PyList_Append(ret, convertToList(in.tags));
+
+	status = PyList_Append(ret, PyBool_FromLong(in.aggregate_solid));
+
+	status = PyList_Append(ret, convertToList(in.aggregate_tags));
+
+	status = PyList_Append(ret, convertToList(in.aggregate_normal));
+
+	status = PyList_Append(ret, convertToList(in.detail_info));
+
+	return ret;
+}
+
+
 //this method reads in the python file in the argument and runs the
 //rule set contained in it on the Octree.
 void Octree::runAutomataRules(std::string rules_file)
