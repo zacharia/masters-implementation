@@ -389,10 +389,32 @@ void Octree::runAutomataRules(std::string rules_file)
 	}
 
 	//now get the number of iterations of the CA to do from the module
+	//default value of 1
+	int num_iterations = 1;
 	p_rule_set_dictionary = PyModule_GetDict(p_rule_set_module);
 	p_rule_set_function = PyDict_GetItemString(p_rule_set_dictionary, "num_iterations");
-	int num_iterations = PyInt_AsLong(p_rule_set_function);
+	if (p_rule_set_function == NULL)
+	{
+		std::cout << "WARNING: could not get num_iterations from rule set. Using default value." << "\n";
+	}
+	else
+	{
+		num_iterations = PyInt_AsLong(p_rule_set_function);
+	}
 
+        //This stores the size of the neighbourhood around the voxel that we'll examine for the automata rules.
+	int neighbourhood_size = 0;
+	//we get it from the python rule set.
+	p_rule_set_function = PyDict_GetItemString(p_rule_set_dictionary, "neighbourhood_size");
+	if (p_rule_set_function == NULL)
+	{
+		std::cout << "WARNING: could not get neighbourhood_size from rule set. Using default value." << "\n";
+	}
+	else
+	{
+		neighbourhood_size = PyInt_AsLong(p_rule_set_function);	
+	}
+	
 	p_rule_set_function = PyDict_GetItemString(p_rule_set_dictionary, "main");
 	if (!PyCallable_Check(p_rule_set_function))
 	{
@@ -442,10 +464,7 @@ void Octree::runAutomataRules(std::string rules_file)
 	std::set<Ogre::Vector3, VectorLessThanComparator> surface_voxels = this->getSurfaceVoxels(26, 0);
 	//temp variables
 	VoxelInformation curr_voxel;
-
-	//I've temporarily made this zero to speed things up.
-	int neighbourhood_size = 0;
-
+	
 	//now iterate the number of times specified in the file
 	for (int iteration_count = 1; iteration_count <= num_iterations; ++iteration_count)
 	{
@@ -468,7 +487,7 @@ void Octree::runAutomataRules(std::string rules_file)
 			PyObject* neighbours = PyList_New(0);
 
 			//temporary variables
-			PyObject *y_row, *z_row;
+			PyObject *y_row = NULL, *z_row = NULL;
 
 			//loop over the entire neighbourhood and add each thing to the array.
 			for (int x = -neighbourhood_size; x <= neighbourhood_size; ++x)
