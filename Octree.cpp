@@ -297,11 +297,14 @@ PyObject* Octree::convertToList(const std::set<std::string>& in)
 
 	//used for storing return status codes of the adding methods.
 	int status;
+	PyObject* temp;
 
 	//go through all the strings in the set and add them to the list
 	for (std::set<std::string>::iterator i = in.begin(); i != in.end(); i++)
 	{
-		status = PyList_Append(ret, PyString_FromString(i->c_str()));
+		temp = PyString_FromString(i->c_str());
+		status = PyList_Append(ret, temp);
+		Py_DECREF(temp);
 
 		//if an error occurs output a warning message
 		if (status != 0)
@@ -322,11 +325,20 @@ PyObject* Octree::convertToList(const Ogre::Vector3& in)
 
 	//used for storing return status codes of the adding methods.
 	int status;
+	PyObject* temp;
 
 	//add the three components to the list
-	status = PyList_Append(ret, PyFloat_FromDouble(in.x));
-	status = PyList_Append(ret, PyFloat_FromDouble(in.y));
-	status = PyList_Append(ret, PyFloat_FromDouble(in.z));
+	temp = PyFloat_FromDouble(in.x);
+	status = PyList_Append(ret, temp);
+	Py_DECREF(temp);
+
+	temp = PyFloat_FromDouble(in.y);
+	status = PyList_Append(ret, temp);
+	Py_DECREF(temp);
+
+	temp = PyFloat_FromDouble(in.z);
+	status = PyList_Append(ret, temp);
+	Py_DECREF(temp);
 	
 	return ret;	
 }
@@ -340,20 +352,29 @@ PyObject* Octree::convertToList(const VoxelInformation& in)
 
 	//used for storing return status codes of the adding methods.
 	int status;
+	PyObject* temp_list;
 
 	//now go through each of the things in the VoxelInformation and add them to the list.
 	
 	status = PyList_Append(ret, PyBool_FromLong(in.solid));
 
-	status = PyList_Append(ret, convertToList(in.tags));
+	temp_list = convertToList(in.tags);
+	status = PyList_Append(ret, temp_list);
+	Py_DECREF(temp_list);
 
 	status = PyList_Append(ret, PyBool_FromLong(in.aggregate_solid));
+	
+	temp_list = convertToList(in.aggregate_tags);
+	status = PyList_Append(ret, temp_list);
+	Py_DECREF(temp_list);
 
-	status = PyList_Append(ret, convertToList(in.aggregate_tags));
+	temp_list = convertToList(in.aggregate_normal);
+	status = PyList_Append(ret, temp_list);
+	Py_DECREF(temp_list);
 
-	status = PyList_Append(ret, convertToList(in.aggregate_normal));
-
-	status = PyList_Append(ret, convertToList(in.detail_info));
+	temp_list = convertToList(in.detail_info);
+	status = PyList_Append(ret, temp_list);
+	Py_DECREF(temp_list);
 
 	return ret;
 }
@@ -468,14 +489,20 @@ void Octree::runAutomataRules(std::string rules_file)
 	//now iterate the number of times specified in the file
 	for (int iteration_count = 1; iteration_count <= num_iterations; ++iteration_count)
 	{
-		std::cout << "surface detail: iteration: " << iteration_count << "\n"; //TEMP
-		int my_count = 0;
+		// std::cout << "surface detail: iteration: " << iteration_count << "\n"; //TEMP
+		// int my_count = 0;
 		
 		//loop over every surface voxel
 		for (std::set<Ogre::Vector3, VectorLessThanComparator>::iterator i = surface_voxels.begin(); i != surface_voxels.end(); i++)
 		{
-			my_count++;
-			std::cout << "doing voxel " << my_count << " of " << surface_voxels.size() << "\n"; //TEMP 
+			// my_count++;
+			// if (my_count % 1000 == 0)
+			// {
+			// 	std::cout << "doing voxel " << my_count << " of " << surface_voxels.size() << "\n"; //TEMP
+			// 	PyRun_SimpleString("from guppy import hpy");
+			// 	PyRun_SimpleString("h = hpy()");
+			// 	PyRun_SimpleString("print h.heap()");
+			// }
 			
 			//get the current voxel's information.
 			curr_voxel = current_buffer->at(i->x, i->y, i->z);
@@ -499,8 +526,10 @@ void Octree::runAutomataRules(std::string rules_file)
 					for (int z = -neighbourhood_size; z <= neighbourhood_size; ++z)
 					{
 						z_row = PyList_New(0);
-
-						status = PyList_Append(z_row, convertToList(current_buffer->at(i->x + x, i->y + y, i->z + z)));
+						PyObject* temp_list = convertToList(current_buffer->at(i->x + x, i->y + y, i->z + z));
+						status = PyList_Append(z_row, temp_list);
+						Py_DECREF(temp_list);
+						Py_DECREF(temp_list);
 					}
 
 					status = PyList_Append(y_row, z_row);		
@@ -511,7 +540,7 @@ void Octree::runAutomataRules(std::string rules_file)
 			
 			Py_DECREF(y_row);
 			Py_DECREF(z_row);
-
+			
 			//this is the python list containing the current voxel that gets passed to the python method. It's already contained in the above array, but this is for convenience.
 			PyObject* p_curr_voxel = convertToList(curr_voxel);
 
@@ -554,6 +583,7 @@ void Octree::runAutomataRules(std::string rules_file)
 
 			//DECREF the unneeded objects.
 			Py_DECREF(neighbours);
+			Py_DECREF(p_curr_voxel);
 			Py_DECREF(p_curr_voxel);
 			Py_DECREF(returned_object);
 		}
