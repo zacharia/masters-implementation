@@ -176,7 +176,7 @@ public:
 
 	bool isEdgeVoxel(Ogre::Vector3 pos, char connectivity);
 
-	PyObject* convertToList(const VoxelInformation& in);
+	PyObject* convertToDict(const VoxelInformation& in);
 
 	PyObject* convertToList(const std::set<std::string>& in);
 

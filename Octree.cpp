@@ -345,36 +345,48 @@ PyObject* Octree::convertToList(const Ogre::Vector3& in)
 
 
 //this method takes a VoxelInformation object and returns a python list representation of it.
-PyObject* Octree::convertToList(const VoxelInformation& in)
+PyObject* Octree::convertToDict(const VoxelInformation& in)
 {
 	//the list object we're adding stuff to.
-	PyObject* ret = PyList_New(0);
+	PyObject* ret = PyDict_New();
 
 	//used for storing return status codes of the adding methods.
 	int status;
-	PyObject* temp_list;
+	PyObject* temp_list, *name;
 
 	//now go through each of the things in the VoxelInformation and add them to the list.
-	
-	status = PyList_Append(ret, PyBool_FromLong(in.solid));
 
+	name = PyString_FromString("solid");
+	status = PyDict_SetItem(ret, name, PyBool_FromLong(in.solid));
+	Py_DECREF(name);
+
+	name = PyString_FromString("tags");
 	temp_list = convertToList(in.tags);
-	status = PyList_Append(ret, temp_list);
+	status = PyDict_SetItem(ret, name, temp_list);
 	Py_DECREF(temp_list);
+	Py_DECREF(name);
 
-	status = PyList_Append(ret, PyBool_FromLong(in.aggregate_solid));
-	
+	name = PyString_FromString("aggregate_solid");
+	status = PyDict_SetItem(ret, name, PyBool_FromLong(in.aggregate_solid));
+	Py_DECREF(name);
+
+	name = PyString_FromString("aggregate_tags");
 	temp_list = convertToList(in.aggregate_tags);
-	status = PyList_Append(ret, temp_list);
+	status = PyDict_SetItem(ret, name, temp_list);
 	Py_DECREF(temp_list);
+	Py_DECREF(name);
 
+	name = PyString_FromString("aggregate_normal");
 	temp_list = convertToList(in.aggregate_normal);
-	status = PyList_Append(ret, temp_list);
+	status = PyDict_SetItem(ret, name, temp_list);
 	Py_DECREF(temp_list);
+	Py_DECREF(name);
 
+	name = PyString_FromString("detail_info");
 	temp_list = convertToList(in.detail_info);
-	status = PyList_Append(ret, temp_list);
+	status = PyDict_SetItem(ret, name, temp_list);
 	Py_DECREF(temp_list);
+	Py_DECREF(name);
 
 	return ret;
 }
@@ -525,7 +537,7 @@ void Octree::runAutomataRules(std::string rules_file)
 					
 					for (int z = -neighbourhood_size; z <= neighbourhood_size; ++z)
 					{	
-						temp_list = convertToList(current_buffer->at(i->x + x, i->y + y, i->z + z));
+						temp_list = convertToDict(current_buffer->at(i->x + x, i->y + y, i->z + z));
 						
 						status = PyList_Append(z_row, temp_list);
 						if (status != 0)
@@ -549,7 +561,7 @@ void Octree::runAutomataRules(std::string rules_file)
 			}
 						
 			//this is the python list containing the current voxel that gets passed to the python method. It's already contained in the above array, but this is for convenience.
-			PyObject* p_curr_voxel = convertToList(curr_voxel);
+			PyObject* p_curr_voxel = convertToDict(curr_voxel);
 
 			//create the arguments for the python method from the current voxel, and it's neighbours' information
 			PyObject* method_args = PyTuple_New(2);
@@ -599,6 +611,7 @@ void Octree::runAutomataRules(std::string rules_file)
 					
 					for (int z = 0; z < PyList_Size(y_list); ++z)
 					{
+						PyDict_Clear(PyList_GetItem(y_list, z));
 						Py_DECREF(PyList_GetItem(y_list, z));
 					}
 
