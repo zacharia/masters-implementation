@@ -489,20 +489,17 @@ void Octree::runAutomataRules(std::string rules_file)
 	//now iterate the number of times specified in the file
 	for (int iteration_count = 1; iteration_count <= num_iterations; ++iteration_count)
 	{
-		// std::cout << "surface detail: iteration: " << iteration_count << "\n"; //TEMP
-		// int my_count = 0;
+		std::cout << "surface detail: iteration: " << iteration_count << "\n"; //TEMP
+		int my_count = 0;
 		
 		//loop over every surface voxel
 		for (std::set<Ogre::Vector3, VectorLessThanComparator>::iterator i = surface_voxels.begin(); i != surface_voxels.end(); i++)
 		{
-			// my_count++;
-			// if (my_count % 1000 == 0)
-			// {
-			// 	std::cout << "doing voxel " << my_count << " of " << surface_voxels.size() << "\n"; //TEMP
-			// 	PyRun_SimpleString("from guppy import hpy");
-			// 	PyRun_SimpleString("h = hpy()");
-			// 	PyRun_SimpleString("print h.heap()");
-			// }
+			my_count++;
+			if (my_count % 1000 == 0)
+			{
+				std::cout << "doing voxel " << my_count << " of " << surface_voxels.size() << "\n";
+			}
 			
 			//get the current voxel's information.
 			curr_voxel = current_buffer->at(i->x, i->y, i->z);
@@ -515,32 +512,42 @@ void Octree::runAutomataRules(std::string rules_file)
 
 			//temporary variables
 			PyObject *y_row = NULL, *z_row = NULL;
+			PyObject* temp_list = NULL;
 
 			//loop over the entire neighbourhood and add each thing to the array.
 			for (int x = -neighbourhood_size; x <= neighbourhood_size; ++x)
-			{				
+			{
+				y_row = PyList_New(0);
+				
 				for (int y = -neighbourhood_size; y <= neighbourhood_size; ++y)
 				{
-					y_row = PyList_New(0);
+					z_row = PyList_New(0);
 					
 					for (int z = -neighbourhood_size; z <= neighbourhood_size; ++z)
-					{
-						z_row = PyList_New(0);
-						PyObject* temp_list = convertToList(current_buffer->at(i->x + x, i->y + y, i->z + z));
+					{	
+						temp_list = convertToList(current_buffer->at(i->x + x, i->y + y, i->z + z));
+						
 						status = PyList_Append(z_row, temp_list);
-						Py_DECREF(temp_list);
-						Py_DECREF(temp_list);
+						if (status != 0)
+						{
+							std::cout << "ERROR: could not insert list element." << "\n"; //TEMP 
+						}
 					}
 
-					status = PyList_Append(y_row, z_row);		
+					status = PyList_Append(y_row, z_row);
+					if (status == -1)
+					{
+						std::cout << "ERROR: could not insert list element." << "\n"; //TEMP 
+					}
 				}
 
 				status = PyList_Append(neighbours, y_row);
+				if (status == -1)
+				{
+					std::cout << "ERROR: could not insert list element." << "\n"; //TEMP 
+				}
 			}
-			
-			Py_DECREF(y_row);
-			Py_DECREF(z_row);
-			
+						
 			//this is the python list containing the current voxel that gets passed to the python method. It's already contained in the above array, but this is for convenience.
 			PyObject* p_curr_voxel = convertToList(curr_voxel);
 
@@ -558,8 +565,6 @@ void Octree::runAutomataRules(std::string rules_file)
 				std::cout << "       skipping on to next voxel." << "\n";
 				continue;
 			}
-			
-			Py_DECREF(method_args);
 			
 			//assign the rule output to curr_voxel
 			//format of returned object is list containing new detail_info tags.
@@ -582,10 +587,35 @@ void Octree::runAutomataRules(std::string rules_file)
 			new_buffer->set(i->x, i->y, i->z, curr_voxel);
 
 			//DECREF the unneeded objects.
+			
+			//this block of code DECREF's all the contents of the neighbourhood array
+			for (int x = 0; x < PyList_Size(neighbours); ++x)
+			{
+				PyObject* x_list = PyList_GetItem(neighbours, x);
+								
+				for (int y = 0; y < PyList_Size(x_list); ++y)
+				{
+					PyObject* y_list = PyList_GetItem(x_list, y);
+					
+					for (int z = 0; z < PyList_Size(y_list); ++z)
+					{
+						Py_DECREF(PyList_GetItem(y_list, z));
+					}
+
+					Py_DECREF(y_list);
+				}
+
+				Py_DECREF(x_list);
+			}
+			Py_DECREF(temp_list);
+			Py_DECREF(y_row);
+			Py_DECREF(z_row);
+
 			Py_DECREF(neighbours);
 			Py_DECREF(p_curr_voxel);
 			Py_DECREF(p_curr_voxel);
 			Py_DECREF(returned_object);
+			Py_DECREF(method_args);
 		}
 
 		//swap the buffer pointers.
