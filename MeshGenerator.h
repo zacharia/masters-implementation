@@ -87,6 +87,8 @@ private:
 
 	Ogre::Vector3 vNormalizeVector(Ogre::Vector3 &rfVectorSource);
 
+	void makeVertex(ManualObject* mesh, Ogre::Vector3 pos, Ogre::Vector3 normal, Ogre::ColourValue colour, DetailingInformation* modifications);
+
 	void vMarchCube1(float fX, float fY, float fZ, float fScale, DetailingInformation* detail_info = NULL);
 
 	void vMarchCube2(float fX, float fY, float fZ, float fScale, DetailingInformation* detail_info = NULL);

@@ -520,6 +520,26 @@ Ogre::Vector3 MeshGenerator::vGetNormal(float fX, float fY, float fZ)
 }
 
 
+//This calls position, normal and colour to make a single vertex in
+//the ManualObject given by the first argument.
+void MeshGenerator::makeVertex(ManualObject* mesh, Ogre::Vector3 pos, Ogre::Vector3 normal, Ogre::ColourValue colour, DetailingInformation* modifications)
+{
+	Ogre::Vector3 final_pos = pos + modifications->position_offset;
+	Ogre::Vector3 final_normal = normal + modifications->normal_offset;
+	if (modifications->normalize_normals)
+	{
+		final_normal.normalise();
+	}
+	Ogre::ColourValue final_colour = colour;
+	
+	mesh->position(final_pos);
+	
+	mesh->normal(final_normal);
+	
+	mesh->colour(final_colour);	
+}
+
+
 //vMarchCube1 performs the Marching Cubes algorithm on a single cube
 void MeshGenerator::vMarchCube1(float fX, float fY, float fZ, float fScale, DetailingInformation* detail_info)
 {
@@ -583,13 +603,13 @@ void MeshGenerator::vMarchCube1(float fX, float fY, float fZ, float fScale, Deta
                 {
                         iVertex = a2iTriangleConnectionTable[iFlagIndex][3*iTriangle+iCorner];
 
-			//this code actually makes the vertices
-			//first the vertex's position
-			ship_mesh->position(asEdgeVertex[iVertex].x, asEdgeVertex[iVertex].y, asEdgeVertex[iVertex].z);
-			//then it's normal
-			ship_mesh->normal(asEdgeNorm[iVertex].x,   asEdgeNorm[iVertex].y,   asEdgeNorm[iVertex].z);
-			//then it's colour
-			ship_mesh->colour( vGetColor(asEdgeVertex[iVertex], asEdgeNorm[iVertex]) );
+			//call the method to create a vertex
+			makeVertex(ship_mesh,
+				   Ogre::Vector3(asEdgeVertex[iVertex].x, asEdgeVertex[iVertex].y, asEdgeVertex[iVertex].z),
+				   Ogre::Vector3(asEdgeNorm[iVertex].x, asEdgeNorm[iVertex].y, asEdgeNorm[iVertex].z),
+				   vGetColor(asEdgeVertex[iVertex], asEdgeNorm[iVertex]),
+				   detail_info);
+						
                         //up the vertex count by one. This is used in joining vertices to make triangles
 			mesh_vertex_count++;
                 }
@@ -653,10 +673,13 @@ void MeshGenerator::vMarchTetrahedron(Ogre::Vector3 *pasTetrahedronPosition, flo
                 {
                         iVertex = a2iTetrahedronTriangles[iFlagIndex][3*iTriangle+iCorner];
 
-			//make a vertex with the appropriate position, normal and colour
-			ship_mesh->position(asEdgeVertex[iVertex].x, asEdgeVertex[iVertex].y, asEdgeVertex[iVertex].z);
-			ship_mesh->normal(asEdgeNorm[iVertex].x,   asEdgeNorm[iVertex].y,   asEdgeNorm[iVertex].z);
-			ship_mesh->colour( vGetColor(asEdgeVertex[iVertex], asEdgeNorm[iVertex]) );
+			//call the method to create a vertex
+			makeVertex(ship_mesh,
+				   Ogre::Vector3(asEdgeVertex[iVertex].x, asEdgeVertex[iVertex].y, asEdgeVertex[iVertex].z),
+				   Ogre::Vector3(asEdgeNorm[iVertex].x, asEdgeNorm[iVertex].y, asEdgeNorm[iVertex].z),
+				   vGetColor(asEdgeVertex[iVertex], asEdgeNorm[iVertex]),
+				   detail_info);
+
 			//up the vertex count by one. This is used in joining vertices to make triangles
 			mesh_vertex_count++;
                 }
