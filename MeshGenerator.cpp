@@ -571,10 +571,7 @@ void MeshGenerator::vMarchCube1(float fX, float fY, float fZ, float fScale)
                         asEdgeNorm[iEdge] = vGetNormal(asEdgeVertex[iEdge].x, asEdgeVertex[iEdge].y, asEdgeVertex[iEdge].z);
                 }
         }
-
-	//get the tags associated with the current voxel. They're used in coloring and detailing the created mesh.
-	std::set<std::string> voxel_tags = voxel_grid->at(fX, fY, fZ).tags;
-
+	
         //Draw the triangles that were found.  There can be up to five per cube
         for(iTriangle = 0; iTriangle < 5; iTriangle++)
         {
@@ -591,7 +588,7 @@ void MeshGenerator::vMarchCube1(float fX, float fY, float fZ, float fScale)
 			//then it's normal
 			ship_mesh->normal(asEdgeNorm[iVertex].x,   asEdgeNorm[iVertex].y,   asEdgeNorm[iVertex].z);
 			//then it's colour
-			ship_mesh->colour( vGetColor(asEdgeVertex[iVertex], asEdgeNorm[iVertex], voxel_tags) );
+			ship_mesh->colour( vGetColor(asEdgeVertex[iVertex], asEdgeNorm[iVertex]) );
                         //up the vertex count by one. This is used in joining vertices to make triangles
 			mesh_vertex_count++;
                 }
@@ -743,26 +740,11 @@ void MeshGenerator::vMarch(bool useMarchingCubes)
 		
 		//and iterate over them, marching on each of them.
 		for (std::set<Ogre::Vector3, VectorLessThanComparator>::iterator a = edge_voxels.begin(); a != edge_voxels.end(); a++)
-		{
+		{			
 			if (useMarchingCubes)
 				vMarchCube1(a->x, a->y, a->z, fStepSize);
 			else
-				vMarchCube2(a->x, a->y, a->z, fStepSize);
-						
-			//this code means the entire correct mesh is created, but repeating voxels means it makes way too many redundant triangles
-			
-			// for (int i = -1; i <= 1; ++i)
-			// {
-			// 	for (int j = -1; j <= 1; ++j)
-			// 	{
-			// 		for (int k = -1; k <= 1; ++k)
-			// 		{
-			// 			temp_pos = Ogre::Vector3(a->x + i, a->y + j, a->z + k);
-								       
-			// 			vMarchCube1(temp_pos.x, temp_pos.y, temp_pos.z, fStepSize);
-			// 		}
-			// 	}
-			// }	
+				vMarchCube2(a->x, a->y, a->z, fStepSize);	
 		}
 	}
 	else
