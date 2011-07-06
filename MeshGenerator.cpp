@@ -524,18 +524,22 @@ Ogre::Vector3 MeshGenerator::vGetNormal(float fX, float fY, float fZ)
 //the ManualObject given by the first argument.
 void MeshGenerator::makeVertex(ManualObject* mesh, Ogre::Vector3 pos, Ogre::Vector3 normal, Ogre::ColourValue colour, DetailingInformation* modifications)
 {
-	Ogre::Vector3 final_pos = pos + modifications->position_offset;
-	Ogre::Vector3 final_normal = normal + modifications->normal_offset;
-	if (modifications->normalize_normals)
-	{
-		final_normal.normalise();
-	}
+	Ogre::Vector3 final_pos = pos;
+	Ogre::Vector3 final_normal = normal;
 	Ogre::ColourValue final_colour = colour;
+
+	if (modifications != NULL)
+	{
+		final_pos += modifications->position_offset;
+		final_normal += modifications->normal_offset;
+		if (modifications->normalize_normals)
+		{
+			final_normal.normalise();
+		}	
+	}
 	
 	mesh->position(final_pos);
-	
 	mesh->normal(final_normal);
-	
 	mesh->colour(final_colour);	
 }
 
@@ -761,10 +765,21 @@ void MeshGenerator::vMarch(bool useMarchingCubes)
 		std::set<Ogre::Vector3, VectorLessThanComparator> edge_voxels = voxel_grid->getSurfaceVoxels(26, 2);
 	
 		Ogre::Vector3 temp_pos;
+
+		int temp_count = 0;
 		
 		//and iterate over them, marching on each of them.
 		for (std::set<Ogre::Vector3, VectorLessThanComparator>::iterator a = edge_voxels.begin(); a != edge_voxels.end(); a++)
 		{
+			if (verbose)
+			{
+				temp_count++;
+				if (temp_count % 10000 == 0)
+				{
+					std::cout << "marching over voxel " << temp_count << " of " << edge_voxels.size() << "\n";
+				}
+			}
+			
 			if (do_detailing)
 			{
 				//get the detailing information for this voxel from it's position.
@@ -775,7 +790,7 @@ void MeshGenerator::vMarch(bool useMarchingCubes)
 	
 				//loop over all detailing information tags.
 				for (std::set<std::string>::iterator i = detail_info.begin(); i != detail_info.end(); i++)
-				{
+				{					
 					if (*i == "")
 					{
 						continue;
@@ -786,7 +801,7 @@ void MeshGenerator::vMarch(bool useMarchingCubes)
 					std::copy(std::istream_iterator<std::string>(iss), std::istream_iterator<std::string>(), std::back_inserter<std::vector<std::string> >(tokens));
 		
 					//and then parse the rest of the string as appropriate to the first word.
-					if (tokens.at(0) == "pos_offset")
+					if (tokens.at(0) == "position_offset")
 					{
 						temp.position_offset.x += atof(tokens.at(1).c_str());
 						temp.position_offset.y += atof(tokens.at(2).c_str());
