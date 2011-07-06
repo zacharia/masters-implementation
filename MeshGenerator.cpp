@@ -397,6 +397,7 @@ MeshGenerator::MeshGenerator()
 	verbose = true;
 	node_size_restriction = 1;
 	onlyMarchSurfaceVoxels = true;
+	do_detailing = true;
 }
 
 
@@ -520,7 +521,7 @@ Ogre::Vector3 MeshGenerator::vGetNormal(float fX, float fY, float fZ)
 
 
 //vMarchCube1 performs the Marching Cubes algorithm on a single cube
-void MeshGenerator::vMarchCube1(float fX, float fY, float fZ, float fScale)
+void MeshGenerator::vMarchCube1(float fX, float fY, float fZ, float fScale, DetailingInformation* detail_info)
 {
         int iCorner, iVertex, iVertexTest, iEdge, iTriangle, iFlagIndex, iEdgeFlags;
         float fOffset;
@@ -600,7 +601,7 @@ void MeshGenerator::vMarchCube1(float fX, float fY, float fZ, float fScale)
 
 
 //vMarchTetrahedron performs the Marching Tetrahedrons algorithm on a single tetrahedron
-void MeshGenerator::vMarchTetrahedron(Ogre::Vector3 *pasTetrahedronPosition, float *pafTetrahedronValue)
+void MeshGenerator::vMarchTetrahedron(Ogre::Vector3 *pasTetrahedronPosition, float *pafTetrahedronValue, DetailingInformation* detail_info)
 {
         int iEdge, iVert0, iVert1, iEdgeFlags, iTriangle, iCorner, iVertex, iFlagIndex = 0;
         float fOffset, fInvOffset, fValue = 0.0;
@@ -667,7 +668,7 @@ void MeshGenerator::vMarchTetrahedron(Ogre::Vector3 *pasTetrahedronPosition, flo
 
 
 //vMarchCube2 performs the Marching Tetrahedrons algorithm on a single cube by making six calls to vMarchTetrahedron
-void MeshGenerator::vMarchCube2(float fX, float fY, float fZ, float fScale)
+void MeshGenerator::vMarchCube2(float fX, float fY, float fZ, float fScale, DetailingInformation* detail_info)
 {
         int iVertex, iTetrahedron, iVertexInACube;
         Ogre::Vector3 asCubePosition[8];
@@ -701,7 +702,7 @@ void MeshGenerator::vMarchCube2(float fX, float fY, float fZ, float fScale)
                         asTetrahedronPosition[iVertex].z = asCubePosition[iVertexInACube].z;
                         afTetrahedronValue[iVertex] = afCubeValue[iVertexInACube];
                 }
-                vMarchTetrahedron(asTetrahedronPosition, afTetrahedronValue);
+                vMarchTetrahedron(asTetrahedronPosition, afTetrahedronValue, detail_info);
         }
 }
 
@@ -740,11 +741,59 @@ void MeshGenerator::vMarch(bool useMarchingCubes)
 		
 		//and iterate over them, marching on each of them.
 		for (std::set<Ogre::Vector3, VectorLessThanComparator>::iterator a = edge_voxels.begin(); a != edge_voxels.end(); a++)
-		{			
-			if (useMarchingCubes)
-				vMarchCube1(a->x, a->y, a->z, fStepSize);
+		{
+			if (do_detailing)
+			{
+				//get the detailing information for this voxel from it's position.
+				//first get the detail info from the VoxelInformation for this voxel.
+				std::set<std::string> detail_info = voxel_grid->at(a->x, a->y, a->z).detail_info;
+				//this stores the modifications from the detailing information.
+				DetailingInformation temp;
+	
+				//loop over all detailing information tags.
+				for (std::set<std::string>::iterator i = detail_info.begin(); i != detail_info.end(); i++)
+				{
+					if (*i == "")
+					{
+						continue;
+					}
+
+					std::istringstream iss(*i);
+					std::vector<std::string> tokens;
+					std::copy(std::istream_iterator<std::string>(iss), std::istream_iterator<std::string>(), std::back_inserter<std::vector<std::string> >(tokens));
+		
+					//and then parse the rest of the string as appropriate to the first word.
+					if (tokens.at(0) == "pos_offset")
+					{
+						temp.position_offset.x += atof(tokens.at(1).c_str());
+						temp.position_offset.y += atof(tokens.at(2).c_str());
+						temp.position_offset.z += atof(tokens.at(3).c_str());
+					}
+					else if (tokens.at(0) == "normal_offset")
+					{
+						temp.normal_offset.x += atof(tokens.at(1).c_str());
+						temp.normal_offset.y += atof(tokens.at(2).c_str());
+						temp.normal_offset.z += atof(tokens.at(3).c_str());
+					}
+					else if (tokens.at(0) == "normalize_normals")
+					{
+						temp.normalize_normals = true;
+					}
+				}
+
+				if (useMarchingCubes)
+					vMarchCube1(a->x, a->y, a->z, fStepSize, &temp);
+				else
+					vMarchCube2(a->x, a->y, a->z, fStepSize, &temp);
+			}
 			else
-				vMarchCube2(a->x, a->y, a->z, fStepSize);	
+			{
+				if (useMarchingCubes)
+					vMarchCube1(a->x, a->y, a->z, fStepSize);
+				else
+					vMarchCube2(a->x, a->y, a->z, fStepSize);
+			}
+				
 		}
 	}
 	else

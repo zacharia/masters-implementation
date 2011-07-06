@@ -24,6 +24,19 @@
 #include "Octree.h"
 #include "OgreDisplay.h"
 
+struct DetailingInformation
+{
+	Ogre::Vector3 position_offset;
+	Ogre::Vector3 normal_offset;
+	bool normalize_normals;
+
+	DetailingInformation()
+	{
+		position_offset = Ogre::Vector3(0.0);
+		normal_offset = Ogre::Vector3(0.0);
+		normalize_normals = false;
+	}
+};
 
 class MeshGenerator
 {
@@ -57,6 +70,8 @@ private:
 
 	bool verbose;
 
+	bool do_detailing;
+
 	//this is used in constraining depth when getting values from the octree. It's the biggest a node's size can be before we must stop recursing. A value of 1 means a leaf node, anything less than that is an aggregated node.
 	int node_size_restriction;
 	
@@ -64,7 +79,7 @@ private:
 
 	Ogre::ColourValue vGetColor(Ogre::Vector3 &rfPosition, Ogre::Vector3 &rfNormal, std::set<std::string> in_tags = std::set<std::string>());
 
-	void vMarchTetrahedron(Ogre::Vector3 *pasTetrahedronPosition, float *pafTetrahedronValue);
+	void vMarchTetrahedron(Ogre::Vector3 *pasTetrahedronPosition, float *pafTetrahedronValue, DetailingInformation* detail_info = NULL);
 
 	Ogre::Vector3 vGetNormal(float fX, float fY, float fZ);
 
@@ -72,9 +87,9 @@ private:
 
 	Ogre::Vector3 vNormalizeVector(Ogre::Vector3 &rfVectorSource);
 
-	void vMarchCube1(float fX, float fY, float fZ, float fScale);
+	void vMarchCube1(float fX, float fY, float fZ, float fScale, DetailingInformation* detail_info = NULL);
 
-	void vMarchCube2(float fX, float fY, float fZ, float fScale);
+	void vMarchCube2(float fX, float fY, float fZ, float fScale, DetailingInformation* detail_info = NULL);
 
 	void vMarch(bool useMarchingCubes);
 
