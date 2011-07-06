@@ -29,12 +29,16 @@ struct DetailingInformation
 	Ogre::Vector3 position_offset;
 	Ogre::Vector3 normal_offset;
 	bool normalize_normals;
+	Ogre::Vector3 normal_replacement;
+	bool replace_normal;
 
 	DetailingInformation()
 	{
 		position_offset = Ogre::Vector3(0.0);
 		normal_offset = Ogre::Vector3(0.0);
 		normalize_normals = false;
+		replace_normal = false;
+		Ogre::Vector3 normal_replacement = Ogre::Vector3(0.0);
 	}
 };
 

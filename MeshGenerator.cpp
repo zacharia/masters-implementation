@@ -531,7 +531,14 @@ void MeshGenerator::makeVertex(ManualObject* mesh, Ogre::Vector3 pos, Ogre::Vect
 	if (modifications != NULL)
 	{
 		final_pos += modifications->position_offset;
-		final_normal += modifications->normal_offset;
+		if (modifications->replace_normal)
+		{
+			final_normal = modifications->normal_replacement;
+		}
+		else
+		{
+			final_normal += modifications->normal_offset;	
+		}
 		if (modifications->normalize_normals)
 		{
 			final_normal.normalise();
@@ -816,6 +823,13 @@ void MeshGenerator::vMarch(bool useMarchingCubes)
 					else if (tokens.at(0) == "normalize_normals")
 					{
 						temp.normalize_normals = true;
+					}
+					else if (tokens.at(0) == "replace_normal")
+					{
+						temp.replace_normal = true;
+						temp.normal_replacement.x += atof(tokens.at(1).c_str());
+						temp.normal_replacement.y += atof(tokens.at(2).c_str());
+						temp.normal_replacement.z += atof(tokens.at(3).c_str());
 					}
 				}
 
