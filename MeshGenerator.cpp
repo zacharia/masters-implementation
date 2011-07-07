@@ -522,11 +522,11 @@ Ogre::Vector3 MeshGenerator::vGetNormal(float fX, float fY, float fZ)
 
 //This calls position, normal and colour to make a single vertex in
 //the ManualObject given by the first argument.
-void MeshGenerator::makeVertex(ManualObject* mesh, Ogre::Vector3 pos, Ogre::Vector3 normal, Ogre::ColourValue colour, DetailingInformation* modifications)
+void MeshGenerator::makeVertex(ManualObject* mesh, Ogre::Vector3 in_pos, Ogre::Vector3 in_normal, Ogre::ColourValue in_colour, DetailingInformation* modifications)
 {
-	Ogre::Vector3 final_pos = pos;
-	Ogre::Vector3 final_normal = normal;
-	Ogre::ColourValue final_colour = colour;
+	Ogre::Vector3 final_pos = in_pos;
+	Ogre::Vector3 final_normal = in_normal;
+	Ogre::ColourValue final_colour = in_colour;
 
 	if (modifications != NULL)
 	{
@@ -542,7 +542,12 @@ void MeshGenerator::makeVertex(ManualObject* mesh, Ogre::Vector3 pos, Ogre::Vect
 		if (modifications->normalize_normals)
 		{
 			final_normal.normalise();
-		}	
+		}
+
+		if (modifications->set_colour)
+		{
+			final_colour = modifications->colour;
+		}
 	}
 	
 	mesh->position(final_pos);
@@ -827,9 +832,17 @@ void MeshGenerator::vMarch(bool useMarchingCubes)
 					else if (tokens.at(0) == "replace_normal")
 					{
 						temp.replace_normal = true;
-						temp.normal_replacement.x += atof(tokens.at(1).c_str());
-						temp.normal_replacement.y += atof(tokens.at(2).c_str());
-						temp.normal_replacement.z += atof(tokens.at(3).c_str());
+						temp.normal_replacement.x = atof(tokens.at(1).c_str());
+						temp.normal_replacement.y = atof(tokens.at(2).c_str());
+						temp.normal_replacement.z = atof(tokens.at(3).c_str());
+					}
+					else if (tokens.at(0) == "colour")
+					{
+						temp.set_colour = true;
+						temp.colour.r = atof(tokens.at(1).c_str());
+						temp.colour.g = atof(tokens.at(2).c_str());
+						temp.colour.b = atof(tokens.at(3).c_str());
+						temp.colour.a = atof(tokens.at(4).c_str());
 					}
 				}
 

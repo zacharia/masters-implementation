@@ -4,8 +4,8 @@ neighbourhood_size = 1
 def main(voxel, neighbourhood):
     ret = []
     ret.append("grey")
-    if voxel["aggregate_normal"][0] >= 0:
-        ret.append("replace_normal 1 0 0")
+    if voxel["aggregate_normal"][1] > 0:
+        ret.append("colour 0.75 0.0 0 0.5")
         #ret.append("normalize_normals")
     # import code
     # code.interact(local=locals())
