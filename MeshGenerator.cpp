@@ -923,6 +923,8 @@ void MeshGenerator::vMarch(bool useMarchingCubes)
 	mesh_vertex_count = 0;
 	
 	std::sort(triangle_set.triangles.begin(), triangle_set.triangles.end(), TriangleSortingComparator());
+	
+	std::map<Ogre::Vector3, Ogre::Vector3, VectorLessThanComparator>::iterator temp;
 
 	for (std::vector<Triangle>::iterator i = triangle_set.triangles.begin(); i != triangle_set.triangles.end(); i++)
 	{
@@ -945,7 +947,16 @@ void MeshGenerator::vMarch(bool useMarchingCubes)
 		
 		for (int j = 0; j < 3; ++j)
 		{
-			ship_mesh->position(i->vertices[j].position);
+			temp = triangle_set.offsets.find(i->vertices[j].position);
+			if (temp == triangle_set.offsets.end())
+			{
+				ship_mesh->position(i->vertices[j].position);
+			}
+			else
+			{
+				ship_mesh->position(triangle_set.offsets[i->vertices[j].position]);
+			}
+			
 			ship_mesh->normal(i->vertices[j].normal);
 			ship_mesh->colour(i->vertices[j].colour);
 			mesh_vertex_count++;

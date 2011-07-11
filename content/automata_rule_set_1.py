@@ -4,7 +4,8 @@ neighbourhood_size = 1
 def main(voxel, neighbourhood, position, octree_size):
     ret = []
     ret.append("grey")
-    if position[1] > 32:
+    if position[1] > 90:
+        ret.append("position_offset 5 0 5")
         ret.append("material basic/cylinder_default")
         #ret.append("normalize_normals")
     # import code
