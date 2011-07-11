@@ -522,7 +522,7 @@ Ogre::Vector3 MeshGenerator::vGetNormal(float fX, float fY, float fZ)
 
 //This calls position, normal and colour to make a single vertex in
 //the ManualObject given by the first argument.
-void MeshGenerator::makeVertex(ManualObject* mesh, Ogre::Vector3 in_pos, Ogre::Vector3 in_normal, Ogre::ColourValue in_colour, DetailingInformation* modifications)
+void MeshGenerator::makeVertex(ManualObject* mesh, size_t in_index, Ogre::Vector3 in_pos, Ogre::Vector3 in_normal, Ogre::ColourValue in_colour, DetailingInformation* modifications)
 {
 	Ogre::Vector3 final_pos = in_pos;
 	Ogre::Vector3 final_normal = in_normal;
@@ -552,7 +552,7 @@ void MeshGenerator::makeVertex(ManualObject* mesh, Ogre::Vector3 in_pos, Ogre::V
 	
 	mesh->position(final_pos);
 	mesh->normal(final_normal);
-	mesh->colour(final_colour);	
+	mesh->colour(final_colour);
 }
 
 
@@ -621,6 +621,7 @@ void MeshGenerator::vMarchCube1(float fX, float fY, float fZ, float fScale, Deta
 
 			//call the method to create a vertex
 			makeVertex(ship_mesh,
+				   mesh_vertex_count,
 				   Ogre::Vector3(asEdgeVertex[iVertex].x, asEdgeVertex[iVertex].y, asEdgeVertex[iVertex].z),
 				   Ogre::Vector3(asEdgeNorm[iVertex].x, asEdgeNorm[iVertex].y, asEdgeNorm[iVertex].z),
 				   vGetColor(asEdgeVertex[iVertex], asEdgeNorm[iVertex]),
@@ -691,6 +692,7 @@ void MeshGenerator::vMarchTetrahedron(Ogre::Vector3 *pasTetrahedronPosition, flo
 
 			//call the method to create a vertex
 			makeVertex(ship_mesh,
+				   mesh_vertex_count,
 				   Ogre::Vector3(asEdgeVertex[iVertex].x, asEdgeVertex[iVertex].y, asEdgeVertex[iVertex].z),
 				   Ogre::Vector3(asEdgeNorm[iVertex].x, asEdgeNorm[iVertex].y, asEdgeNorm[iVertex].z),
 				   vGetColor(asEdgeVertex[iVertex], asEdgeNorm[iVertex]),
@@ -769,7 +771,7 @@ void MeshGenerator::vMarch(bool useMarchingCubes)
 	//this variable tracks how many vertices have been added, for the purposes of connecting them into triangles.
 	//It's a global variable to this Object, and not passed as an argument.
 	mesh_vertex_count = 0;
-
+	
 	//if we're only using surface voxels
 	if (onlyMarchSurfaceVoxels)
 	{
@@ -844,6 +846,11 @@ void MeshGenerator::vMarch(bool useMarchingCubes)
 						temp.colour.b = atof(tokens.at(3).c_str());
 						temp.colour.a = atof(tokens.at(4).c_str());
 					}
+
+					else if (tokens.at(0) == "material")
+					{
+						temp.material_name = tokens.at(1);
+					}
 				}
 
 				if (useMarchingCubes)
@@ -857,12 +864,16 @@ void MeshGenerator::vMarch(bool useMarchingCubes)
 					vMarchCube1(a->x, a->y, a->z, fStepSize);
 				else
 					vMarchCube2(a->x, a->y, a->z, fStepSize);
-			}
-				
+			}		
 		}
 	}
 	else
 	{
+		//IMPORTANT: This method of marching DOES NOT HAVE
+		//DETAILING SUPPORT.  There's no reason to use this
+		//method when the surface voxels only one is quicker
+		//and works just as well.
+		
 		//iterate over the entire octree's space, marching on each element.
 		for(iX = 0; iX < iDataSetSize; iX++)
 		{
@@ -883,7 +894,7 @@ void MeshGenerator::vMarch(bool useMarchingCubes)
 	}
 	
 	//ogre draw end
-	ship_mesh->end();
+	ship_mesh->end();	
 	ship_mesh->convertToMesh(name);
 
 	//actually make an object using the mesh and add it to the display object.

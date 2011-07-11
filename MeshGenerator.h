@@ -33,6 +33,7 @@ struct DetailingInformation
 	bool replace_normal;
 	Ogre::ColourValue colour;
 	bool set_colour;
+	std::string material_name;
 
 	DetailingInformation()
 	{
@@ -43,6 +44,7 @@ struct DetailingInformation
 		Ogre::Vector3 normal_replacement = Ogre::Vector3(0.0);
 		colour = Ogre::ColourValue();
 		set_colour = false;
+		material_name = "";
 	}
 };
 
@@ -95,7 +97,7 @@ private:
 
 	Ogre::Vector3 vNormalizeVector(Ogre::Vector3 &rfVectorSource);
 
-	void makeVertex(ManualObject* mesh, Ogre::Vector3 in_pos, Ogre::Vector3 in_normal, Ogre::ColourValue in_colour, DetailingInformation* modifications);
+	void makeVertex(ManualObject* mesh, size_t in_index, Ogre::Vector3 in_pos, Ogre::Vector3 in_normal, Ogre::ColourValue in_colour, DetailingInformation* modifications);
 
 	void vMarchCube1(float fX, float fY, float fZ, float fScale, DetailingInformation* detail_info = NULL);
 
