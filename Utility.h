@@ -46,11 +46,11 @@ struct VectorLessThanComparator
 		{
 			if (abs(a.y - b.y) < POSITION_EQUALITY_TOLERANCE)
 			{
-				return a.z - b.z < POSITION_EQUALITY_TOLERANCE;
+				return a.z - b.z < -POSITION_EQUALITY_TOLERANCE;
 			}
-			return a.y - b.y < POSITION_EQUALITY_TOLERANCE;
+			return a.y - b.y < -POSITION_EQUALITY_TOLERANCE;
 		}
-		return a.x - b.x < POSITION_EQUALITY_TOLERANCE;
+		return a.x - b.x < -POSITION_EQUALITY_TOLERANCE;
 	}
 };
 
