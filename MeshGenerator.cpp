@@ -522,15 +522,21 @@ Ogre::Vector3 MeshGenerator::vGetNormal(float fX, float fY, float fZ)
 
 //This calls position, normal and colour to make a single vertex in
 //the ManualObject given by the first argument.
-void MeshGenerator::makeVertex(ManualObject* mesh, size_t in_index, Ogre::Vector3 in_pos, Ogre::Vector3 in_normal, Ogre::ColourValue in_colour, DetailingInformation* modifications)
+Vertex MeshGenerator::makeVertex(ManualObject* mesh, size_t in_index, Ogre::Vector3 in_pos, Ogre::Vector3 in_normal, Ogre::ColourValue in_colour, DetailingInformation* modifications, std::map<Ogre::Vector3, Ogre::Vector3, VectorLessThanComparator>* offsets)
 {
+	Vertex ret;
 	Ogre::Vector3 final_pos = in_pos;
 	Ogre::Vector3 final_normal = in_normal;
 	Ogre::ColourValue final_colour = in_colour;
 
 	if (modifications != NULL)
 	{
-		final_pos += modifications->position_offset;
+		if (modifications->position_offset != Ogre::Vector3::ZERO)
+		{
+			std::pair<Ogre::Vector3, Ogre::Vector3> new_offset(in_pos, in_pos + modifications->position_offset);
+			offsets->insert(new_offset);
+		}
+		//final_pos += modifications->position_offset;
 		if (modifications->replace_normal)
 		{
 			final_normal = modifications->normal_replacement;
@@ -550,14 +556,18 @@ void MeshGenerator::makeVertex(ManualObject* mesh, size_t in_index, Ogre::Vector
 		}
 	}
 	
-	mesh->position(final_pos);
-	mesh->normal(final_normal);
-	mesh->colour(final_colour);
+	// mesh->position(final_pos);
+	// mesh->normal(final_normal);
+	// mesh->colour(final_colour);
+	ret.position = final_pos;
+	ret.normal = final_normal;
+	ret.colour = final_colour;
+	return ret;
 }
 
 
 //vMarchCube1 performs the Marching Cubes algorithm on a single cube
-void MeshGenerator::vMarchCube1(float fX, float fY, float fZ, float fScale, DetailingInformation* detail_info)
+void MeshGenerator::vMarchCube1(float fX, float fY, float fZ, float fScale, DetailingInformation* detail_info, TriangleSet* triangle_set)
 {
         int iCorner, iVertex, iVertexTest, iEdge, iTriangle, iFlagIndex, iEdgeFlags;
         float fOffset;
@@ -615,30 +625,37 @@ void MeshGenerator::vMarchCube1(float fX, float fY, float fZ, float fScale, Deta
                 if(a2iTriangleConnectionTable[iFlagIndex][3*iTriangle] < 0)
                         break;
 
+		Triangle curr_triangle;
+		
                 for(iCorner = 0; iCorner < 3; iCorner++)
                 {
                         iVertex = a2iTriangleConnectionTable[iFlagIndex][3*iTriangle+iCorner];
 
 			//call the method to create a vertex
-			makeVertex(ship_mesh,
-				   mesh_vertex_count,
-				   Ogre::Vector3(asEdgeVertex[iVertex].x, asEdgeVertex[iVertex].y, asEdgeVertex[iVertex].z),
-				   Ogre::Vector3(asEdgeNorm[iVertex].x, asEdgeNorm[iVertex].y, asEdgeNorm[iVertex].z),
-				   vGetColor(asEdgeVertex[iVertex], asEdgeNorm[iVertex]),
-				   detail_info);
+			curr_triangle.vertices[iCorner] = makeVertex(ship_mesh,
+							    mesh_vertex_count,
+							    Ogre::Vector3(asEdgeVertex[iVertex].x, asEdgeVertex[iVertex].y, asEdgeVertex[iVertex].z),
+							    Ogre::Vector3(asEdgeNorm[iVertex].x, asEdgeNorm[iVertex].y, asEdgeNorm[iVertex].z),
+							    vGetColor(asEdgeVertex[iVertex], asEdgeNorm[iVertex]),
+							    detail_info,
+							    &(triangle_set->offsets));
 						
                         //up the vertex count by one. This is used in joining vertices to make triangles
 			mesh_vertex_count++;
                 }
 
+		curr_triangle.material = detail_info->material_name;
+
+		triangle_set->triangles.push_back(curr_triangle);
+
 		//join the last three created vertices up to make them into a triangle.
-		ship_mesh->triangle(mesh_vertex_count-3, mesh_vertex_count-2, mesh_vertex_count-1);
+		//ship_mesh->triangle(mesh_vertex_count-3, mesh_vertex_count-2, mesh_vertex_count-1);
         }
 }
 
 
 //vMarchTetrahedron performs the Marching Tetrahedrons algorithm on a single tetrahedron
-void MeshGenerator::vMarchTetrahedron(Ogre::Vector3 *pasTetrahedronPosition, float *pafTetrahedronValue, DetailingInformation* detail_info)
+void MeshGenerator::vMarchTetrahedron(Ogre::Vector3 *pasTetrahedronPosition, float *pafTetrahedronValue, DetailingInformation* detail_info, TriangleSet* triangle_set)
 {
         int iEdge, iVert0, iVert1, iEdgeFlags, iTriangle, iCorner, iVertex, iFlagIndex = 0;
         float fOffset, fInvOffset, fValue = 0.0;
@@ -686,30 +703,37 @@ void MeshGenerator::vMarchTetrahedron(Ogre::Vector3 *pasTetrahedronPosition, flo
                 if(a2iTetrahedronTriangles[iFlagIndex][3*iTriangle] < 0)
                         break;
 
+		Triangle curr_triangle;
+
                 for(iCorner = 0; iCorner < 3; iCorner++)
                 {
                         iVertex = a2iTetrahedronTriangles[iFlagIndex][3*iTriangle+iCorner];
 
 			//call the method to create a vertex
-			makeVertex(ship_mesh,
-				   mesh_vertex_count,
-				   Ogre::Vector3(asEdgeVertex[iVertex].x, asEdgeVertex[iVertex].y, asEdgeVertex[iVertex].z),
-				   Ogre::Vector3(asEdgeNorm[iVertex].x, asEdgeNorm[iVertex].y, asEdgeNorm[iVertex].z),
-				   vGetColor(asEdgeVertex[iVertex], asEdgeNorm[iVertex]),
-				   detail_info);
+			curr_triangle.vertices[iCorner] = makeVertex(ship_mesh,
+							    mesh_vertex_count,
+							    Ogre::Vector3(asEdgeVertex[iVertex].x, asEdgeVertex[iVertex].y, asEdgeVertex[iVertex].z),
+							    Ogre::Vector3(asEdgeNorm[iVertex].x, asEdgeNorm[iVertex].y, asEdgeNorm[iVertex].z),
+							    vGetColor(asEdgeVertex[iVertex], asEdgeNorm[iVertex]),
+							    detail_info,
+							    &(triangle_set->offsets));
 
 			//up the vertex count by one. This is used in joining vertices to make triangles
 			mesh_vertex_count++;
                 }
 
+		curr_triangle.material = detail_info->material_name;
+
+		triangle_set->triangles.push_back(curr_triangle);
+
 		//join the last three created vertices up to make them into a triangle.
-		ship_mesh->triangle(mesh_vertex_count-3, mesh_vertex_count-2, mesh_vertex_count-1);
+		//ship_mesh->triangle(mesh_vertex_count-3, mesh_vertex_count-2, mesh_vertex_count-1);
         }
 }
 
 
 //vMarchCube2 performs the Marching Tetrahedrons algorithm on a single cube by making six calls to vMarchTetrahedron
-void MeshGenerator::vMarchCube2(float fX, float fY, float fZ, float fScale, DetailingInformation* detail_info)
+void MeshGenerator::vMarchCube2(float fX, float fY, float fZ, float fScale, DetailingInformation* detail_info, TriangleSet* triangle_set)
 {
         int iVertex, iTetrahedron, iVertexInACube;
         Ogre::Vector3 asCubePosition[8];
@@ -743,7 +767,7 @@ void MeshGenerator::vMarchCube2(float fX, float fY, float fZ, float fScale, Deta
                         asTetrahedronPosition[iVertex].z = asCubePosition[iVertexInACube].z;
                         afTetrahedronValue[iVertex] = afCubeValue[iVertexInACube];
                 }
-                vMarchTetrahedron(asTetrahedronPosition, afTetrahedronValue, detail_info);
+                vMarchTetrahedron(asTetrahedronPosition, afTetrahedronValue, detail_info, triangle_set);
         }
 }
 
@@ -762,16 +786,8 @@ void MeshGenerator::vMarch(bool useMarchingCubes)
 	
         int iX, iY, iZ;
 
-	//ogre object drawing code.
-	assert(display != NULL);
-	std::string name = "ship";
-	std::string material = "basic/vertex_colour_lighting";
-	ship_mesh = display->createManualObject(name);
-	ship_mesh->begin(material, RenderOperation::OT_TRIANGLE_LIST);
-	//this variable tracks how many vertices have been added, for the purposes of connecting them into triangles.
-	//It's a global variable to this Object, and not passed as an argument.
-	mesh_vertex_count = 0;
-	
+	TriangleSet triangle_set;
+		
 	//if we're only using surface voxels
 	if (onlyMarchSurfaceVoxels)
 	{
@@ -854,17 +870,17 @@ void MeshGenerator::vMarch(bool useMarchingCubes)
 				}
 
 				if (useMarchingCubes)
-					vMarchCube1(a->x, a->y, a->z, fStepSize, &temp);
+					vMarchCube1(a->x, a->y, a->z, fStepSize, &temp, &triangle_set);
 				else
-					vMarchCube2(a->x, a->y, a->z, fStepSize, &temp);
+					vMarchCube2(a->x, a->y, a->z, fStepSize, &temp, &triangle_set);
 			}
 			else
 			{
 				if (useMarchingCubes)
-					vMarchCube1(a->x, a->y, a->z, fStepSize);
+					vMarchCube1(a->x, a->y, a->z, fStepSize, NULL, &triangle_set);
 				else
-					vMarchCube2(a->x, a->y, a->z, fStepSize);
-			}		
+					vMarchCube2(a->x, a->y, a->z, fStepSize, NULL, &triangle_set);
+			}
 		}
 	}
 	else
@@ -891,6 +907,33 @@ void MeshGenerator::vMarch(bool useMarchingCubes)
 						vMarchCube2(iX*fStepSize, iY*fStepSize, iZ*fStepSize, fStepSize);
 				}
 		}
+	}
+
+	//Now take the TriangleSet and turn it into a mesh.
+
+        //ogre object drawing code.
+	assert(display != NULL);
+	assert(triangle_set.triangles.size() > 0);
+	std::string name = "ship";
+	std::string material = "basic/vertex_colour_lighting";
+	ship_mesh = display->createManualObject(name);
+	ship_mesh->begin(material, RenderOperation::OT_TRIANGLE_LIST);
+	//this variable tracks how many vertices have been added, for the purposes of connecting them into triangles.
+	//It's a global variable to this Object, and not passed as an argument.
+	mesh_vertex_count = 0;
+
+	std::sort(triangle_set.triangles.begin(), triangle_set.triangles.end(), TriangleSortingComparator());
+
+	for (std::vector<Triangle>::iterator i = triangle_set.triangles.begin(); i != triangle_set.triangles.end(); i++)
+	{
+		for (int j = 0; j < 3; ++j)
+		{
+			ship_mesh->position(i->vertices[j].position);
+			ship_mesh->normal(i->vertices[j].normal);
+			ship_mesh->colour(i->vertices[j].colour);
+			mesh_vertex_count++;
+		}
+		ship_mesh->triangle(mesh_vertex_count-3, mesh_vertex_count-2, mesh_vertex_count-1);
 	}
 	
 	//ogre draw end

@@ -37,7 +37,7 @@ struct DetailingInformation
 
 	DetailingInformation()
 	{
-		position_offset = Ogre::Vector3(0.0);
+		position_offset = Ogre::Vector3::ZERO;
 		normal_offset = Ogre::Vector3(0.0);
 		normalize_normals = false;
 		replace_normal = false;
@@ -45,6 +45,33 @@ struct DetailingInformation
 		colour = Ogre::ColourValue();
 		set_colour = false;
 		material_name = "";
+	}
+};
+
+struct Vertex
+{
+	Ogre::Vector3 position;
+	Ogre::Vector3 normal;
+	Ogre::ColourValue colour;
+};
+
+struct Triangle
+{
+	Vertex vertices[3];
+	std::string material;
+};
+
+struct TriangleSet
+{
+	std::vector<Triangle> triangles;
+	std::map<Ogre::Vector3, Ogre::Vector3, VectorLessThanComparator> offsets;
+};
+
+struct TriangleSortingComparator
+{
+	bool operator()(const Triangle& a, const Triangle& b)
+	{
+		return a.material < b.material;
 	}
 };
 
@@ -89,7 +116,7 @@ private:
 
 	Ogre::ColourValue vGetColor(Ogre::Vector3 &rfPosition, Ogre::Vector3 &rfNormal, std::set<std::string> in_tags = std::set<std::string>());
 
-	void vMarchTetrahedron(Ogre::Vector3 *pasTetrahedronPosition, float *pafTetrahedronValue, DetailingInformation* detail_info = NULL);
+	void vMarchTetrahedron(Ogre::Vector3 *pasTetrahedronPosition, float *pafTetrahedronValue, DetailingInformation* detail_info = NULL, TriangleSet* triangle_set = NULL);
 
 	Ogre::Vector3 vGetNormal(float fX, float fY, float fZ);
 
@@ -97,11 +124,11 @@ private:
 
 	Ogre::Vector3 vNormalizeVector(Ogre::Vector3 &rfVectorSource);
 
-	void makeVertex(ManualObject* mesh, size_t in_index, Ogre::Vector3 in_pos, Ogre::Vector3 in_normal, Ogre::ColourValue in_colour, DetailingInformation* modifications);
+	Vertex makeVertex(ManualObject* mesh, size_t in_index, Ogre::Vector3 in_pos, Ogre::Vector3 in_normal, Ogre::ColourValue in_colour, DetailingInformation* modifications, std::map<Ogre::Vector3, Ogre::Vector3, VectorLessThanComparator>* offsets);
 
-	void vMarchCube1(float fX, float fY, float fZ, float fScale, DetailingInformation* detail_info = NULL);
+	void vMarchCube1(float fX, float fY, float fZ, float fScale, DetailingInformation* detail_info = NULL, TriangleSet* triangle_set = NULL);
 
-	void vMarchCube2(float fX, float fY, float fZ, float fScale, DetailingInformation* detail_info = NULL);
+	void vMarchCube2(float fX, float fY, float fZ, float fScale, DetailingInformation* detail_info = NULL, TriangleSet* triangle_set = NULL);
 
 	void vMarch(bool useMarchingCubes);
 
