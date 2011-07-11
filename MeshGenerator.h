@@ -44,7 +44,7 @@ struct DetailingInformation
 		Ogre::Vector3 normal_replacement = Ogre::Vector3(0.0);
 		colour = Ogre::ColourValue();
 		set_colour = false;
-		material_name = "";
+		material_name = "basic/vertex_colour_lighting";
 	}
 };
 
@@ -71,7 +71,7 @@ struct TriangleSortingComparator
 {
 	bool operator()(const Triangle& a, const Triangle& b)
 	{
-		return a.material < b.material;
+		return a.material.compare(b.material) < 0;
 	}
 };
 

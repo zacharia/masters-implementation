@@ -915,17 +915,34 @@ void MeshGenerator::vMarch(bool useMarchingCubes)
 	assert(display != NULL);
 	assert(triangle_set.triangles.size() > 0);
 	std::string name = "ship";
-	std::string material = "basic/vertex_colour_lighting";
+	std::string curr_material = "basic/vertex_colour_lighting";
 	ship_mesh = display->createManualObject(name);
-	ship_mesh->begin(material, RenderOperation::OT_TRIANGLE_LIST);
+	ship_mesh->begin(curr_material, RenderOperation::OT_TRIANGLE_LIST);
 	//this variable tracks how many vertices have been added, for the purposes of connecting them into triangles.
 	//It's a global variable to this Object, and not passed as an argument.
 	mesh_vertex_count = 0;
-
+	
 	std::sort(triangle_set.triangles.begin(), triangle_set.triangles.end(), TriangleSortingComparator());
 
 	for (std::vector<Triangle>::iterator i = triangle_set.triangles.begin(); i != triangle_set.triangles.end(); i++)
 	{
+		if (i->material.compare(curr_material) != 0)
+		{
+			if (verbose)
+			{
+				std::cout << "Drawing the submesh for material: " << i->material << "\n"; //TEMP
+			}
+			
+			ship_mesh->end();
+			if (i->material.compare("") == 0)
+			{
+				curr_material = "basic/vertex_colour_lighting";
+			}
+			curr_material = i->material;
+			ship_mesh->begin(curr_material, RenderOperation::OT_TRIANGLE_LIST);
+			mesh_vertex_count = 0;
+		}
+		
 		for (int j = 0; j < 3; ++j)
 		{
 			ship_mesh->position(i->vertices[j].position);
@@ -937,7 +954,7 @@ void MeshGenerator::vMarch(bool useMarchingCubes)
 	}
 	
 	//ogre draw end
-	ship_mesh->end();	
+	ship_mesh->end();
 	ship_mesh->convertToMesh(name);
 
 	//actually make an object using the mesh and add it to the display object.

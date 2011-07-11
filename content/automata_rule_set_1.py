@@ -5,7 +5,7 @@ def main(voxel, neighbourhood, position, octree_size):
     ret = []
     ret.append("grey")
     if position[1] > 32:
-        ret.append("material basic/backface_culling_off")
+        ret.append("material basic/cylinder_default")
         #ret.append("normalize_normals")
     # import code
     # code.interact(local=locals())
