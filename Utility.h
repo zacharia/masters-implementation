@@ -17,6 +17,8 @@
 //project inclusions
 // HERE
 
+#define POSITION_EQUALITY_TOLERANCE 0.001
+
 class Utility
 {
 private:
@@ -40,15 +42,15 @@ struct VectorLessThanComparator
 {
 	bool operator()(const Ogre::Vector3 &a, const Ogre::Vector3 &b)
 	{
-		if (a.x == b.x)
+		if (abs(a.x - b.x) < POSITION_EQUALITY_TOLERANCE)
 		{
-			if (a.y == b.y)
+			if (abs(a.y - b.y) < POSITION_EQUALITY_TOLERANCE)
 			{
-				return a.z < b.z;
+				return a.z - b.z < POSITION_EQUALITY_TOLERANCE;
 			}
-			return a.y < b.y;
+			return a.y - b.y < POSITION_EQUALITY_TOLERANCE;
 		}
-		return a.x < b.x;
+		return a.x - b.x < POSITION_EQUALITY_TOLERANCE;
 	}
 };
 
