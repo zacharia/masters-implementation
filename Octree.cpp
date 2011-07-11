@@ -563,10 +563,15 @@ void Octree::runAutomataRules(std::string rules_file)
 			//this is the python list containing the current voxel that gets passed to the python method. It's already contained in the above array, but this is for convenience.
 			PyObject* p_curr_voxel = convertToDict(curr_voxel);
 
+			PyObject* p_curr_pos = convertToList(*i);
+			PyObject* p_max_octree_size = convertToList(Ogre::Vector3(this->size));
+
 			//create the arguments for the python method from the current voxel, and it's neighbours' information
-			PyObject* method_args = PyTuple_New(2);
+			PyObject* method_args = PyTuple_New(4);
 			PyTuple_SetItem(method_args, 0, p_curr_voxel);
 			PyTuple_SetItem(method_args, 1, neighbours);
+			PyTuple_SetItem(method_args, 2, p_curr_pos);
+			PyTuple_SetItem(method_args, 3, p_max_octree_size);
 
 			//run the python rule on it.
 			PyObject* returned_object = PyObject_CallObject(p_rule_set_function, method_args);
@@ -623,6 +628,9 @@ void Octree::runAutomataRules(std::string rules_file)
 			Py_DECREF(temp_list);
 			Py_DECREF(y_row);
 			Py_DECREF(z_row);
+
+			Py_DECREF(p_curr_pos);
+			Py_DECREF(p_max_octree_size);
 
 			Py_DECREF(neighbours);
 			Py_DECREF(p_curr_voxel);

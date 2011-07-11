@@ -1,11 +1,11 @@
 num_iterations = 1
 neighbourhood_size = 1
 
-def main(voxel, neighbourhood):
+def main(voxel, neighbourhood, position, octree_size):
     ret = []
     ret.append("grey")
-    if voxel["aggregate_normal"][1] > 0:
-        ret.append("material basic/cube_default")
+    if position[1] > 32:
+        ret.append("material basic/backface_culling_off")
         #ret.append("normalize_normals")
     # import code
     # code.interact(local=locals())
