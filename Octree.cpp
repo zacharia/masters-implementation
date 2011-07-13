@@ -119,6 +119,21 @@ VoxelInformation Octree::at(int x, int y, int z, int depth_restriction)
 }
 
 
+VoxelInformation* Octree::at_pointer(int x, int y, int z, int depth_restriction)
+{
+	if ( (x < 0) || (x > this->size) || (y < 0) || (y > this->size) || (z < 0) || (z > this->size) )
+	{
+		return NULL;
+	}
+	
+	//TODO: code an iterative way of doing this method, for
+	//efficiency. This current way is because it's more
+	//understandable, but the function calls make it less
+	//efficient.
+	return root->at_pointer(x,y,z, this->size, depth_restriction);
+}
+
+
 void Octree::set(int x, int y, int z, VoxelInformation value)
 {
 	assert(x >= 0 && x < this->size);
@@ -810,6 +825,47 @@ VoxelInformation OctreeNode::at(int x, int y, int z, int currSize, int depth_res
 }
 
 
+//as above, but returns a pointer instead of a copy of the voxel info
+VoxelInformation* OctreeNode::at_pointer(int x, int y, int z, int currSize, int depth_restriction)
+{
+	//if we've hit our depth_restriction, then return the current
+	//node's info, and do not recurse any further.
+	if ((depth_restriction > 0) && (currSize <= depth_restriction))
+	{
+		return &(this->info);
+	}
+	
+	//if we're at a node with no children
+	if ((this->children[0][0][0] == NULL) &&
+	    (this->children[0][0][1] == NULL) &&
+	    (this->children[0][1][0] == NULL) &&
+	    (this->children[0][1][1] == NULL) &&
+	    (this->children[1][0][0] == NULL) &&
+	    (this->children[1][0][1] == NULL) &&
+	    (this->children[1][1][0] == NULL) &&
+	    (this->children[1][1][1] == NULL))
+	{
+		//return the current node's VoxelInformation
+		return &(this->info);
+	}
+	//otherwise if there are children
+	else
+	{
+		//I got this code for selecting which child to go to from the octree class I was using. hope it works.
+		int newSize = currSize / 2;
+		//recurse on the correct child node if it's non-null, else return the current node's value
+		if (this->children[!!(x & newSize)][!!(y & newSize)][!!(z & newSize)] == NULL)
+		{
+			return &(this->info);
+		}
+		else
+		{
+			return this->children[!!(x & newSize)][!!(y & newSize)][!!(z & newSize)]->at_pointer(x,y,z, newSize, depth_restriction);
+		}		
+	}
+}
+
+
 //A recursive method for setting a value. It avoids creating
 //unnecessary nodes, where possible.
 void OctreeNode::set(int x, int y, int z, VoxelInformation value, int currSize)
@@ -1205,8 +1261,15 @@ void OctreeNode::makeAggregateInformation()
 					}
 				}
 
-		this->info.aggregate_normal = total / count;
-		this->info.aggregate_normal.normalise();
+		if (count == 0)
+		{
+			this->info.aggregate_normal = Ogre::Vector3::ZERO;
+		}
+		else
+		{
+			this->info.aggregate_normal = total / count;
+			this->info.aggregate_normal.normalise();	
+		}
 
 		//alternatively, we can get a normal by comparing to aggregated neighbours at this resolution.
 		

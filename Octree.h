@@ -107,6 +107,8 @@ public:
 	
 	VoxelInformation at(int x, int y, int z, int currSize, int depth_restriction = 1);
 
+	VoxelInformation* at_pointer(int x, int y, int z, int currSize, int depth_restriction = 1);
+
 	void set(int x, int y, int z, VoxelInformation value, int currSize);
 
 	void setRange(Ogre::Vector3 lower, Ogre::Vector3 upper, Ogre::Vector3 node_center, VoxelInformation value);
@@ -157,6 +159,8 @@ public:
 	int getSize();
 
 	VoxelInformation at(int x, int y, int z, int depth_restriction = 1);
+
+	VoxelInformation* at_pointer(int x, int y, int z, int depth_restriction = 1);
 
 	void set(int x, int y, int z, VoxelInformation value);
 
