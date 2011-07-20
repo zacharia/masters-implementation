@@ -540,6 +540,53 @@ void VoxelGrid::doSurfaceDetail()
 
 	//delete the surface voxels only octree now that we're done with it.
 	delete surface_voxels_only_octree;
+
+	// //the code from here to the end of the method is all for making sure that all voxels are detailed properly.
+	// int count = 0;
+	// if (verbose)
+	// {
+	// 	std::cout << "Ensuring neighbouring undetailed voxels gets properly detailed." << "\n";	
+	// }
+	
+	// int border_size = 2;
+	// surface_voxels = grid->getSurfaceVoxels(26, border_size);	
+	// for (std::set<Ogre::Vector3, VectorLessThanComparator>::iterator i = surface_voxels.begin(); i != surface_voxels.end(); i++)
+	// {
+	// 	if (verbose)
+	// 	{
+	// 		count++;
+	// 		if (count % 1000 == 0)
+	// 		{
+	// 			std::cout << count << " of " << surface_voxels.size() << "\n"; //TEMP 	
+	// 		}
+	// 	}
+		
+	// 	VoxelInformation* curr_voxel_info = grid->at_pointer(i->x, i->y, i->z), *temp = NULL, *min_detail_info = NULL;
+	// 	if ((curr_voxel_info != NULL) && (curr_voxel_info->detail_info.empty()))
+	// 	{
+	// 		double min_dist = 99999;
+			
+	// 		for (int x = -border_size; x <= border_size; ++x)
+	// 			for (int y = -border_size; y <= border_size; ++y)
+	// 				for (int z = -border_size; z <= border_size; ++z)
+	// 				{
+	// 					temp = grid->at_pointer(i->x + x, i->y + y, i->z + z);
+	// 					if ((temp != NULL) && !(temp->detail_info.empty()))
+	// 					{
+	// 						double dist = i->distance(Ogre::Vector3(i->x + x, i->y + y, i->z + z));
+	// 						if (dist < min_dist)
+	// 						{
+	// 							min_dist = dist;
+	// 							min_detail_info = temp;
+	// 						}
+	// 					}
+	// 				}
+	// 		if (min_dist < sqrt(border_size * border_size * border_size))
+	// 		{
+	// 			grid->at_pointer(i->x, i->y, i->z)->detail_info = min_detail_info->detail_info;	
+	// 		}			
+	// 	}
+	// }
 }
 
 
