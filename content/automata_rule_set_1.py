@@ -3,7 +3,7 @@ neighbourhood_size = 1
 
 def main(voxel, neighbourhood, position, octree_size):
     ret = []
-    if position[1] > 64:
+    if position[1] % 2 == 0:
     #if voxel["aggregate_normal"][1] > 0:
         #ret.append("position_offset 0 0 5")
         ret.append("material basic/cylinder_default")
