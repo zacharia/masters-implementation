@@ -959,6 +959,14 @@ void MeshGenerator::vMarch(bool useMarchingCubes)
 			
 			ship_mesh->normal(i->vertices[j].normal);
 			ship_mesh->colour(i->vertices[j].colour);
+
+			if (j == 0)
+				ship_mesh->textureCoord(0,0);
+			else if (j == 1)
+				ship_mesh->textureCoord(0,1);
+			else if (j == 2)
+				ship_mesh->textureCoord(1,0);
+			
 			mesh_vertex_count++;
 		}
 		ship_mesh->triangle(mesh_vertex_count-3, mesh_vertex_count-2, mesh_vertex_count-1);
