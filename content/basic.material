@@ -34,6 +34,8 @@ material basic/backface_culling_off
 		{
 			cull_hardware none
 			cull_software none
+			
+			scene_blend alpha_blend
 		
 			//texture_unit
 			//{
@@ -55,6 +57,8 @@ material basic/vertex_colour_lighting
 			ambient vertexcolour
 			diffuse vertexcolour
 			specular vertexcolour
+			
+			scene_blend alpha_blend
 		
 			//texture_unit
 			//{
@@ -62,4 +66,27 @@ material basic/vertex_colour_lighting
 			//}
 		}
 	}
+}
+
+material basic/textureexample
+{
+    // first, preferred technique
+    technique
+    {
+        pass
+        {
+            ambient vertexcolour
+            diffuse vertexcolour
+            specular 1.0 1.0 1.0
+            shading phong
+
+            texture_unit 
+            {
+                texture poster.jpg
+                scroll_anim 0.1 0.0
+                tex_border_colour 0.0 0.0 0.0 0.0
+            }
+        }
+        
+    }
 }
