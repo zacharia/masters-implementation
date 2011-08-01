@@ -32,7 +32,7 @@ struct DetailingInformation
 	Ogre::Vector3 normal_replacement;
 	bool replace_normal;
 	Ogre::ColourValue colour;
-	bool set_colour;
+	char set_colour;
 	std::string material_name;
 
 	DetailingInformation()
@@ -43,7 +43,7 @@ struct DetailingInformation
 		replace_normal = false;
 		Ogre::Vector3 normal_replacement = Ogre::Vector3(0.0);
 		colour = Ogre::ColourValue();
-		set_colour = false;
+		set_colour = 0;
 		material_name = "basic/vertex_colour_lighting";
 	}
 };

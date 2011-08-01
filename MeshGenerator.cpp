@@ -550,9 +550,17 @@ Vertex MeshGenerator::makeVertex(ManualObject* mesh, size_t in_index, Ogre::Vect
 			final_normal.normalise();
 		}
 
-		if (modifications->set_colour)
+		if (modifications->set_colour == 0)
+		{
+			final_colour = Ogre::ColourValue::Black;
+		}
+		if (modifications->set_colour == 1)
 		{
 			final_colour = modifications->colour;
+		}
+		else if (modifications->set_colour == 2)
+		{
+			final_colour = in_colour;
 		}
 	}
 	
@@ -856,13 +864,19 @@ void MeshGenerator::vMarch(bool useMarchingCubes)
 					}
 					else if (tokens.at(0) == "colour")
 					{
-						temp.set_colour = true;
-						temp.colour.r = atof(tokens.at(1).c_str());
-						temp.colour.g = atof(tokens.at(2).c_str());
-						temp.colour.b = atof(tokens.at(3).c_str());
-						temp.colour.a = atof(tokens.at(4).c_str());
+						if (tokens.at(1) == "from_normal")
+						{
+							temp.set_colour = 2;
+						}
+						else
+						{
+							temp.set_colour = 1;
+							temp.colour.r = atof(tokens.at(1).c_str());
+							temp.colour.g = atof(tokens.at(2).c_str());
+							temp.colour.b = atof(tokens.at(3).c_str());
+							temp.colour.a = atof(tokens.at(4).c_str());
+						}
 					}
-
 					else if (tokens.at(0) == "material")
 					{
 						temp.material_name = tokens.at(1);
