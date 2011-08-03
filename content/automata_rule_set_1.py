@@ -16,17 +16,34 @@ def main(voxel, neighbourhood, position, octree_size):
     # import code
     # code.interact(local=locals())
 
-    ret.append("material basic/vertex_colour_lighting")
+    #ret.append("colour from_normal")
 
     if "ring" in voxel["tags"]:
-        ret.append("colour 1.0 0 0 1")
-    if "spire" in voxel["tags"]:
-        ret.append("colour 0 1 0 1")
-    if "spoke" in voxel["tags"]:
-        ret.append("colour 0 0 1 1")
-    if "tower" in voxel["tags"]:
-        ret.append("colour 1 0 1 0.5")
-    if "centre" in voxel["tags"]:
-        ret.append("colour 0 0 0 0.75")
+        ret.append("colour 1.0 0 0 0.5")
+        ret.append("material basic/vertex_colour_lighting")
+        pass
+    elif "spire" in voxel["tags"]:
+        #ret.append("colour 0 1 0 1")
+        if position[1] % 3 == 0:
+            ret.append("material spaceship/metal_wall")
+        else:
+            ret.append("material spaceship/window_ugly")
+        pass
+    elif "spoke" in voxel["tags"]:
+        #ret.append("colour 0 0 1 1")
+        ret.append("material basic/vertex_colour_lighting")
+        pass
+    elif "tower" in voxel["tags"]:
+        #ret.append("colour 1 0 1 0.5")
+        ret.append("material basic/vertex_colour_lighting")
+        pass
+    elif "centre" in voxel["tags"]:
+        #ret.append("colour 0 0 0 0.75")
+        ret.append("material basic/vertex_colour_lighting")
+        pass
+    else:
+        #ret.append("colour 0 0 0 0.75")
+        ret.append("material basic/vertex_colour_lighting")
+        pass
     
     return ret
