@@ -25,3 +25,11 @@ def main(voxel, neighbourhood, position, octree_size):
 
         
     return ret
+
+def other(voxel, neighbourhood, position, octree_size):
+    ret = []
+    ret.append("material basic/vertex_colour_lighting")
+    
+    ret.append("colour 1 1 0 0")
+        
+    return ret

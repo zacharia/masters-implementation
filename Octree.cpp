@@ -409,7 +409,8 @@ PyObject* Octree::convertToDict(const VoxelInformation& in)
 
 //this method reads in the python file in the argument and runs the
 //rule set contained in it on the Octree.
-void Octree::runAutomataRules(std::string rules_file)
+//The rules_method argument is the name of the method in the file to call on each voxel.
+void Octree::runAutomataRules(std::string rules_file, std::string rules_method)
 {
 	//initialize the python interpreter
 	Py_Initialize();
@@ -462,11 +463,21 @@ void Octree::runAutomataRules(std::string rules_file)
 	{
 		neighbourhood_size = PyInt_AsLong(p_rule_set_function);	
 	}
+
+	//if the rules method is the empty string, then default to looking for a method named 'main'
+	if (rules_method == "")
+	{
+		p_rule_set_function = PyDict_GetItemString(p_rule_set_dictionary, "main");	
+	}
+	//otherwise use whatever rules_method is.
+	else
+	{
+		p_rule_set_function = PyDict_GetItemString(p_rule_set_dictionary, rules_method.c_str());
+	}
 	
-	p_rule_set_function = PyDict_GetItemString(p_rule_set_dictionary, "main");
 	if (!PyCallable_Check(p_rule_set_function))
 	{
-		std::cout << "ERROR: no main function found in the rule set file " << rules_file << "\n";
+		std::cout << "ERROR: no function named " << rules_method << " found in the rule set file " << rules_file << "\n";
 		PyErr_Print();
 		std::cout << "no detailing will be done." << "\n";
 		Py_Finalize();

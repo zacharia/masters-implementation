@@ -68,7 +68,10 @@ class VoxelGrid
 
 	//the path to the file containing the automata rule set for doing surface detail
 	std::string automata_rules_file;
-		
+
+	//the name of the method to call in the python automata grammar. if this is "", then "main" is used.
+	std::string automata_rules_method;
+
  public:
 	VoxelGrid();
 
@@ -125,6 +128,8 @@ class VoxelGrid
 	void setUsePriorities(bool v);
 
 	void setAutomataRuleSet(std::string file);
+
+	void setAutomataRuleMethod(std::string in);
 };
 
 #endif

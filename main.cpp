@@ -49,6 +49,7 @@ bool useMarchingCubes = true;
 bool usePriorities = true;
 
 string automata_rules_file = "";
+string automata_rules_method = "";
 
 void tick()
 {
@@ -222,6 +223,11 @@ int main(int argc, char** argv)
 		{
 			automata_rules_file = argv[++i];
 		}
+		//the name of the method from the rules file to call on each voxel. Defaults to 'main' if this argument is not given
+		if ((curr == "--automata-method") || (curr == "-m"))
+		{
+			automata_rules_method = argv[++i];
+		}
 		if ((curr == "--help") || (curr == "-h")) //display help
 		{
 			cout << "options:\n"			     
@@ -236,7 +242,8 @@ int main(int argc, char** argv)
 			     << "-v\t\t Enable verbose output.\n"
 			     << "-t\t\t Use marching tetrahedra instead of the standard marching cubes.\n"
 			     << "-n\t\t Ignore shape priorities when voxelizing them.\n"
-			     << "-r <file>\t the python file containing the automata rule set to use when doing surface detail\n"
+			     << "-r <file>\t the python file containing the automata rule set to use when doing surface detail.\n"
+			     << "-m <name>\t the name of the method to use from the automata rules file.\n"
 			     << "-h\t\t display this help information\n\n";
 			exit(0);
 		}
@@ -297,7 +304,7 @@ int main(int argc, char** argv)
 	}
 
 	vg->setAutomataRuleSet(automata_rules_file);
-
+	vg->setAutomataRuleMethod(automata_rules_method);
 	vg->doSurfaceDetail();
 
 	if (verbose)
