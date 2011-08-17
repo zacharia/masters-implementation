@@ -50,6 +50,8 @@ bool usePriorities = true;
 
 string automata_rules_file = "";
 string automata_rules_method = "";
+int automata_num_iterations = -1;
+int automata_neighbourhood_size = -1;
 
 void tick()
 {
@@ -228,6 +230,16 @@ int main(int argc, char** argv)
 		{
 			automata_rules_method = argv[++i];
 		}
+		//the size of the neighbourhood to use when doing the detailing automata.
+		if ((curr == "--automata-neighbourhood-size") || (curr == "-ans"))
+		{
+			automata_neighbourhood_size = atoi(argv[++i]); 
+		}
+		//the number of iterations of the cellular automata to do.
+		if ((curr == "--automata-num-iterations") || (curr == "-ani"))
+		{
+			automata_num_iterations = atoi(argv[++i]); 
+		}
 		if ((curr == "--help") || (curr == "-h")) //display help
 		{
 			cout << "options:\n"			     
@@ -244,6 +256,8 @@ int main(int argc, char** argv)
 			     << "-n\t\t Ignore shape priorities when voxelizing them.\n"
 			     << "-r <file>\t the python file containing the automata rule set to use when doing surface detail.\n"
 			     << "-m <name>\t the name of the method to use from the automata rules file.\n"
+			     << "-ans <num>\t the neighbourhood size to use when running the automata.\n"
+			     << "-ani <num>\t the number of iterations of the automata rule set to do.\n"
 			     << "-h\t\t display this help information\n\n";
 			exit(0);
 		}
@@ -305,6 +319,8 @@ int main(int argc, char** argv)
 
 	vg->setAutomataRuleSet(automata_rules_file);
 	vg->setAutomataRuleMethod(automata_rules_method);
+	vg->setAutomataIterations(automata_num_iterations);
+	vg->setAutomataNeighbourhoodSize(automata_neighbourhood_size);
 	vg->doSurfaceDetail();
 
 	if (verbose)

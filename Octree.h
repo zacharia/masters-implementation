@@ -186,7 +186,7 @@ public:
 
 	PyObject* convertToList(const Ogre::Vector3& in);
 
-	void runAutomataRules(std::string rules_file, std::string rules_method);
+	void runAutomataRules(std::string rules_file, std::string rules_method, int max_iterations = -1, int neighbourhood_radius = -1);
 
 	std::set<Ogre::Vector3, VectorLessThanComparator> getAllSolidVoxels();
 };

@@ -15,6 +15,8 @@ VoxelGrid::VoxelGrid()
 	usePriorities = true;
 	automata_rules_file = "";
 	automata_rules_method = "";
+	automata_num_iterations = -1;
+	automata_neighbourhood_size = -1;
 }
 
 
@@ -30,6 +32,8 @@ VoxelGrid::VoxelGrid(int size)
 	usePriorities = true;
 	automata_rules_file = "";
 	automata_rules_method = "";
+	automata_num_iterations = -1;
+	automata_neighbourhood_size = -1;
 }
 
 
@@ -529,7 +533,7 @@ void VoxelGrid::doSurfaceDetail()
 	surface_voxels_only_octree->makeAggregateInformation();
 
 	//then run the cellular automata on the aggregated tree.
-	surface_voxels_only_octree->runAutomataRules(automata_rules_file, automata_rules_method);
+	surface_voxels_only_octree->runAutomataRules(automata_rules_file, automata_rules_method, automata_num_iterations, automata_neighbourhood_size);
 
 	//now take the detailing information from the surface voxels tree and put it back into the main octree.
 	std::set<Ogre::Vector3, VectorLessThanComparator> detailed_surface_voxels = grid->getAllSolidVoxels();
@@ -809,3 +813,14 @@ void VoxelGrid::setAutomataRuleMethod(std::string in)
 {
 	automata_rules_method = in;
 }
+
+void VoxelGrid::setAutomataIterations(int in)
+{
+	automata_num_iterations = in;
+}
+
+void VoxelGrid::setAutomataNeighbourhoodSize(int in)
+{
+	automata_neighbourhood_size = in;
+}
+

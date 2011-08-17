@@ -72,6 +72,9 @@ class VoxelGrid
 	//the name of the method to call in the python automata grammar. if this is "", then "main" is used.
 	std::string automata_rules_method;
 
+	int automata_num_iterations;
+	int automata_neighbourhood_size;
+
  public:
 	VoxelGrid();
 
@@ -130,6 +133,10 @@ class VoxelGrid
 	void setAutomataRuleSet(std::string file);
 
 	void setAutomataRuleMethod(std::string in);
+
+	void setAutomataIterations(int in);
+
+	void setAutomataNeighbourhoodSize(int in);
 };
 
 #endif

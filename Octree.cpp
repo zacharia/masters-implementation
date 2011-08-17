@@ -410,7 +410,7 @@ PyObject* Octree::convertToDict(const VoxelInformation& in)
 //this method reads in the python file in the argument and runs the
 //rule set contained in it on the Octree.
 //The rules_method argument is the name of the method in the file to call on each voxel.
-void Octree::runAutomataRules(std::string rules_file, std::string rules_method)
+void Octree::runAutomataRules(std::string rules_file, std::string rules_method, int max_iterations, int neighbourhood_radius)
 {
 	//initialize the python interpreter
 	Py_Initialize();
@@ -437,31 +437,54 @@ void Octree::runAutomataRules(std::string rules_file, std::string rules_method)
 		std::cout << "========================================" << "\n";
 	}
 
-	//now get the number of iterations of the CA to do from the module
+	//get the rule file's dictionary
+	p_rule_set_dictionary = PyModule_GetDict(p_rule_set_module);
+	
+	//now get the number of iterations of the CA to do from the module, if it's not given as an argument.
 	//default value of 1
 	int num_iterations = 1;
-	p_rule_set_dictionary = PyModule_GetDict(p_rule_set_module);
-	p_rule_set_function = PyDict_GetItemString(p_rule_set_dictionary, "num_iterations");
-	if (p_rule_set_function == NULL)
+	//if the argument value is 1 or more (i.e. valid)
+	if (max_iterations >= 1)
 	{
-		std::cout << "WARNING: could not get num_iterations from rule set. Using default value." << "\n";
+		//then use that
+		num_iterations = max_iterations;
 	}
+	//otherwise, we need to get the value from the file.
 	else
 	{
-		num_iterations = PyInt_AsLong(p_rule_set_function);
+		
+		p_rule_set_function = PyDict_GetItemString(p_rule_set_dictionary, "num_iterations");
+		if (p_rule_set_function == NULL)
+		{
+			std::cout << "WARNING: could not get num_iterations from rule set. Using default value." << "\n";
+		}
+		else
+		{
+			num_iterations = PyInt_AsLong(p_rule_set_function);
+		}	
 	}
 
         //This stores the size of the neighbourhood around the voxel that we'll examine for the automata rules.
 	int neighbourhood_size = 0;
-	//we get it from the python rule set.
-	p_rule_set_function = PyDict_GetItemString(p_rule_set_dictionary, "neighbourhood_size");
-	if (p_rule_set_function == NULL)
+	//if the neighbourhood size argument is 0 or more (i.e. valid)
+	if (neighbourhood_radius >= 0)
 	{
-		std::cout << "WARNING: could not get neighbourhood_size from rule set. Using default value." << "\n";
+		//then use the argument
+		neighbourhood_size = neighbourhood_radius;
 	}
+	//otherwise
 	else
 	{
-		neighbourhood_size = PyInt_AsLong(p_rule_set_function);	
+		//we get the value to use from the python rule set.
+		p_rule_set_function = PyDict_GetItemString(p_rule_set_dictionary, "neighbourhood_size");
+		if (p_rule_set_function == NULL)
+		{
+			std::cout << "WARNING: could not get neighbourhood_size from rule set. Using default value." << "\n";
+		}
+		else
+		{
+			neighbourhood_size = PyInt_AsLong(p_rule_set_function);	
+		}	
 	}
 
 	//if the rules method is the empty string, then default to looking for a method named 'main'
@@ -605,8 +628,12 @@ void Octree::runAutomataRules(std::string rules_file, std::string rules_method)
 			if (returned_object == NULL)
 			{
 				std::cout << "ERROR: could not successfully call python method" << "\n";
-				std::cout << "       skipping on to next voxel." << "\n";
-				continue;
+				std::cout << "================================================\n";
+				PyErr_Print();
+				std::cout << "================================================\n";
+				std::cout << "       skipping on to next voxel." << "\n\n";
+				exit(1);
+				//continue;
 			}
 			
 			//assign the rule output to curr_voxel
