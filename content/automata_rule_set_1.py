@@ -1,4 +1,4 @@
-num_iterations = 90
+num_iterations = 1
 neighbourhood_size = 1
 
 def space_station_detail(voxel, neighbourhood, position, octree_size):
@@ -89,8 +89,6 @@ def colour_from_normals(voxel, neighbourhood, position, octree_size):
 def rule90(voxel, neighbourhood, position, octree_size):
     ret = []
 
-    
-
     if position[0] == 64 and position[1] == 100:
         ret.append("on")
 
@@ -127,4 +125,22 @@ def rule90(voxel, neighbourhood, position, octree_size):
         ret.append("material basic/vertex_colour_lighting")
         ret.append("colour from_normal")
         
+    return ret
+
+def enterprise(voxel, neighbourhood, position, octree_size):
+    ret = []
+    threshold = 0.7
+
+    import code
+    code.interact(local=locals())
+
+    if "disk" in voxel["tags"] or "neck" in voxel["tags"] or "body" in voxel["tags"]:
+        if abs(voxel["aggregate_normal"][0]) > threshold or abs(voxel["aggregate_normal"][2]) > threshold:
+            ret.append("material spaceship/window_ugly")
+
+    if "thruster" in voxel["tags"]:
+        if abs(voxel["aggregate_normal"][0]) > threshold or abs(voxel["aggregate_normal"][2]) > threshold:
+            ret.append("material basic/vertex_colour_lighting")
+            ret.append("colour 0.3 0.1 0.8 0")
+
     return ret
