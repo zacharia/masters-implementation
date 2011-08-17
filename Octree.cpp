@@ -425,6 +425,10 @@ void Octree::runAutomataRules(std::string rules_file, std::string rules_method, 
 	PyRun_SimpleString("import sys");
 	PyRun_SimpleString("sys.path.append(\"./content/\")");
 
+	//initialize the random number generator
+	PyRun_SimpleString("import random");
+	PyRun_SimpleString("random.seed()");
+
 	//load the file containing the rule set.
 	p_rule_set_module = PyImport_ImportModule(rules_file.c_str());
 
@@ -614,13 +618,15 @@ void Octree::runAutomataRules(std::string rules_file, std::string rules_method, 
 
 			PyObject* p_curr_pos = convertToList(*i);
 			PyObject* p_max_octree_size = convertToList(Ogre::Vector3(this->size));
+			PyObject* p_curr_iteration = PyInt_FromLong(iteration_count);
 
 			//create the arguments for the python method from the current voxel, and it's neighbours' information
-			PyObject* method_args = PyTuple_New(4);
+			PyObject* method_args = PyTuple_New(5);
 			PyTuple_SetItem(method_args, 0, p_curr_voxel);
 			PyTuple_SetItem(method_args, 1, neighbours);
 			PyTuple_SetItem(method_args, 2, p_curr_pos);
 			PyTuple_SetItem(method_args, 3, p_max_octree_size);
+			PyTuple_SetItem(method_args, 4, p_curr_iteration);
 
 			//run the python rule on it.
 			PyObject* returned_object = PyObject_CallObject(p_rule_set_function, method_args);

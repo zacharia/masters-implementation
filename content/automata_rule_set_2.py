@@ -1,7 +1,9 @@
+import random
+
 num_iterations = 1
 neighbourhood_size = 1
 
-def main(voxel, neighbourhood, position, octree_size):
+def main(voxel, neighbourhood, position, octree_size, curr_iteration):
     ret = []
     ret.append("material basic/vertex_colour_lighting")
     #if position[1] % 2 == 0:
@@ -26,7 +28,7 @@ def main(voxel, neighbourhood, position, octree_size):
         
     return ret
 
-def other(voxel, neighbourhood, position, octree_size):
+def other(voxel, neighbourhood, position, octree_size, curr_iteration):
     ret = []
     ret.append("material basic/vertex_colour_lighting")
     

@@ -1,7 +1,9 @@
+import random
+
 num_iterations = 1
 neighbourhood_size = 1
 
-def space_station_detail(voxel, neighbourhood, position, octree_size):
+def space_station_detail(voxel, neighbourhood, position, octree_size, curr_iteration):
     ret = []
     #if position[1] % 2 == 0:
     #if position[1] > 63:
@@ -49,7 +51,7 @@ def space_station_detail(voxel, neighbourhood, position, octree_size):
     return ret
 
 
-def spiral_detail(voxel, neighbourhood, position, octree_size):
+def spiral_detail(voxel, neighbourhood, position, octree_size, curr_iteration):
     ret = []
 
     ret.append("material basic/vertex_colour_lighting")
@@ -61,7 +63,7 @@ def spiral_detail(voxel, neighbourhood, position, octree_size):
     return ret
 
 
-def fractal_tree_detail(voxel, neighbourhood, position, octree_size):
+def fractal_tree_detail(voxel, neighbourhood, position, octree_size, curr_iteration):
     ret = []
 
     ret.append("material basic/scrolling_metal_wall")
@@ -78,7 +80,7 @@ def fractal_tree_detail(voxel, neighbourhood, position, octree_size):
 
     return ret
 
-def colour_from_normals(voxel, neighbourhood, position, octree_size):
+def colour_from_normals(voxel, neighbourhood, position, octree_size, curr_iteration):
     ret = []
     ret.append("material basic/vertex_colour_lighting")
     
@@ -86,7 +88,7 @@ def colour_from_normals(voxel, neighbourhood, position, octree_size):
         
     return ret
 
-def rule90(voxel, neighbourhood, position, octree_size):
+def rule90(voxel, neighbourhood, position, octree_size, curr_iteration):
     ret = []
 
     if position[0] == 64 and position[1] == 100:
@@ -127,20 +129,28 @@ def rule90(voxel, neighbourhood, position, octree_size):
         
     return ret
 
-def enterprise(voxel, neighbourhood, position, octree_size):
+def enterprise(voxel, neighbourhood, position, octree_size, curr_iteration):
     ret = []
     threshold = 0.7
 
-    import code
-    code.interact(local=locals())
+    if curr_iteration == 1:
+        #ret.append("material spaceship/metal_wall")
+        ret.append("material basic/vertex_colour_lighting")
 
-    if "disk" in voxel["tags"] or "neck" in voxel["tags"] or "body" in voxel["tags"]:
-        if abs(voxel["aggregate_normal"][0]) > threshold or abs(voxel["aggregate_normal"][2]) > threshold:
-            ret.append("material spaceship/window_ugly")
+        if random.randint(1,2) == 1:
+            ret.append("colour 1 0 0 0")
+        else:
+            ret.append("colour 0 0 1 0")
+        
+    else:
 
-    if "thruster" in voxel["tags"]:
-        if abs(voxel["aggregate_normal"][0]) > threshold or abs(voxel["aggregate_normal"][2]) > threshold:
-            ret.append("material basic/vertex_colour_lighting")
-            ret.append("colour 0.3 0.1 0.8 0")
+        if "disk" in voxel["tags"] or "neck" in voxel["tags"] or "body" in voxel["tags"]:
+            if abs(voxel["aggregate_normal"][0]) > threshold or abs(voxel["aggregate_normal"][2]) > threshold:
+                ret.append("material spaceship/window_ugly")
+
+        if "thruster" in voxel["tags"]:
+            if abs(voxel["aggregate_normal"][0]) > threshold or abs(voxel["aggregate_normal"][2]) > threshold:
+                ret.append("material basic/vertex_colour_lighting")
+                ret.append("colour 0.3 0.1 0.8 0")
 
     return ret

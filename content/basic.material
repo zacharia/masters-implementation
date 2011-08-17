@@ -104,8 +104,6 @@ material spaceship/metal_wall
             texture_unit 
             {
                 texture textures/metal_bulkheads.jpg
-                //scroll_anim 0.1 0.0
-                //tex_border_colour 0.0 0.0 0.0 0.0
             }
         }
         
