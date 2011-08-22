@@ -134,23 +134,37 @@ def enterprise(voxel, neighbourhood, position, octree_size, curr_iteration):
     threshold = 0.7
 
     if curr_iteration == 1:
-        #ret.append("material spaceship/metal_wall")
-        ret.append("material basic/vertex_colour_lighting")
+        ret.append("material spaceship/metal_wall")
+        #ret.append("material basic/vertex_colour_lighting")
 
-        if random.randint(1,2) == 1:
-            ret.append("colour 1 0 0 0")
-        else:
-            ret.append("colour 0 0 1 0")
+        # if random.randint(1,2) == 1:
+        #     ret.append("colour 1 0 0 0")
+        # else:
+        #     ret.append("colour 0 0 1 0")
         
     else:
 
-        if "disk" in voxel["tags"] or "neck" in voxel["tags"] or "body" in voxel["tags"]:
-            if abs(voxel["aggregate_normal"][0]) > threshold or abs(voxel["aggregate_normal"][2]) > threshold:
-                ret.append("material spaceship/window_ugly")
+        # if "disk" in voxel["tags"] or "neck" in voxel["tags"] or "body" in voxel["tags"]:
+        #     if abs(voxel["aggregate_normal"][0]) > threshold or abs(voxel["aggregate_normal"][2]) > threshold:
+        #         ret.append("material spaceship/window_ugly")
 
-        if "thruster" in voxel["tags"]:
+        # if "thruster" in voxel["tags"]:
+        #     if abs(voxel["aggregate_normal"][0]) > threshold or abs(voxel["aggregate_normal"][2]) > threshold:
+        #         ret.append("material basic/vertex_colour_lighting")
+        #         ret.append("colour 0.3 0.1 0.8 0")
+
+        if position[1] % 5 == 0:# and random.randint(1,10) == 1:
             if abs(voxel["aggregate_normal"][0]) > threshold or abs(voxel["aggregate_normal"][2]) > threshold:
                 ret.append("material basic/vertex_colour_lighting")
-                ret.append("colour 0.3 0.1 0.8 0")
+                ret.append("colour 0.5 0.5 0 0")
+
+    return ret
+
+def normal_lightness(voxel, neighbourhood, position, octree_size, curr_iteration):
+    ret = []
+
+    ret.append("material basic/vertex_colour_lighting")
+    value = abs(voxel["aggregate_normal"][1])
+    ret.append("colour %f %f %f 0" % (value, value, value))
 
     return ret
