@@ -136,9 +136,20 @@ VoxelInformation* Octree::at_pointer(int x, int y, int z, int depth_restriction)
 
 void Octree::set(int x, int y, int z, VoxelInformation value)
 {
-	assert(x >= 0 && x < this->size);
-	assert(y >= 0 && y < this->size);
-	assert(z >= 0 && z < this->size);
+	// assert(x >= 0 && x < this->size);
+	// assert(y >= 0 && y < this->size);
+	// assert(z >= 0 && z < this->size);
+
+	//if the instruction is to set something outside the grid's space, then just ignore it
+	if ((x < 0) ||
+	    (x >= this->size) ||
+	    (y < 0) ||
+	    (y >= this->size) ||
+	    (z < 0) ||
+	    (z >= this->size))
+	{
+		return;
+	}
 
 	//TODO: iterative way of doing this, instead of recursive.
 	root->set(x,y,z, value, this->size);
