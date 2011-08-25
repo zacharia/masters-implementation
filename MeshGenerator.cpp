@@ -825,6 +825,41 @@ void MeshGenerator::vMarch(bool useMarchingCubes)
 				std::set<std::string> detail_info = voxel_grid->at(a->x, a->y, a->z).detail_info;
 				//this stores the modifications from the detailing information.
 				DetailingInformation temp;
+
+				//if we get a voxel without detailing information
+				if (detail_info.empty())
+				{
+					//then search for it's closest detailed neighbour and use that neighbour's detailing information for detailing this voxel.
+
+					double min_dist = 99999;
+					//this is the radius of the neighbourhood around the voxel to search.
+					int border_size = 2;
+					VoxelInformation* curr_candidate = NULL, *min_detail_info = NULL;
+
+					//search the neighbourhood around the voxel.
+					for (int x = -border_size; x <= border_size; ++x)
+						for (int y = -border_size; y <= border_size; ++y)
+							for (int z = -border_size; z <= border_size; ++z)
+							{
+								//keep track of which detailed neighbour is closest.
+								curr_candidate = voxel_grid->at_pointer(a->x + x, a->y + y, a->z + z);
+								if ((curr_candidate != NULL) && !(curr_candidate->detail_info.empty()))
+								{
+									double dist = a->distance(Ogre::Vector3(a->x + x, a->y + y, a->z + z));
+									if (dist < min_dist)
+									{
+										min_dist = dist;
+										min_detail_info = curr_candidate;
+									}
+								}
+							}
+
+					//and use the detailing info of the closest detailed voxel we can find for the current voxel.
+					if (min_dist <= sqrt(border_size * border_size * border_size))
+					{
+						detail_info = min_detail_info->detail_info;
+					}
+				}
 	
 				//loop over all detailing information tags.
 				for (std::set<std::string>::iterator i = detail_info.begin(); i != detail_info.end(); i++)
@@ -939,7 +974,7 @@ void MeshGenerator::vMarch(bool useMarchingCubes)
 	std::sort(triangle_set.triangles.begin(), triangle_set.triangles.end(), TriangleSortingComparator());
 	
 	std::map<Ogre::Vector3, Ogre::Vector3, VectorLessThanComparator>::iterator temp;
-
+	
 	for (std::vector<Triangle>::iterator i = triangle_set.triangles.begin(); i != triangle_set.triangles.end(); i++)
 	{
 		if (i->material.compare(curr_material) != 0)

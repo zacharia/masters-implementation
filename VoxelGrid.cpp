@@ -548,6 +548,7 @@ void VoxelGrid::doSurfaceDetail()
 	//delete surface_voxels_only_octree;
 
 	//the code from here to the end of the method is all for making sure that all voxels are detailed properly.
+	//The reason it's done here is to speed up the second pass at making all the voxels detailed, which is done in the MeshGenerator class in vMarch.
 	int count = 0;
 	if (verbose)
 	{
@@ -555,7 +556,9 @@ void VoxelGrid::doSurfaceDetail()
 	}
 	
 	int border_size = 2;
-	surface_voxels = grid->getSurfaceVoxels(26, border_size);	
+	//get the surface voxels, with a border of 2 empty voxels around them
+	surface_voxels = grid->getSurfaceVoxels(26, border_size);
+	//loop over the surface voxels (and their border)
 	for (std::set<Ogre::Vector3, VectorLessThanComparator>::iterator i = surface_voxels.begin(); i != surface_voxels.end(); i++)
 	{
 		if (verbose)
@@ -566,12 +569,14 @@ void VoxelGrid::doSurfaceDetail()
 				std::cout << count << " of " << surface_voxels.size() << "\n"; //TEMP 	
 			}
 		}
-		
+
+		//get the current surface voxel and make some temp variables.
 		VoxelInformation* curr_voxel_info = grid->at_pointer(i->x, i->y, i->z), *temp = NULL, *min_detail_info = NULL;
+		//if the current voxel is not detailed
 		if ((curr_voxel_info != NULL) && (curr_voxel_info->detail_info.empty()))
 		{
+			//then look for it's closest detailed neighbour in a cubic neighbourhood of size border_size * 2
 			double min_dist = 99999;
-			
 			for (int x = -border_size; x <= border_size; ++x)
 				for (int y = -border_size; y <= border_size; ++y)
 					for (int z = -border_size; z <= border_size; ++z)
@@ -587,9 +592,17 @@ void VoxelGrid::doSurfaceDetail()
 							}
 						}
 					}
+
+			//copy the detailing of the closest detailed neighbour into the current voxel.
 			if (min_dist < sqrt(border_size * border_size * border_size))
 			{
-				grid->at_pointer(i->x, i->y, i->z)->detail_info = min_detail_info->detail_info;
+				//this is how I used to do it. It gave full coverage, but would assign detailing incorrectly to some of the voxels.
+				//grid->at_pointer(i->x, i->y, i->z)->detail_info = min_detail_info->detail_info;
+
+				//this is the new way. It doesn't give full coverage (that's done in MeshGenerator, in vMarch (if (detail_info.empty()...), but those that it does assign detailing info to are all done correctly.
+				VoxelInformation empty_space = *curr_voxel_info;
+				empty_space.detail_info = min_detail_info->detail_info;
+				grid->set(i->x, i->y, i->z, empty_space);
 			}			
 		}
 	}
