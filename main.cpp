@@ -53,6 +53,9 @@ string automata_rules_method = "";
 int automata_num_iterations = -1;
 int automata_neighbourhood_size = -1;
 
+//empty string means don't actaully export
+string exported_mesh_file_name = "";
+
 void tick()
 {
 	//keyboard input handling
@@ -240,6 +243,11 @@ int main(int argc, char** argv)
 		{
 			automata_num_iterations = atoi(argv[++i]); 
 		}
+		//the name of the file to export the the generated model.
+		if ((curr == "--export-mesh") || (curr == "-o"))
+		{
+			exported_mesh_file_name = argv[++i];
+		}
 		if ((curr == "--help") || (curr == "-h")) //display help
 		{
 			cout << "options:\n"			     
@@ -258,6 +266,7 @@ int main(int argc, char** argv)
 			     << "-m <name>\t the name of the method to use from the automata rules file.\n"
 			     << "-ans <num>\t the neighbourhood size to use when running the automata.\n"
 			     << "-ani <num>\t the number of iterations of the automata rule set to do.\n"
+			     << "-o <name>\t the name of the file to export the generated spacecraft model to.\n"
 			     << "-h\t\t display this help information\n\n";
 			exit(0);
 		}
@@ -335,6 +344,39 @@ int main(int argc, char** argv)
 	else
 	{
 		vg->polygonize();	
+	}
+
+	//if the export mesh file name is not the empty string (i.e. we should export the created model to a mesh file after generating it.
+	if (exported_mesh_file_name != "")
+	{
+		if (verbose)
+		{
+			std::cout << "Exporting the model to mesh file: " << exported_mesh_file_name << "\n";
+		}
+		
+		//call the OgreDisplay method to do the exporting
+		display->exportMeshToFile(exported_mesh_file_name);
+
+		//clean up memory
+		if (vg != NULL)
+		{
+			delete vg;
+			vg = NULL;
+		}
+		if (input != NULL)
+		{
+			input->removeAllListeners();
+			delete input;
+			input = NULL;
+		}
+		if (display != NULL)
+		{
+			delete display;
+			display = NULL;
+		}
+
+		//exit the program
+		exit(0);
 	}
 		
 	if (drawBoundingBoxes)

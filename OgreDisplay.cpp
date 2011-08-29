@@ -21,6 +21,8 @@ OgreDisplay::OgreDisplay()
 	originLight = NULL;
 
 	verbose = false;
+
+	model_name = "ship";
 }
 
 
@@ -479,4 +481,25 @@ void OgreDisplay::QuietLog::messageLogged(const String& message, LogMessageLevel
 void OgreDisplay::setVerbose(bool v)
 {
 	verbose = v;
+}
+
+
+void OgreDisplay::exportMeshToFile(std::string file_name)
+{
+	Ogre::MeshPtr model_pointer = sceneMgr->getEntity(model_name)->getMesh();
+	if (model_pointer.isNull())
+	{
+		std::cout << "ERROR: could not export model to file.";
+	}
+	else
+	{
+		Ogre::MeshSerializer model_exporter;
+		model_exporter.exportMesh(model_pointer.getPointer(), file_name);
+	}
+}
+
+
+std::string OgreDisplay::getModelName()
+{
+	return model_name;
 }

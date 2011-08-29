@@ -963,7 +963,7 @@ void MeshGenerator::vMarch(bool useMarchingCubes)
         //ogre object drawing code.
 	assert(display != NULL);
 	assert(triangle_set.triangles.size() > 0);
-	std::string name = "ship";
+	std::string name = display->getModelName();
 	std::string curr_material = "basic/vertex_colour_lighting";
 	ship_mesh = display->createManualObject(name);
 	ship_mesh->begin(curr_material, RenderOperation::OT_TRIANGLE_LIST);

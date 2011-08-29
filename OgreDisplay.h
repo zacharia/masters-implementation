@@ -33,6 +33,9 @@ class OgreDisplay
 
 	bool verbose;
 
+	//this is the name used for the Mesh, Entities, etc. objects
+	std::string model_name;
+
 	//This is used as a dummy class to stop ogre from spamming it's log to the command line.
 	class QuietLog : public Ogre::LogListener
 	{
@@ -85,6 +88,10 @@ public:
 	void toggleOriginLight();
 
 	void setVerbose(bool v);
+
+	void exportMeshToFile(std::string file_name);
+
+	std::string getModelName();
 };
 
 #endif
