@@ -1,0 +1,161 @@
+====================================
+To do list:
+====================================
+ 
+Surface detail prettiness:
+ - bump mapping
+ 
+Nice to haves:
+ - output model format for rendering in blender instead of displaying with Ogre.
+ - fast recursive shape addition
+ - adding pre-made geometry
+
+Fix normal generation by the marching cubes/tetrahedra stuff.
+
+mesh post-processing
+
+====================================
+stuff done fromt the list:
+====================================
+
+Cellular automata
+ - cellular automata grammar - python?
+ - actually run cellular automata stuff
+ - actually adding the geometry/detail itself.
+ - pass the iteration number to python
+ - make iteration number and neighbourhood size argument accessible
+
+octree features:
+ - aggregation of nodes, including tag handling
+ - getting normals for aggregate nodes
+
+Made new octree class.
+ - non-leaf nodes storing data.
+ - update octree with necessary functions
+
+implement marching cubes myself or get a better implementation than duncan's.
+
+getting surface normals for nodes
+
+Surface detail prettiness:
+ - Textures instead of colours
+
+optimizations:
+ - select surface voxels
+
+Tagging related:
+ - update the element data type with tag capabilities, etc.
+ - update the python shape grammar to do tagging stuff, and reading the tags in the displaying program
+ 
+Nice to haves:
+ - comment everything
+ - change code to reduce compiler warnings
+
+================================================================================================
+
+things that also need to be passed to the python stuff:
+- voxel position
+- max dimensions of octree
+
+things that can be modified when generating the mesh:
+- position (displacement mapping)
+- colour/texture (just change material?)
+- normal?
+- shaders?
+- normalize normals
+
+
+
+
+WAYS OF DOING SURFACE DETAIL:
+
+shape grammar surface methods
+cellular automata
+premade bits wang tiled together
+
+don't forget to check the cited by for papers for other things that may be worth considering
+
+IDEAS: making windows using some simple cellular automata thing
+	doing damage to a spacecraft by eating away at it with cellular automata
+
+
+
+
+
+TO INCLUDE IN NEXT VERSION:
+
+add new shapes:
+ - ring
+ - generalized cylinders (MAYBE)
+(MAYBE) a way to slice the corners off of objects, or at least takes slices out of them.
+(MAYBE) recode a new octree class from scratch to support arbitrary depths, pointers to data for each cell in octree, fast rendering of shapes exploiting octree
+(MAYBE) refactor
+
+FIXED/INCLUDED:
+get a better vector library, which is easier to use
+scaling by a vector, not just a scalar
+change to only rotation matrices instead of quaternions and rot matrices
+subtractive shapes are ignored when finding the boundaries for scaling the shapes.
+being able to return nothing from a method/rule (just return an empty list)
+have option of using corner coordinates instead of always centre for position
+have some standard methods that can be used in the grammar, like:
+ - get local vectors for thing from it's orientation matrix
+ - split node
+ - make something hollow by copying it, making the copy subtractive (or inverting it's additive-ness) and adding it's child to it. Also an offset for the centre of the subtractive child.
+everything is always relative to the parent's position and orientation by default, so adjusting one thing adjusts all it's children
+methods to X a branch:
+ - move
+ - rotate
+ - scale
+ - set all priorities for a branch
+(MAYBE) each node has a priority level, and they're added to the voxel grid in that order. This would allow more control over what happens when you have additive and subtractive together.
+
+ships to try:
+ - lego ships
+ - babylon 5
+ 
+After the features above:
+ - post-processing, like surface smoothing of shape, etc.
+ - surface detail
+ - interface
+ - get started on writing
+
+=============================================
+Some examples to use when demoing:
+=============================================
+
+spiral shape (mathematically derived shape and stripes from grammar)
+	./run.sh -x spiral -m 50
+	./run.sh -m spiral_detail -s 256
+
+fractal tree (fractal shape, basic textures and scrolling)
+	./run.sh -x fractal_tree -m 10
+	./run.sh -m fractal_tree_detail -s 256
+
+space station (basic variation stuff and shapes from grammar being tagged in their individual ways) (run this a few times to show variation across different runnings)
+	./run.sh -i input2 -x space_station -a
+	./run.sh -m space_station_detail
+
+space station with different detailing (to show independence of detailing from shapes)
+	(OPTIONAL) ./run.sh -i input2 -x space_station -a
+	./run.sh -m spiral_detail
+
+screenshot of program doing rule 90 (too slow to wait for)
+	./run.sh -x flat_rectangle
+	./run.sh -m rule90
+
+enterprise (copy existing ship)
+	./run.sh
+	./run.sh -m enterprise
+
+other space station (copied from existing picture)
+	./run.sh -i input2 -x c_station -a
+	./run.sh -m enterprise -ani 2
+
+tie fighter (not working properly because tweaking wings just before demo)
+	./run.sh -i input2 -x tie_fighter -a
+	./run.sh -m colour_from_normals -s 64
+
+spike ship (cooked this up myself)
+	./run.sh -i input2 -x spike_ship -a
+	./run.sh -m normal_lightness
