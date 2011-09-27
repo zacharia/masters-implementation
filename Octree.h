@@ -10,7 +10,7 @@
 #define _OCTREE_CLASS_H
 
 //the C/python interface for embedding python
-#include <python2.6/Python.h>
+#include <python2.7/Python.h>
 
 //standard library inclusions
 #include <cstddef>
