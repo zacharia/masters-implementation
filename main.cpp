@@ -193,7 +193,7 @@ int main(int argc, char** argv)
 		}
 		if ((curr == "--display-axes") || (curr == "-x")) //display axes
 		{
-			display_axes = true;
+			display_axes = !display_axes;
 		}
 		if ((curr == "--scale-shapes") || (curr == "-q")) //display axes
 		{
@@ -213,7 +213,7 @@ int main(int argc, char** argv)
 		}		
 		if ((curr == "--verbose") || (curr == "-v"))
 		{
-			verbose = true;
+			verbose = !verbose;
 		}
 		if ((curr == "--use-marching-tetrahedra") || (curr == "-t"))
 		{
@@ -254,12 +254,12 @@ int main(int argc, char** argv)
 			     << "-p\t\t use point rendering instead of mesh based.\n"
 			     << "-s <num>\t the size to make the voxel grid when doing voxel grid stuff\n"
 			     << "-f <file>\t a file to use that was produced by the python interpreter\n"
-			     << "-x\t\t display the x, y and z axes\n"
+			     << "-x\t\t toggles displaying of the x, y and z axes\n"
 			     << "-b\t\t display the bounding boxes of the octree grid and spacecraft.\n"
 			     << "-g <num>\t the granularity to use when adding stuff to the voxel grid.\n"
 			     << "-c <num>\t the size to make chunks when polygonizing the voxel grid.\n"
 			     << "-q\t\t scale the shapes into the octree's coordinates.\n"
-			     << "-v\t\t Enable verbose output.\n"
+			     << "-v\t\t toggles enabling of verbose output.\n"
 			     << "-t\t\t Use marching tetrahedra instead of the standard marching cubes.\n"
 			     << "-n\t\t Ignore shape priorities when voxelizing them.\n"
 			     << "-r <file>\t the python file containing the automata rule set to use when doing surface detail.\n"
