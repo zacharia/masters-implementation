@@ -168,3 +168,19 @@ def normal_lightness(voxel, neighbourhood, position, octree_size, curr_iteration
     ret.append("colour %f %f %f 0" % (value, value, value))
 
     return ret
+
+def building_windows(voxel, neighbourhood, position, octree_size, curr_iteration):
+    ret = []
+
+    ret.append("material basic/vertex_colour_lighting")
+    value = 0;
+
+    for i in voxel["tags"]:
+        stuff = i.split("_")
+        if stuff[0] == "col":
+            value = float(stuff[1])
+
+    ret.append("colour %f %f %f 0" % (value, value, value))
+    
+    return ret
+            

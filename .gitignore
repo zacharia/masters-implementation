@@ -4,3 +4,6 @@ lex.yy.c
 prototype
 voxel_generator
 *.pyc
+*.log
+*.mesh
+*.xml

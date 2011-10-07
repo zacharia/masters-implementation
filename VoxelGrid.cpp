@@ -485,7 +485,11 @@ void VoxelGrid::updateDisplay()
 					    (grid->at(i,j,k-1).solid == SPACE_EMPTY))
 #endif
 					{
-						display->addVoxelBillboard(Ogre::Vector3(i,j,k));	
+						//This line is for doing each voxel as a point
+						//display->addVoxelBillboard(Ogre::Vector3(i,j,k));
+						
+						//This line is for doing each as a cube.
+						display->addCube(Ogre::Vector3(i,j,k));	
 					}					
 				}
 			}
