@@ -127,23 +127,92 @@ void OgreDisplay::createCubeMesh(std::string name, std::string material)
 	cubeMesh->begin(material, RenderOperation::OT_TRIANGLE_LIST);
 	
 	cubeMesh->position(-0.5, -0.5, -0.5); //0
+	cubeMesh->normal(0,-1,0);
+	cubeMesh->textureCoord(0,0);
 	cubeMesh->position(-0.5, -0.5, 0.5); //1
+	cubeMesh->normal(0,-1,0);
+	cubeMesh->textureCoord(0,1);
 	cubeMesh->position(0.5, -0.5, 0.5); //2
+	cubeMesh->normal(0,-1,0);
+	cubeMesh->textureCoord(1,1);
 	cubeMesh->position(0.5, -0.5, -0.5); //3
+	cubeMesh->normal(0,-1,0);
+	cubeMesh->textureCoord(1,0);
 	cubeMesh->position(-0.5, 0.5, -0.5); //4
+	cubeMesh->normal(0,1,0);
+	cubeMesh->textureCoord(0,0);
 	cubeMesh->position(-0.5, 0.5, 0.5); //5
+	cubeMesh->normal(0,1,0);
+	cubeMesh->textureCoord(0,1);
 	cubeMesh->position(0.5, 0.5, 0.5); //6
+	cubeMesh->normal(0,1,0);
+	cubeMesh->textureCoord(1,1);
 	cubeMesh->position(0.5, 0.5, -0.5); //7
+	cubeMesh->normal(0,1,0);
+	cubeMesh->textureCoord(1,0);
 
+	cubeMesh->position(-0.5, -0.5, -0.5); //8
+	cubeMesh->normal(0,0,-1);
+	cubeMesh->textureCoord(0,0);
+	cubeMesh->position(-0.5, -0.5, 0.5); //9
+	cubeMesh->normal(0,0,1);
+	cubeMesh->textureCoord(0,0);
+	cubeMesh->position(0.5, -0.5, 0.5); //10
+	cubeMesh->normal(0,0,1);
+	cubeMesh->textureCoord(1,0);
+	cubeMesh->position(0.5, -0.5, -0.5); //11
+	cubeMesh->normal(0,0,-1);
+	cubeMesh->textureCoord(1,0);
+	cubeMesh->position(-0.5, 0.5, -0.5); //12
+	cubeMesh->normal(0,0,-1);
+	cubeMesh->textureCoord(0,1);
+	cubeMesh->position(-0.5, 0.5, 0.5); //13
+	cubeMesh->normal(0,0,1);
+	cubeMesh->textureCoord(0,1);
+	cubeMesh->position(0.5, 0.5, 0.5); //14
+	cubeMesh->normal(0,0,1);
+	cubeMesh->textureCoord(1,1);
+	cubeMesh->position(0.5, 0.5, -0.5); //15
+	cubeMesh->normal(0,0,-1);
+	cubeMesh->textureCoord(1,1);
+
+	cubeMesh->position(-0.5, -0.5, -0.5); //16
+	cubeMesh->normal(-1,0,0);
+	cubeMesh->textureCoord(0,0);
+	cubeMesh->position(-0.5, -0.5, 0.5); //17
+	cubeMesh->normal(-1,0,0);
+	cubeMesh->textureCoord(0,1);
+	cubeMesh->position(0.5, -0.5, 0.5); //18
+	cubeMesh->normal(1,0,0);
+	cubeMesh->textureCoord(0,1);
+	cubeMesh->position(0.5, -0.5, -0.5); //19
+	cubeMesh->normal(1,0,0);
+	cubeMesh->textureCoord(0,0);
+	cubeMesh->position(-0.5, 0.5, -0.5); //20
+	cubeMesh->normal(-1,0,0);
+	cubeMesh->textureCoord(1,0);
+	cubeMesh->position(-0.5, 0.5, 0.5); //21
+	cubeMesh->normal(-1,0,0);
+	cubeMesh->textureCoord(1,1);
+	cubeMesh->position(0.5, 0.5, 0.5); //22
+	cubeMesh->normal(1,0,0);
+	cubeMesh->textureCoord(1,1);
+	cubeMesh->position(0.5, 0.5, -0.5); //23
+	cubeMesh->normal(1,0,0);
+	cubeMesh->textureCoord(1,0);
+	
 	//bottom
 	cubeMesh->quad(3,2,1,0);
 	//top
 	cubeMesh->quad(4,5,6,7);
-	//sides
-	cubeMesh->quad(0,1,5,4);
-	cubeMesh->quad(7,6,2,3);
-	cubeMesh->quad(2,6,5,1);
-	cubeMesh->quad(0,4,7,3);
+	//front
+	cubeMesh->quad(10,14,13,9);
+	//back
+	cubeMesh->quad(8,12,15,11);
+	//left
+	cubeMesh->quad(16,17,21,20);
+	//right
+	cubeMesh->quad(23,22,18,19);
 
 	cubeMesh->end();
 

@@ -489,7 +489,7 @@ void VoxelGrid::updateDisplay()
 						//display->addVoxelBillboard(Ogre::Vector3(i,j,k));
 						
 						//This line is for doing each as a cube.
-						display->addCube(Ogre::Vector3(i,j,k));	
+						display->addCube(Ogre::Vector3(i,j,k), Ogre::Vector3(0.5), Quaternion::IDENTITY, "basic/grey_outline", false);	
 					}					
 				}
 			}

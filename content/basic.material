@@ -133,3 +133,24 @@ material spaceship/window_ugly
         
     }
 }
+
+material basic/grey_outline
+{
+    // first, preferred technique
+    technique
+    {
+        pass
+        {
+            ambient vertexcolour
+            diffuse vertexcolour
+            specular 1.0 1.0 1.0
+            shading phong
+
+            texture_unit 
+            {
+                texture textures/grey_outline_square.jpg
+            }
+        }
+        
+    }
+}
