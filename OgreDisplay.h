@@ -92,6 +92,8 @@ public:
 	void exportMeshToFile(std::string file_name);
 
 	std::string getModelName();
+
+	void takeScreenshot(std::string file_name = "content/screenshot.png");
 };
 
 #endif

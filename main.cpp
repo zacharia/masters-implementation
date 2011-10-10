@@ -90,6 +90,12 @@ void tick()
 		display->getCamera()->move(Vector3(0.0,-1.0,0.0));
 	}
 
+	//screenshot key
+	if (input->getKeyboard()->isKeyDown(OIS::KC_T))
+	{		
+		display->takeScreenshot();
+	}
+
 	//check for lighting control changes
 	if (input->getKeyboard()->isKeyDown(OIS::KC_Q))
 	{
@@ -289,8 +295,8 @@ int main(int argc, char** argv)
 	}
 
 	//add a camera origin lights
-	display->makeCameraLight(Ogre::ColourValue(0,1,0));
-	display->makeOriginLight(Ogre::ColourValue(1,0,0));
+	display->makeCameraLight(Ogre::ColourValue(0.4,0.4,0.4));
+	display->makeOriginLight(Ogre::ColourValue(0.1,0.1,0.1));
 	
 	//voxel grid init
 	vg = new VoxelGrid(voxel_grid_size);

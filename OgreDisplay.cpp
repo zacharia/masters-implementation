@@ -97,8 +97,8 @@ void OgreDisplay::initialize()
 	//sceneMgr->setShadowTechnique(Ogre::SHADOWTYPE_STENCIL_ADDITIVE);
 
 	//put the camera looking at the origins
-	camera->setPosition(0,5,5);
-	camera->lookAt(Vector3(0,0,0));
+	camera->setPosition(0,0,0);
+	camera->lookAt(Vector3(64,64,64));
 
 	//create a static geometry group for doing the voxels
 	sceneMgr->createStaticGeometry("voxel_grid");
@@ -571,4 +571,10 @@ void OgreDisplay::exportMeshToFile(std::string file_name)
 std::string OgreDisplay::getModelName()
 {
 	return model_name;
+}
+
+
+void OgreDisplay::takeScreenshot(std::string file_name)
+{
+	this->renderWindow->writeContentsToFile(file_name);
 }
