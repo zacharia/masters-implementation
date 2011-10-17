@@ -178,8 +178,6 @@ void tick()
 
 int main(int argc, char** argv)
 {
-	cout << "VOXEL-SPACE PROCEDURAL SPACESHIP GENERATOR.\n\n";
-
 	// argument handling
 
 	string curr;
@@ -464,6 +462,10 @@ int main(int argc, char** argv)
 		display = NULL;
 	}
 
-	cout << "\nEND OF PROGRAM\n";
+	if (verbose)
+	{
+		cout << "\nEND OF PROGRAM\n";	
+	}
+	
 	return 0;
 }

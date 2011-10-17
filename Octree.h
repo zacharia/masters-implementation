@@ -136,6 +136,8 @@ private:
 	OctreeNode* root;
 	int size;
 
+	bool verbose;
+
 	//NB: null does not necessarily imply that a node is empty. The VoxelInformation is used for that.
         
 public:
@@ -189,6 +191,8 @@ public:
 	void runAutomataRules(std::string rules_file, std::string rules_method, int max_iterations = -1, int neighbourhood_radius = -1);
 
 	std::set<Ogre::Vector3, VectorLessThanComparator> getAllSolidVoxels();
+
+	void setVerbose(bool v);
 };
 
 #endif

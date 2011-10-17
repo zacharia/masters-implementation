@@ -11,6 +11,7 @@ Octree::Octree()
 {
 	root = NULL;
 	this->createOctree(256);
+	verbose = false;
 }
 
 
@@ -22,6 +23,7 @@ Octree::Octree(const Octree& copy_from_me)
 	this->auto_optimize_on = copy_from_me.auto_optimize_on;
 	this->auto_optimize_interval = copy_from_me.auto_optimize_interval;
 	this->auto_optimize_counter = copy_from_me.auto_optimize_counter;
+	verbose = false;
 }
 
 
@@ -30,6 +32,7 @@ Octree::Octree(int in_size)
 {
 	root = NULL;
 	this->createOctree(in_size);
+	verbose = false;
 }
 
 
@@ -565,16 +568,23 @@ void Octree::runAutomataRules(std::string rules_file, std::string rules_method, 
 	//now iterate the number of times specified in the file
 	for (int iteration_count = 1; iteration_count <= num_iterations; ++iteration_count)
 	{
-		std::cout << "surface detail: iteration: " << iteration_count << "\n"; //TEMP
+		if (verbose)
+		{
+			std::cout << "surface detail: iteration: " << iteration_count << "\n"; //TEMP
+		}
+		
 		int my_count = 0;
 		
 		//loop over every surface voxel
 		for (std::set<Ogre::Vector3, VectorLessThanComparator>::iterator i = surface_voxels.begin(); i != surface_voxels.end(); i++)
 		{
 			my_count++;
-			if (my_count % 1000 == 0)
+			if (verbose)
 			{
-				std::cout << "doing voxel " << my_count << " of " << surface_voxels.size() << "\n";
+				if (my_count % 1000 == 0)
+				{
+					std::cout << "doing voxel " << my_count << " of " << surface_voxels.size() << "\n";
+				}	
 			}
 			
 			//get the current voxel's information.
@@ -1590,6 +1600,12 @@ bool OctreeNode::allChildrenNull()
 		(this->children[1][0][1] == NULL) &&
 		(this->children[1][1][0] == NULL) &&
 		(this->children[1][1][1] == NULL));
+}
+
+
+void Octree::setVerbose(bool v)
+{
+	verbose = v;
 }
 
 

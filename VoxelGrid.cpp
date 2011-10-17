@@ -51,6 +51,7 @@ void VoxelGrid::makeVoxelGrid(int size)
 {
 	//TODO: parametize this correctly
 	grid = new Octree(size);
+	grid->setVerbose(verbose);
 }
 
 
