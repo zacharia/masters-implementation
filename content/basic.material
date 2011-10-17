@@ -1,3 +1,21 @@
+//this is a continuously changing material I use for quickly testing how a texture looks.
+material testing
+{
+    // first, preferred technique
+    technique
+    {
+        pass
+        {
+            shading phong
+
+            texture_unit 
+            {
+                texture textures/Concrete05.jpg
+            }
+        }
+    }
+}
+
 material basic/cube_default
 {
 	technique
@@ -153,4 +171,162 @@ material basic/grey_outline
         }
         
     }
+}
+
+material basic/red
+{
+    // first, preferred technique
+    technique
+    {
+        pass
+        {
+            shading phong
+
+            texture_unit 
+            {
+                texture textures/red.jpg
+            }
+        }
+        
+    }
+}
+
+material basic/green
+{
+    // first, preferred technique
+    technique
+    {
+        pass
+        {
+            shading phong
+
+            texture_unit 
+            {
+                texture textures/green.jpg
+            }
+        }
+        
+    }
+}
+
+material basic/blue
+{
+    // first, preferred technique
+    technique
+    {
+        pass
+        {
+            shading phong
+
+            texture_unit 
+            {
+                texture textures/blue.jpg
+            }
+        }
+        
+    }
+}
+
+material nature/grass
+{
+    // first, preferred technique
+    technique
+    {
+        pass
+        {
+            shading phong
+
+            texture_unit 
+            {
+                texture textures/organic_grass.jpg
+            }
+        }
+        
+    }
+}
+
+
+material basic/brown
+{
+    // first, preferred technique
+    technique
+    {
+        pass
+        {
+            shading phong
+
+            texture_unit 
+            {
+                texture textures/brown.jpg
+            }
+        }
+    }
+}
+
+material basic/dark_green
+{
+    // first, preferred technique
+    technique
+    {
+        pass
+        {
+            shading phong
+
+            texture_unit 
+            {
+                texture textures/dark_green.jpg
+            }
+        }
+    }
+}
+
+material metal/diamond_plate
+{
+    // first, preferred technique
+    technique
+    {
+        pass
+        {
+            shading phong
+
+            texture_unit 
+            {
+                texture textures/metal_diamond_plate.jpg
+            }
+        }
+    }
+}
+
+material metal/hole_plate
+{
+    // first, preferred technique
+    technique
+    {
+        pass
+        {
+            shading phong
+
+            texture_unit 
+            {
+                texture textures/metal_hole_plate.jpg
+            }
+        }
+    }
+}
+
+material brick/concrete
+{
+	// first, preferred technique
+	technique
+	{
+		pass
+		{
+			shading phong
+
+			texture_unit 
+			{
+				texture textures/Concrete05.jpg
+			}
+		}
+	}
 }
