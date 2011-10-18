@@ -14,6 +14,7 @@ A comment
 #include "VoxelGrid.h"
 #include "InputManager.h"
 #include "OgreDisplay.h"
+#include "TimedSection.h"
 
 using namespace std;
 
@@ -52,6 +53,8 @@ string automata_rules_file = "";
 string automata_rules_method = "";
 int automata_num_iterations = -1;
 int automata_neighbourhood_size = -1;
+
+bool show_timings = false;
 
 //empty string means don't actaully export
 string exported_mesh_file_name = "";
@@ -177,7 +180,7 @@ void tick()
 }
 
 int main(int argc, char** argv)
-{
+{		
 	// argument handling
 
 	string curr;
@@ -252,6 +255,10 @@ int main(int argc, char** argv)
 		{
 			exported_mesh_file_name = argv[++i];
 		}
+		if ((curr == "--timings") || (curr == "-st"))
+		{
+			show_timings = !show_timings;
+		}
 		if ((curr == "--help") || (curr == "-h")) //display help
 		{
 			cout << "options:\n"			     
@@ -275,6 +282,8 @@ int main(int argc, char** argv)
 			exit(0);
 		}
 	}
+
+	TimedSection main_timer("main method", show_timings);
 	
 	//seed the random number generator
 	srand(time(NULL));
@@ -322,20 +331,36 @@ int main(int argc, char** argv)
 		}
 		vg->scaleShapes();
 	}
-	
-	vg->createShapes();
+
+	//this set of braces is to scope the timer so that it gets
+	//deconstructed after the step is finished, and displays it's
+	//timing information.
+	{
+		TimedSection voxelization_timer("voxelization", show_timings);
+
+		//shape voxelization
+		vg->createShapes();
+	}
 
 	if (verbose)
 	{
 		std::cout << "Doing the surface detail.\n";	
 	}
 
-	vg->setAutomataRuleSet(automata_rules_file);
-	vg->setAutomataRuleMethod(automata_rules_method);
-	vg->setAutomataIterations(automata_num_iterations);
-	vg->setAutomataNeighbourhoodSize(automata_neighbourhood_size);
-	vg->doSurfaceDetail();
+	//this set of braces is to scope the timer so that it gets
+	//deconstructed after the step is finished, and displays it's
+	//timing information.
+	{
+		TimedSection detailing_timer("voxel detailing", show_timings);
 
+		//voxel detailing
+		vg->setAutomataRuleSet(automata_rules_file);
+		vg->setAutomataRuleMethod(automata_rules_method);
+		vg->setAutomataIterations(automata_num_iterations);
+		vg->setAutomataNeighbourhoodSize(automata_neighbourhood_size);
+		vg->doSurfaceDetail();
+	}
+	
 	if (verbose)
 	{
 		std::cout << "Converting voxel grid to a mesh.\n";	
@@ -347,6 +372,9 @@ int main(int argc, char** argv)
 	}
 	else
 	{
+		//a timer to record how long it takes to mesh the voxel grid.
+		TimedSection main_timer("meshing voxel grid", show_timings);
+		
 		vg->polygonize();	
 	}
 
