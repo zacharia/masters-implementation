@@ -9,11 +9,14 @@ DO_TIMING=true
 DO_MEM_USAGE=false
 
 #this is applied to all commands, for both timing or memory
-TIMING_GLOBAL_ARGS=-st
+TIMING_GLOBAL_ARGS=-st -s 32
 MEM_USAGE_GLOBAL_ARGS=
 
 TESTS=(
-    './voxel_generator -s 128 -g 0.5 --scale-shapes -f /home/zcrumley/temp/output -r automata_rule_set_1 -s 32 -m camoflauge'
+    './voxel_generator -s 128 -g 0.5 --scale-shapes -f /home/zcrumley/temp/enterprise.output -r automata_rule_set_1 -m camoflauge -o content/enterprise.mesh -st -s 512'
+    './voxel_generator -s 128 -g 0.5 --scale-shapes -f /home/zcrumley/temp/spike_ship.output -r automata_rule_set_1 -m normal_lightness -o content/spike_ship.mesh -st -s 512'
+    './voxel_generator -s 128 -g 0.5 --scale-shapes -f /home/zcrumley/temp/space_station.output -r automata_rule_set_1 -m spiral_detail -o content/space_station.mesh -st -s 512'
+    './voxel_generator -s 128 -g 0.5 --scale-shapes -f /home/zcrumley/temp/c_station.output -r automata_rule_set_1 -m c_station_detail -o content/c_station.mesh -st -s 512'
 )
 
 echo "================================================================================================="

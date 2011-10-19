@@ -191,7 +191,7 @@ def skyscraper(voxel, neighbourhood, position, octree_size, curr_iteration):
 def camoflauge(voxel, neighbourhood, position, octree_size, curr_iteration):
     ret = []
     
-    num = random.randint(1,43)
+    num = random.randint(1,20)
     if num == 1:
         ret.append("material basic/brown")
     elif num == 2:

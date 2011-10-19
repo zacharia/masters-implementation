@@ -1,6 +1,9 @@
 ====================================
 To do list:
 ====================================
+
+I should be able to add memory usage by reading from /proc/self/status.
+check the proc man page for more details.
  
 Surface detail prettiness:
  - bump mapping
