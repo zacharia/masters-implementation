@@ -10,7 +10,7 @@ material testing
 
             texture_unit 
             {
-                texture textures/Concrete05.jpg
+                texture textures/rusty_rock.jpg
             }
         }
     }

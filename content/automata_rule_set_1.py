@@ -131,36 +131,47 @@ def rule90(voxel, neighbourhood, position, octree_size, curr_iteration):
 
 def enterprise(voxel, neighbourhood, position, octree_size, curr_iteration):
     ret = []
-    threshold = 0.7
 
-    if curr_iteration == 1:
-        ret.append("material spaceship/metal_wall")
-        #ret.append("material basic/vertex_colour_lighting")
+    base_grey = "material brick/concrete"
+    window = "material spaceship/window_ugly"
+    glowing_blue = "material basic/blue"
+    glowing_red = "material basic/red"
 
-        # if random.randint(1,2) == 1:
-        #     ret.append("colour 1 0 0 0")
-        # else:
-        #     ret.append("colour 0 0 1 0")
-        
-    else:
+    if "disk" in voxel["tags"]:
+        if abs(voxel["aggregate_normal"][1]) < 0.6 and position[1] % 2 == 1 and random.randint(1,4) == 1:
+            ret.append(window)
+        else:
+            ret.append(base_grey)
 
-        # if "disk" in voxel["tags"] or "neck" in voxel["tags"] or "body" in voxel["tags"]:
-        #     if abs(voxel["aggregate_normal"][0]) > threshold or abs(voxel["aggregate_normal"][2]) > threshold:
-        #         ret.append("material spaceship/window_ugly")
+    elif "neck" in voxel["tags"]:
+        if abs(voxel["aggregate_normal"][1]) == 0 and position[1] % 3 == 1 and random.randint(1,4) == 1:
+            ret.append(window)
+        else:
+            ret.append(base_grey)
+    
+    elif "body" in voxel["tags"]:
+        if abs(voxel["aggregate_normal"][1]) < 0.5 and abs(voxel["aggregate_normal"][2]) == 0 and position[1] % 4 == 1 and random.randint(1,4) == 1:
+            ret.append(window)
+        else:
+            ret.append(base_grey)
 
-        # if "thruster" in voxel["tags"]:
-        #     if abs(voxel["aggregate_normal"][0]) > threshold or abs(voxel["aggregate_normal"][2]) > threshold:
-        #         ret.append("material basic/vertex_colour_lighting")
-        #         ret.append("colour 0.3 0.1 0.8 0")
+    elif "thruster_bumps" in voxel["tags"]:
+        ret.append(glowing_blue)
 
-        num = random.randint(1,43)
-        if num == 1:
-            ret.append("material basic/red")
-        elif num == 2:
-            ret.append("material spaceship/window_ugly")
-        elif num == 3:
-            ret.append("material spaceship/metal_wall")
-        
+    elif "thruster" in voxel["tags"]:
+        if  abs(voxel["aggregate_normal"][2]) == 1:
+            ret.append(glowing_red)
+        else:
+            ret.append(base_grey)
+
+    elif "wing" in voxel["tags"]:
+        ret.append(base_grey)
+
+    elif "body_extension" in voxel["tags"]:
+        ret.append(glowing_blue)
+
+    #ret.append(voxel["detail_info"][0])
+    
     return ret
 
 def normal_lightness(voxel, neighbourhood, position, octree_size, curr_iteration):
@@ -198,6 +209,28 @@ def camoflauge(voxel, neighbourhood, position, octree_size, curr_iteration):
         ret.append("material nature/grass")
     elif num == 3:
         ret.append("material basic/dark_green")
+        
+    return ret
+
+
+# this doesn't work completely yet. I'm ironing out some bugs.
+def tank(voxel, neighbourhood, position, octree_size, curr_iteration):
+    ret = []
+
+    if "tread" in voxel["tags"]:
+        ret.append("basic/red")
+
+    elif "gun_tip" in voxel["tags"] or  "gun" in voxel["tags"]:
+        ret.append("basic/red")
+
+    else:
+        num = random.randint(1,20)
+        if num == 1:
+            ret.append("material basic/brown")
+        elif num == 2:
+            ret.append("material nature/grass")
+        elif num == 3:
+            ret.append("material basic/dark_green")
         
     return ret
 
@@ -307,4 +340,44 @@ def random_grey(voxel, neighbourhood, position, octree_size, curr_iteration):
 
     ret.append("colour %f %f %f 0" % (value, value, value))
     
+    return ret
+
+def castle(voxel, neighbourhood, position, octree_size, curr_iteration):
+    ret = []
+
+    stone_main = "material testing"
+    stone_spots = "material basic/dark_green"
+    stone_small_spots = "material brick/concrete"
+    floor = "material basic/red"
+
+    if curr_iteration == 1:
+        if random.randint(1,100) == 1:
+            ret.append(stone_spots)
+        else:
+            ret.append(stone_main)
+
+    elif curr_iteration == 2:
+        if abs(voxel["aggregate_normal"][1]) == 0 and position[1] % 3 == 1 and random.randint(1,4) == 1:
+            ret.append(stone_small_spots)
+        else:
+            ret.append(voxel["detail_info"][0])    
+            
+    elif curr_iteration >= 3 and curr_iteration <= 5:
+        
+        been_set = False
+        
+        for i in neighbourhood:
+            for j in i:
+                for k in j:
+                    if stone_spots in k["detail_info"] and random.randint(1,3) == 1:
+                        ret.append(stone_spots)
+                        been_set = True
+
+        if not been_set:
+            ret.append(voxel["detail_info"][0])
+
+        #this was for getting the floor to be different. It needs more tinkering, and I've given up on it for now.
+        #if abs(voxel["aggregate_normal"][1]) == 1 and ("castle_wall" in voxel["tags"] or "castle_tower" in voxel["tags"]):
+            #ret.append(floor)
+        
     return ret
