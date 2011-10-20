@@ -516,6 +516,7 @@ void VoxelGrid::doSurfaceDetail()
 
 	//make a new empty octree
 	Octree* surface_voxels_only_octree = new Octree(grid->getSize());
+	surface_voxels_only_octree->setVerbose(verbose);
 
 	//add the surface voxels to the new octree.
 	VoxelInformation temp;
