@@ -218,10 +218,10 @@ def tank(voxel, neighbourhood, position, octree_size, curr_iteration):
     ret = []
 
     if "tread" in voxel["tags"]:
-        ret.append("basic/red")
+        ret.append("material metal/hole_plate")
 
     elif "gun_tip" in voxel["tags"] or  "gun" in voxel["tags"]:
-        ret.append("basic/red")
+        ret.append("material metal/diamond_plate")
 
     else:
         num = random.randint(1,20)
