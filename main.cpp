@@ -55,6 +55,7 @@ int automata_num_iterations = -1;
 int automata_neighbourhood_size = -1;
 
 bool show_timings = false;
+bool show_mem_usage = false;
 
 //empty string means don't actaully export
 string exported_mesh_file_name = "";
@@ -259,6 +260,10 @@ int main(int argc, char** argv)
 		{
 			show_timings = !show_timings;
 		}
+		if ((curr == "--mem-usage") || (curr == "-sm"))
+		{
+			show_mem_usage = !show_mem_usage;
+		}
 		if ((curr == "--help") || (curr == "-h")) //display help
 		{
 			cout << "options:\n"			     
@@ -278,6 +283,8 @@ int main(int argc, char** argv)
 			     << "-ans <num>\t the neighbourhood size to use when running the automata.\n"
 			     << "-ani <num>\t the number of iterations of the automata rule set to do.\n"
 			     << "-o <name>\t the name of the file to export the generated spacecraft model to.\n"
+			     << "-st\t\t Show timing information about how long each step takes.\n"
+			     << "-sm\t\t Show peak memory usage at the end of the program.\n"
 			     << "-h\t\t display this help information\n\n";
 			exit(0);
 		}
@@ -488,6 +495,32 @@ int main(int argc, char** argv)
 	{
 		delete display;
 		display = NULL;
+	}
+
+	if (show_mem_usage)
+	{
+		std::ifstream in_status("/proc/self/status");
+
+		if (in_status)
+		{
+			string temp;
+			while (!in_status.eof())
+			{
+				in_status >> temp >> ws;
+				if (temp == "VmPeak:")
+				{
+					in_status >> temp >> ws;
+					std::cout << "Peak memory usage was: " << temp << " kB" << "\n";
+					break;
+				}
+			}
+		}
+		else
+		{
+			std::cout << "Could not open /proc/self/status to get memory usage." << "\n";
+		}
+
+		in_status.close();
 	}
 
 	if (verbose)
