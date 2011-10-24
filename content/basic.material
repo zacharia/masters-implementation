@@ -263,6 +263,61 @@ material basic/brown
     }
 }
 
+
+material basic/black
+{
+	// first, preferred technique
+	technique
+	{
+		pass
+		{
+			shading phong
+
+			texture_unit 
+			{
+				texture textures/black.jpg
+			}
+		}
+	}
+}
+
+
+material basic/white
+{
+	// first, preferred technique
+	technique
+	{
+		pass
+		{
+			shading phong
+
+			texture_unit 
+			{
+				texture textures/white.jpg
+			}
+		}
+	}
+}
+
+
+material basic/grey
+{
+	// first, preferred technique
+	technique
+	{
+		pass
+		{
+			shading phong
+
+			texture_unit 
+			{
+				texture textures/grey.jpg
+			}
+		}
+	}
+}
+
+
 material basic/dark_green
 {
     // first, preferred technique

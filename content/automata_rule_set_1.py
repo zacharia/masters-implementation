@@ -94,8 +94,12 @@ def rule90(voxel, neighbourhood, position, octree_size, curr_iteration):
     ret = []
 
     #these control what materials are used for 0 and 1
-    off = "material basic/red"
-    on = "material basic/blue"
+    #red blue colour set
+    #off = "material basic/red"
+    #on = "material basic/blue"
+    #black white colour set
+    off = "material basic/white"
+    on = "material basic/black"
     #this sets which of the axes the automata will run along.
     direction = "y"
 
@@ -164,8 +168,11 @@ def rule110(voxel, neighbourhood, position, octree_size, curr_iteration):
     ret = []
 
     #these control what materials are used for 0 and 1
-    off = "material basic/red"
-    on = "material basic/blue"
+    #off = "material basic/red"
+    #on = "material basic/blue"
+    #black white colour set
+    off = "material basic/white"
+    on = "material basic/black"
     #this sets which of the axes the automata will run along.
     direction = "z"
 
@@ -234,8 +241,11 @@ def rule184(voxel, neighbourhood, position, octree_size, curr_iteration):
     ret = []
 
     #these control what materials are used for 0 and 1
-    off = "material basic/red"
-    on = "material basic/blue"
+    #off = "material basic/red"
+    #on = "material basic/blue"
+    #black white colour set
+    off = "material basic/white"
+    on = "material basic/black"
     #this sets which of the axes the automata will run along.
     direction = "z"
 
@@ -304,8 +314,11 @@ def rule30(voxel, neighbourhood, position, octree_size, curr_iteration):
     ret = []
 
     #these control what materials are used for 0 and 1
-    off = "material basic/red"
-    on = "material basic/blue"
+    #off = "material basic/red"
+    #on = "material basic/blue"
+    #black white colour set
+    off = "material basic/white"
+    on = "material basic/black"
     #this sets which of the axes the automata will run along.
     direction = "z"
 
