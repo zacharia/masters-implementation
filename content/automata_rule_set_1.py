@@ -80,6 +80,7 @@ def fractal_tree_detail(voxel, neighbourhood, position, octree_size, curr_iterat
 
     return ret
 
+
 def colour_from_normals(voxel, neighbourhood, position, octree_size, curr_iteration):
     ret = []
     ret.append("material basic/vertex_colour_lighting")
@@ -88,46 +89,286 @@ def colour_from_normals(voxel, neighbourhood, position, octree_size, curr_iterat
         
     return ret
 
+
 def rule90(voxel, neighbourhood, position, octree_size, curr_iteration):
     ret = []
 
-    if position[0] == 64 and position[1] == 100:
-        ret.append("on")
+    #these control what materials are used for 0 and 1
+    off = "material basic/red"
+    on = "material basic/blue"
+    #this sets which of the axes the automata will run along.
+    direction = "y"
 
-    upper_row = ["on" in neighbourhood[0][2][1]["detail_info"], "on" in neighbourhood[1][2][1]["detail_info"], "on" in neighbourhood[2][2][1]["detail_info"]]
-    result = True
-
-    if upper_row[0]:
-        if upper_row[1]:
-            if upper_row[2]:
-                result = False
-            else:
-                result = True
+    #the first iteration randomly sets a few of the voxels to on.
+    if curr_iteration == 1:
+        if random.randint(1,1000) == 1:
+            ret.append(on)
         else:
-            if upper_row[2]:
-                result = False
-            else:
-                result = True
+            ret.append(off)
+    #the rest just run the automata rules.
     else:
-        if upper_row[1]:
-            if upper_row[2]:
-                result = True
-            else:
-                result = False
-        else:
-            if upper_row[2]:
-                result = True
-            else:
-                result = False
+        #this stores which of the parents are on
+        parent_row = [False, False, False]
 
-    if result:
-        ret.append("on")
-        
-    if "on" in voxel["detail_info"]:
-        ret.append("material basic/vertex_colour_lighting")
-        ret.append("colour from_normal")
+        if direction == "z":
+            if on in neighbourhood[0][2][0]["detail_info"] or on in neighbourhood[0][2][1]["detail_info"] or on in neighbourhood[0][2][2]["detail_info"]:
+                parent_row[0] = True
+            if on in neighbourhood[1][2][0]["detail_info"] or on in neighbourhood[1][2][1]["detail_info"] or on in neighbourhood[1][2][2]["detail_info"]:
+                parent_row[1] = True
+            if on in neighbourhood[2][2][0]["detail_info"] or on in neighbourhood[2][2][1]["detail_info"] or on in neighbourhood[2][2][2]["detail_info"]:
+                parent_row[2] = True
+                
+        elif direction == "x":
+            if on in neighbourhood[0][2][0]["detail_info"] or on in neighbourhood[1][2][0]["detail_info"] or on in neighbourhood[2][2][0]["detail_info"]:
+                parent_row[0] = True
+            if on in neighbourhood[0][2][1]["detail_info"] or on in neighbourhood[1][2][1]["detail_info"] or on in neighbourhood[2][2][1]["detail_info"]:
+                parent_row[1] = True
+            if on in neighbourhood[0][2][2]["detail_info"] or on in neighbourhood[1][2][2]["detail_info"] or on in neighbourhood[2][2][2]["detail_info"]:
+                parent_row[2] = True
+
+        if direction == "y":
+            if on in neighbourhood[0][0][2]["detail_info"] or on in neighbourhood[0][1][2]["detail_info"] or on in neighbourhood[0][2][2]["detail_info"]:
+                parent_row[0] = True
+            if on in neighbourhood[1][0][2]["detail_info"] or on in neighbourhood[1][1][2]["detail_info"] or on in neighbourhood[1][2][2]["detail_info"]:
+                parent_row[1] = True
+            if on in neighbourhood[2][0][2]["detail_info"] or on in neighbourhood[2][1][2]["detail_info"] or on in neighbourhood[2][2][2]["detail_info"]:
+                parent_row[2] = True
+                        
+        if parent_row[0]:
+            if parent_row[1]:
+                if parent_row[2]:
+                    ret.append(voxel["detail_info"][0])
+                else:
+                    ret.append(on)
+            else:
+                if parent_row[2]:
+                    ret.append(voxel["detail_info"][0])
+                else:
+                    ret.append(on)
+        else:
+            if parent_row[1]:
+                if parent_row[2]:
+                    ret.append(on)
+                else:
+                    ret.append(voxel["detail_info"][0])
+            else:
+                if parent_row[2]:
+                    ret.append(on)
+                else:
+                    ret.append(voxel["detail_info"][0])
         
     return ret
+
+
+def rule110(voxel, neighbourhood, position, octree_size, curr_iteration):
+    ret = []
+
+    #these control what materials are used for 0 and 1
+    off = "material basic/red"
+    on = "material basic/blue"
+    #this sets which of the axes the automata will run along.
+    direction = "z"
+
+    #the first iteration randomly sets a few of the voxels to on.
+    if curr_iteration == 1:
+        if random.randint(1,500) == 1:
+            ret.append(on)
+        else:
+            ret.append(off)
+    #the rest just run the automata rules.
+    else:
+        #this stores which of the parents are on
+        parent_row = [False, False, False]
+
+        if direction == "z":
+            if on in neighbourhood[0][2][0]["detail_info"] or on in neighbourhood[0][2][1]["detail_info"] or on in neighbourhood[0][2][2]["detail_info"]:
+                parent_row[0] = True
+            if on in neighbourhood[1][2][0]["detail_info"] or on in neighbourhood[1][2][1]["detail_info"] or on in neighbourhood[1][2][2]["detail_info"]:
+                parent_row[1] = True
+            if on in neighbourhood[2][2][0]["detail_info"] or on in neighbourhood[2][2][1]["detail_info"] or on in neighbourhood[2][2][2]["detail_info"]:
+                parent_row[2] = True
+                
+        elif direction == "x":
+            if on in neighbourhood[0][2][0]["detail_info"] or on in neighbourhood[1][2][0]["detail_info"] or on in neighbourhood[2][2][0]["detail_info"]:
+                parent_row[0] = True
+            if on in neighbourhood[0][2][1]["detail_info"] or on in neighbourhood[1][2][1]["detail_info"] or on in neighbourhood[2][2][1]["detail_info"]:
+                parent_row[1] = True
+            if on in neighbourhood[0][2][2]["detail_info"] or on in neighbourhood[1][2][2]["detail_info"] or on in neighbourhood[2][2][2]["detail_info"]:
+                parent_row[2] = True
+
+        if direction == "y":
+            if on in neighbourhood[0][0][2]["detail_info"] or on in neighbourhood[0][1][2]["detail_info"] or on in neighbourhood[0][2][2]["detail_info"]:
+                parent_row[0] = True
+            if on in neighbourhood[1][0][2]["detail_info"] or on in neighbourhood[1][1][2]["detail_info"] or on in neighbourhood[1][2][2]["detail_info"]:
+                parent_row[1] = True
+            if on in neighbourhood[2][0][2]["detail_info"] or on in neighbourhood[2][1][2]["detail_info"] or on in neighbourhood[2][2][2]["detail_info"]:
+                parent_row[2] = True
+                
+        if parent_row[0]:
+            if parent_row[1]:
+                if parent_row[2]:
+                    ret.append(voxel["detail_info"][0])
+                else:
+                    ret.append(on)
+            else:
+                if parent_row[2]:
+                    ret.append(on)
+                else:
+                    ret.append(voxel["detail_info"][0])
+        else:
+            if parent_row[1]:
+                if parent_row[2]:
+                    ret.append(on)
+                else:
+                    ret.append(on)
+            else:
+                if parent_row[2]:
+                    ret.append(on)
+                else:
+                    ret.append(voxel["detail_info"][0])
+        
+    return ret
+
+
+def rule184(voxel, neighbourhood, position, octree_size, curr_iteration):
+    ret = []
+
+    #these control what materials are used for 0 and 1
+    off = "material basic/red"
+    on = "material basic/blue"
+    #this sets which of the axes the automata will run along.
+    direction = "z"
+
+    #the first iteration randomly sets a few of the voxels to on.
+    if curr_iteration == 1:
+        if random.randint(1,010) == 1:
+            ret.append(on)
+        else:
+            ret.append(off)
+    #the rest just run the automata rules.
+    else:
+        #this stores which of the parents are on
+        parent_row = [False, False, False]
+
+        if direction == "z":
+            if on in neighbourhood[0][2][0]["detail_info"] or on in neighbourhood[0][2][1]["detail_info"] or on in neighbourhood[0][2][2]["detail_info"]:
+                parent_row[0] = True
+            if on in neighbourhood[1][2][0]["detail_info"] or on in neighbourhood[1][2][1]["detail_info"] or on in neighbourhood[1][2][2]["detail_info"]:
+                parent_row[1] = True
+            if on in neighbourhood[2][2][0]["detail_info"] or on in neighbourhood[2][2][1]["detail_info"] or on in neighbourhood[2][2][2]["detail_info"]:
+                parent_row[2] = True
+                
+        elif direction == "x":
+            if on in neighbourhood[0][2][0]["detail_info"] or on in neighbourhood[1][2][0]["detail_info"] or on in neighbourhood[2][2][0]["detail_info"]:
+                parent_row[0] = True
+            if on in neighbourhood[0][2][1]["detail_info"] or on in neighbourhood[1][2][1]["detail_info"] or on in neighbourhood[2][2][1]["detail_info"]:
+                parent_row[1] = True
+            if on in neighbourhood[0][2][2]["detail_info"] or on in neighbourhood[1][2][2]["detail_info"] or on in neighbourhood[2][2][2]["detail_info"]:
+                parent_row[2] = True
+
+        if direction == "y":
+            if on in neighbourhood[0][0][2]["detail_info"] or on in neighbourhood[0][1][2]["detail_info"] or on in neighbourhood[0][2][2]["detail_info"]:
+                parent_row[0] = True
+            if on in neighbourhood[1][0][2]["detail_info"] or on in neighbourhood[1][1][2]["detail_info"] or on in neighbourhood[1][2][2]["detail_info"]:
+                parent_row[1] = True
+            if on in neighbourhood[2][0][2]["detail_info"] or on in neighbourhood[2][1][2]["detail_info"] or on in neighbourhood[2][2][2]["detail_info"]:
+                parent_row[2] = True
+                
+        if parent_row[0]:
+            if parent_row[1]:
+                if parent_row[2]:
+                    ret.append(on)
+                else:
+                    ret.append(voxel["detail_info"][0])
+            else:
+                if parent_row[2]:
+                    ret.append(on)
+                else:
+                    ret.append(on)
+        else:
+            if parent_row[1]:
+                if parent_row[2]:
+                    ret.append(on)
+                else:
+                    ret.append(voxel["detail_info"][0])
+            else:
+                if parent_row[2]:
+                    ret.append(voxel["detail_info"][0])
+                else:
+                    ret.append(voxel["detail_info"][0])
+        
+    return ret
+
+
+def rule30(voxel, neighbourhood, position, octree_size, curr_iteration):
+    ret = []
+
+    #these control what materials are used for 0 and 1
+    off = "material basic/red"
+    on = "material basic/blue"
+    #this sets which of the axes the automata will run along.
+    direction = "z"
+
+    #the first iteration randomly sets a few of the voxels to on.
+    if curr_iteration == 1:
+        if random.randint(1,500) == 1:
+            ret.append(on)
+        else:
+            ret.append(off)
+    #the rest just run the automata rules.
+    else:
+        #this stores which of the parents are on
+        parent_row = [False, False, False]
+
+        if direction == "z":
+            if on in neighbourhood[0][2][0]["detail_info"] or on in neighbourhood[0][2][1]["detail_info"] or on in neighbourhood[0][2][2]["detail_info"]:
+                parent_row[0] = True
+            if on in neighbourhood[1][2][0]["detail_info"] or on in neighbourhood[1][2][1]["detail_info"] or on in neighbourhood[1][2][2]["detail_info"]:
+                parent_row[1] = True
+            if on in neighbourhood[2][2][0]["detail_info"] or on in neighbourhood[2][2][1]["detail_info"] or on in neighbourhood[2][2][2]["detail_info"]:
+                parent_row[2] = True
+                
+        elif direction == "x":
+            if on in neighbourhood[0][2][0]["detail_info"] or on in neighbourhood[1][2][0]["detail_info"] or on in neighbourhood[2][2][0]["detail_info"]:
+                parent_row[0] = True
+            if on in neighbourhood[0][2][1]["detail_info"] or on in neighbourhood[1][2][1]["detail_info"] or on in neighbourhood[2][2][1]["detail_info"]:
+                parent_row[1] = True
+            if on in neighbourhood[0][2][2]["detail_info"] or on in neighbourhood[1][2][2]["detail_info"] or on in neighbourhood[2][2][2]["detail_info"]:
+                parent_row[2] = True
+
+        if direction == "y":
+            if on in neighbourhood[0][0][2]["detail_info"] or on in neighbourhood[0][1][2]["detail_info"] or on in neighbourhood[0][2][2]["detail_info"]:
+                parent_row[0] = True
+            if on in neighbourhood[1][0][2]["detail_info"] or on in neighbourhood[1][1][2]["detail_info"] or on in neighbourhood[1][2][2]["detail_info"]:
+                parent_row[1] = True
+            if on in neighbourhood[2][0][2]["detail_info"] or on in neighbourhood[2][1][2]["detail_info"] or on in neighbourhood[2][2][2]["detail_info"]:
+                parent_row[2] = True
+                
+        if parent_row[0]:
+            if parent_row[1]:
+                if parent_row[2]:
+                    ret.append(voxel["detail_info"][0])
+                else:
+                    ret.append(voxel["detail_info"][0])
+            else:
+                if parent_row[2]:
+                    ret.append(voxel["detail_info"][0])
+                else:
+                    ret.append(on)
+        else:
+            if parent_row[1]:
+                if parent_row[2]:
+                    ret.append(on)
+                else:
+                    ret.append(on)
+            else:
+                if parent_row[2]:
+                    ret.append(on)
+                else:
+                    ret.append(voxel["detail_info"][0])
+        
+    return ret
+
 
 def enterprise(voxel, neighbourhood, position, octree_size, curr_iteration):
     ret = []
@@ -173,6 +414,7 @@ def enterprise(voxel, neighbourhood, position, octree_size, curr_iteration):
     #ret.append(voxel["detail_info"][0])
     
     return ret
+
 
 def normal_lightness(voxel, neighbourhood, position, octree_size, curr_iteration):
     ret = []
@@ -322,11 +564,9 @@ def spaceship_windows(voxel, neighbourhood, position, octree_size, curr_iteratio
 
 # this makes each shape that has the tag "col_<num>" a random shade of grey corresponding to num
 #in the shape grammar, assign the random colours with this code:
-
 # value = random.random()
 # the_tag = "col_%f" % value
 # parent.tags.append(the_tag)
-
 def random_grey(voxel, neighbourhood, position, octree_size, curr_iteration):
     ret = []
 
@@ -341,6 +581,7 @@ def random_grey(voxel, neighbourhood, position, octree_size, curr_iteration):
     ret.append("colour %f %f %f 0" % (value, value, value))
     
     return ret
+
 
 def castle(voxel, neighbourhood, position, octree_size, curr_iteration):
     ret = []

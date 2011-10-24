@@ -9,8 +9,7 @@ DO_TIMING=true
 DO_MEM_USAGE=false
 
 #this is applied to all commands, for both timing or memory
-TIMING_GLOBAL_ARGS=-st -s 32
-MEM_USAGE_GLOBAL_ARGS=
+GLOBAL_ARGS=-st -s 32
 
 TESTS=(
     './voxel_generator -s 128 -g 0.5 --scale-shapes -f /home/zcrumley/temp/enterprise.output -r automata_rule_set_1 -m camoflauge -o content/enterprise.mesh -st -s 512'
@@ -36,7 +35,7 @@ do
     then
 	echo -e "******************************TIMING:\n\n"
         #run the command
-	${TESTS[count]} ${TIMING_GLOBAL_ARGS}
+	${TESTS[count]} ${GLOBAL_ARGS}
     else
 	echo "*****************************timing was not done"
     fi
