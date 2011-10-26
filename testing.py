@@ -6,19 +6,13 @@ import subprocess
 import sys
 
 sizes = [64, 128, 256, 512]
-#sizes = [256, 512]
 global_args = "./voxel_generator -g 0.5 --scale-shapes -st -sm -r automata_rule_set_1 "
-input_files_directory = "/home/zcrumley/Documents/Masters/mesh_prototype/content/"
+input_files_directory = "/home/zcrumley/Documents/Masters/mesh_prototype/content/shape_grammar_outputs/"
 mesh_output_directory = "/home/zcrumley/temp/testing_mesh_output/"
 
-run_commands = False
+run_commands = True
 
 #[".output", "", ""],
-
-models_temp = [["enterprise.output", "enterprise", "1"],
-          ["enterprise.output", "camoflauge", "1"],
-          ["flat_rectangle.output", "rule90", "25"],
-          ]
 
 models = [["castle_1.output", "castle", "5"],
           ["castle_2.output", "castle", "5"],
