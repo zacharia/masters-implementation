@@ -422,3 +422,20 @@ material brick/concrete
 		}
 	}
 }
+
+material stone/rock
+{
+	// first, preferred technique
+	technique
+	{
+		pass
+		{
+			shading phong
+
+			texture_unit 
+			{
+				texture textures/rusty_rock.jpg
+			}
+		}
+	}
+}
