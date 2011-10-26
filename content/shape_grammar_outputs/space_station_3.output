@@ -1,0 +1,16 @@
+name ellipsoid active True additive True position  0.0 0.0 0.0 extents  76.0 22.0 76.0 orientation  1.0 0.0 0.0 0.0 1.0 0.0 0.0 0.0 1.0 priority  0 tags_begin  ring tags_end # 
+name cylinder active True additive False position  0.0 0.0 0.0 extents  57.0287753316 26.4 57.0287753316 orientation  1.0 0.0 0.0 0.0 1.0 0.0 0.0 0.0 1.0 priority  -1 tags_begin  tags_end # 
+name cylinder active True additive True position  76.0 0.0 0.0 extents  20.0 46.0 23.0 orientation  1.0 0.0 0.0 0.0 1.0 0.0 0.0 0.0 1.0 priority  -2 tags_begin  spire tags_end # 
+name cylinder active True additive True position  -38.0 0.0 0.0 extents  6.0 38.0 6.0 orientation  6.12303176911e-17 1.0 0.0 -1.0 6.12303176911e-17 0.0 0.0 0.0 1.0 priority  -5 tags_begin  spoke tags_end # 
+name cylinder active True additive True position  0.0 0.0 0.0 extents  11.0 10.0 11.0 orientation  1.0 0.0 0.0 0.0 1.0 0.0 0.0 0.0 1.0 priority  -2 tags_begin  centre tags_end # 
+name cylinder active True additive True position  76.0 46.0 0.0 extents  11.4231818397 60.7634956261 16.8459900461 orientation  1.0 0.0 0.0 0.0 1.0 0.0 0.0 0.0 1.0 priority  0 tags_begin  tags_end # 
+name cylinder active True additive True position  -76.0 0.0 -9.30700828905e-15 extents  20.0 46.0 23.0 orientation  -1.0 0.0 1.22460635382e-16 0.0 1.0 0.0 -1.22460635382e-16 0.0 -1.0 priority  -2 tags_begin  spire tags_end # 
+name cylinder active True additive False position  -38.0 0.0 0.0 extents  3.0 45.6 3.0 orientation  6.12303176911e-17 1.0 0.0 -1.0 6.12303176911e-17 0.0 0.0 0.0 1.0 priority  -10 tags_begin  spoke_passage tags_end # 
+name cylinder active True additive True position  19.0 0.0 32.9089653438 extents  6.0 38.0 6.0 orientation  -3.06151588456e-17 -0.5 0.866025403784 -1.0 6.12303176911e-17 0.0 -5.30270106023e-17 -0.866025403784 -0.5 priority  -5 tags_begin  spoke tags_end # 
+name cylinder active True additive True position  19.0 0.0 -32.9089653438 extents  6.0 38.0 6.0 orientation  -3.06151588456e-17 -0.5 -0.866025403784 -1.0 6.12303176911e-17 0.0 5.30270106023e-17 0.866025403784 -0.5 priority  -5 tags_begin  spoke tags_end # 
+name cylinder active True additive True position  76.0 -46.0 0.0 extents  11.4231818397 60.7634956261 16.8459900461 orientation  1.0 0.0 0.0 0.0 -1.0 0.0 0.0 0.0 1.0 priority  0 tags_begin  tags_end # 
+name cylinder active True additive True position  -76.0 46.0 -9.30700828905e-15 extents  11.4231818397 60.7634956261 16.8459900461 orientation  -1.0 0.0 1.22460635382e-16 0.0 1.0 0.0 -1.22460635382e-16 0.0 -1.0 priority  0 tags_begin  tags_end # 
+name cylinder active True additive False position  19.0 0.0 32.9089653438 extents  3.0 45.6 3.0 orientation  -3.06151588456e-17 -0.5 0.866025403784 -1.0 6.12303176911e-17 0.0 -5.30270106023e-17 -0.866025403784 -0.5 priority  -10 tags_begin  spoke_passage tags_end # 
+name cylinder active True additive False position  19.0 0.0 -32.9089653438 extents  3.0 45.6 3.0 orientation  -3.06151588456e-17 -0.5 -0.866025403784 -1.0 6.12303176911e-17 0.0 5.30270106023e-17 0.866025403784 -0.5 priority  -10 tags_begin  spoke_passage tags_end # 
+name cylinder active True additive True position  -76.0 -46.0 -9.30700828905e-15 extents  11.4231818397 60.7634956261 16.8459900461 orientation  -1.0 0.0 1.22460635382e-16 0.0 -1.0 0.0 -1.22460635382e-16 -0.0 -1.0 priority  0 tags_begin  tags_end # 
+

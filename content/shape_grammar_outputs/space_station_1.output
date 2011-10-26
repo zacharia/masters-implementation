@@ -1,0 +1,16 @@
+name ellipsoid active True additive True position  0.0 0.0 0.0 extents  77.0 21.0 77.0 orientation  1.0 0.0 0.0 0.0 1.0 0.0 0.0 0.0 1.0 priority  0 tags_begin  ring tags_end # 
+name cylinder active True additive False position  0.0 0.0 0.0 extents  61.9789250952 25.2 61.9789250952 orientation  1.0 0.0 0.0 0.0 1.0 0.0 0.0 0.0 1.0 priority  -1 tags_begin  tags_end # 
+name cylinder active True additive True position  77.0 0.0 0.0 extents  23.0 23.0 15.0 orientation  1.0 0.0 0.0 0.0 1.0 0.0 0.0 0.0 1.0 priority  -2 tags_begin  spire tags_end # 
+name cylinder active True additive True position  -38.5 0.0 0.0 extents  8.0 38.5 7.0 orientation  6.12303176911e-17 1.0 0.0 -1.0 6.12303176911e-17 0.0 0.0 0.0 1.0 priority  -5 tags_begin  spoke tags_end # 
+name ellipsoid active True additive True position  0.0 0.0 0.0 extents  8.0 25.0 8.0 orientation  1.0 0.0 0.0 0.0 1.0 0.0 0.0 0.0 1.0 priority  -2 tags_begin  centre tags_end # 
+name cylinder active True additive True position  77.0 23.0 0.0 extents  18.2904289922 33.5672913683 9.22550921671 orientation  1.0 0.0 0.0 0.0 1.0 0.0 0.0 0.0 1.0 priority  0 tags_begin  tags_end # 
+name cylinder active True additive True position  -77.0 0.0 -9.42946892443e-15 extents  23.0 23.0 15.0 orientation  -1.0 0.0 1.22460635382e-16 0.0 1.0 0.0 -1.22460635382e-16 0.0 -1.0 priority  -2 tags_begin  spire tags_end # 
+name cylinder active True additive False position  -38.5 0.0 0.0 extents  4.0 46.2 3.5 orientation  6.12303176911e-17 1.0 0.0 -1.0 6.12303176911e-17 0.0 0.0 0.0 1.0 priority  -10 tags_begin  spoke_passage tags_end # 
+name cylinder active True additive True position  77.0 -23.0 0.0 extents  18.2904289922 33.5672913683 9.22550921671 orientation  1.0 0.0 0.0 0.0 -1.0 0.0 0.0 0.0 1.0 priority  0 tags_begin  tags_end # 
+name cylinder active True additive True position  77.0 56.5672913683 0.0 extents  13.7178217442 25.1754685263 6.91913191254 orientation  1.0 0.0 0.0 0.0 1.0 0.0 0.0 0.0 1.0 priority  0 tags_begin  tower tags_end # 
+name cylinder active True additive True position  -77.0 23.0 -9.42946892443e-15 extents  18.2904289922 33.5672913683 9.22550921671 orientation  -1.0 0.0 1.22460635382e-16 0.0 1.0 0.0 -1.22460635382e-16 0.0 -1.0 priority  0 tags_begin  tags_end # 
+name cylinder active True additive True position  77.0 -56.5672913683 0.0 extents  13.7178217442 25.1754685263 6.91913191254 orientation  1.0 0.0 0.0 0.0 -1.0 0.0 0.0 0.0 1.0 priority  0 tags_begin  tower tags_end # 
+name cylinder active True additive True position  -77.0 -23.0 -9.42946892443e-15 extents  18.2904289922 33.5672913683 9.22550921671 orientation  -1.0 0.0 1.22460635382e-16 0.0 -1.0 0.0 -1.22460635382e-16 -0.0 -1.0 priority  0 tags_begin  tags_end # 
+name cylinder active True additive True position  -77.0 56.5672913683 -9.42946892443e-15 extents  13.7178217442 25.1754685263 6.91913191254 orientation  -1.0 0.0 1.22460635382e-16 0.0 1.0 0.0 -1.22460635382e-16 0.0 -1.0 priority  0 tags_begin  tower tags_end # 
+name cylinder active True additive True position  -77.0 -56.5672913683 -9.42946892443e-15 extents  13.7178217442 25.1754685263 6.91913191254 orientation  -1.0 0.0 1.22460635382e-16 0.0 -1.0 0.0 -1.22460635382e-16 -0.0 -1.0 priority  0 tags_begin  tower tags_end # 
+
