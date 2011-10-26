@@ -414,6 +414,33 @@ int main(int argc, char** argv)
 			display = NULL;
 		}
 
+		//display the memory usage if we're meant to.
+		if (show_mem_usage)
+		{
+			std::ifstream in_status("/proc/self/status");
+
+			if (in_status)
+			{
+				string temp;
+				while (!in_status.eof())
+				{
+					in_status >> temp >> ws;
+					if (temp == "VmPeak:")
+					{
+						in_status >> temp >> ws;
+						std::cerr << "Peak memory usage was: " << temp << " kB" << "\n";
+						break;
+					}
+				}
+			}
+			else
+			{
+				std::cout << "Could not open /proc/self/status to get memory usage." << "\n";
+			}
+
+			in_status.close();
+		}
+
 		//exit the program
 		exit(0);
 	}
