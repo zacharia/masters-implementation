@@ -262,7 +262,7 @@ int main(int argc, char** argv)
 		}
 		if ((curr == "--mem-usage") || (curr == "-sm"))
 		{
-			show_mem_usage = !show_mem_usage;
+			show_mem_usage = true;
 		}
 		if ((curr == "--help") || (curr == "-h")) //display help
 		{
@@ -510,7 +510,7 @@ int main(int argc, char** argv)
 				if (temp == "VmPeak:")
 				{
 					in_status >> temp >> ws;
-					std::cout << "Peak memory usage was: " << temp << " kB" << "\n";
+					std::cerr << "Peak memory usage was: " << temp << " kB" << "\n";
 					break;
 				}
 			}

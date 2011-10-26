@@ -318,6 +318,24 @@ material basic/grey
 }
 
 
+material basic/yellow
+{
+	// first, preferred technique
+	technique
+	{
+		pass
+		{
+			shading phong
+
+			texture_unit 
+			{
+				texture textures/yellow.jpg
+			}
+		}
+	}
+}
+
+
 material basic/dark_green
 {
     // first, preferred technique
@@ -368,6 +386,25 @@ material metal/hole_plate
         }
     }
 }
+
+
+material metal/dark
+{
+	// first, preferred technique
+	technique
+	{
+		pass
+		{
+			shading phong
+
+			texture_unit 
+			{
+				texture textures/dark_metal.jpg
+			}
+		}
+	}
+}
+
 
 material brick/concrete
 {

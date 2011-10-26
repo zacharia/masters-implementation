@@ -53,12 +53,11 @@ def space_station_detail(voxel, neighbourhood, position, octree_size, curr_itera
 
 def spiral_detail(voxel, neighbourhood, position, octree_size, curr_iteration):
     ret = []
-
-    ret.append("material basic/vertex_colour_lighting")
+    
     if position[1] % 10 < 5:
-        ret.append("colour 1 0 0 0")
+        ret.append("material basic/yellow")
     else:
-        ret.append("colour 0 1 0 0")
+        ret.append("material basic/blue")
 
     return ret
 
@@ -101,7 +100,7 @@ def rule90(voxel, neighbourhood, position, octree_size, curr_iteration):
     off = "material basic/white"
     on = "material basic/black"
     #this sets which of the axes the automata will run along.
-    direction = "y"
+    direction = "z"
 
     #the first iteration randomly sets a few of the voxels to on.
     if curr_iteration == 1:
@@ -174,7 +173,7 @@ def rule110(voxel, neighbourhood, position, octree_size, curr_iteration):
     off = "material basic/white"
     on = "material basic/black"
     #this sets which of the axes the automata will run along.
-    direction = "z"
+    direction = "y"
 
     #the first iteration randomly sets a few of the voxels to on.
     if curr_iteration == 1:
@@ -247,7 +246,7 @@ def rule184(voxel, neighbourhood, position, octree_size, curr_iteration):
     off = "material basic/white"
     on = "material basic/black"
     #this sets which of the axes the automata will run along.
-    direction = "z"
+    direction = "x"
 
     #the first iteration randomly sets a few of the voxels to on.
     if curr_iteration == 1:
@@ -493,12 +492,12 @@ def tank(voxel, neighbourhood, position, octree_size, curr_iteration):
 def c_station_detail(voxel, neighbourhood, position, octree_size, curr_iteration):
     ret = []
 
-    metal_main = "material metal/diamond_plate"
-    metal_spots = "material metal/hole_plate"
-    windows = "material spaceship/window_ugly"
+    metal_main = "material metal/dark"
+    metal_spots = "material metal/diamond_plate"
+    windows = "material basic/yellow"
 
     if curr_iteration == 1:
-      if random.randint(1,100) == 1:
+      if random.randint(1,500) == 1:
           ret.append(metal_spots)
       else:
           ret.append(metal_main)
@@ -564,10 +563,10 @@ def testing(voxel, neighbourhood, position, octree_size, curr_iteration):
 def spaceship_windows(voxel, neighbourhood, position, octree_size, curr_iteration):
     ret = []
     
-    if abs(voxel["aggregate_normal"][1]) == 0 and position[1] % 3 == 1 and random.randint(1,4) == 1:
+    if abs(voxel["aggregate_normal"][1]) == 0 and abs(voxel["aggregate_normal"][0]) >= 0.8 and position[1] % 3 == 1 and random.randint(1,4) == 1:
         ret.append("material basic/blue")
     else:
-        if random.randint(1,2) == 1:
+        if random.randint(1,4) == 1:
             ret.append("material metal/diamond_plate")
         else:
             ret.append("material metal/hole_plate")
@@ -634,4 +633,11 @@ def castle(voxel, neighbourhood, position, octree_size, curr_iteration):
         #if abs(voxel["aggregate_normal"][1]) == 1 and ("castle_wall" in voxel["tags"] or "castle_tower" in voxel["tags"]):
             #ret.append(floor)
         
+    return ret
+
+def grey(voxel, neighbourhood, position, octree_size, curr_iteration):
+    ret = []
+
+    ret.append("material basic/grey")
+
     return ret
