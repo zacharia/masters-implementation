@@ -167,11 +167,11 @@ def rule110(voxel, neighbourhood, position, octree_size, curr_iteration):
     ret = []
 
     #these control what materials are used for 0 and 1
-    #off = "material basic/red"
-    #on = "material basic/blue"
+    off = "material basic/red"
+    on = "material basic/blue"
     #black white colour set
-    off = "material basic/white"
-    on = "material basic/black"
+    #off = "material basic/white"
+    #on = "material basic/black"
     #this sets which of the axes the automata will run along.
     direction = "y"
 
@@ -240,11 +240,11 @@ def rule184(voxel, neighbourhood, position, octree_size, curr_iteration):
     ret = []
 
     #these control what materials are used for 0 and 1
-    #off = "material basic/red"
-    #on = "material basic/blue"
+    off = "material basic/red"
+    on = "material basic/blue"
     #black white colour set
-    off = "material basic/white"
-    on = "material basic/black"
+    #off = "material basic/white"
+    #on = "material basic/black"
     #this sets which of the axes the automata will run along.
     direction = "x"
 
@@ -639,5 +639,125 @@ def grey(voxel, neighbourhood, position, octree_size, curr_iteration):
     ret = []
 
     ret.append("material basic/grey")
+
+    return ret
+
+
+def flames(voxel, neighbourhood, position, octree_size, curr_iteration):
+    ret = []
+
+    base_colour = "material basic/blue"
+    inner_flame = "material basic/red"
+    mid_flame = "material basic/orange"
+    outer_flame = "material basic/yellow"
+
+    if curr_iteration == 1:
+        if random.randint(1,500) == 1:
+            ret.append(inner_flame)
+        else:
+            ret.append(base_colour)
+            
+    elif curr_iteration > 1:
+        if base_colour in voxel["detail_info"]:
+            lowest_level = 4
+        
+            for i in neighbourhood:
+                for j in i:
+                    for k in j:
+                        if outer_flame in k["detail_info"]:
+                            lowest_level = 3
+                        if mid_flame in k["detail_info"]:
+                            lowest_level = 2
+                        if inner_flame in k["detail_info"]:
+                            lowest_level = 1
+
+            if lowest_level < 4:
+                ranval = random.randint(1,3)
+                if lowest_level == 1:
+                    if ranval == 1:
+                        ret.append(base_colour)
+                    if ranval == 2:
+                        ret.append(inner_flame)
+                    if ranval == 3:
+                        ret.append(mid_flame)
+                elif lowest_level == 2:
+                    if ranval == 1:
+                        ret.append(base_colour)
+                    if ranval == 2:
+                        ret.append(mid_flame)
+                    if ranval == 3:
+                        ret.append(outer_flame)
+                elif lowest_level == 3:
+                    if ranval == 1:
+                        ret.append(base_colour)
+                    if ranval == 2:
+                        ret.append(base_colour)
+                    if ranval == 3:
+                        ret.append(outer_flame)
+            else:
+                ret.append(base_colour)
+
+        else:
+            ret.append(voxel["detail_info"][0])
+        
+    return ret
+
+
+def spike_ship(voxel, neighbourhood, position, octree_size, curr_iteration):
+    ret = []
+
+    total_iterations = 15
+        
+    #these control what materials are used for 0 and 1
+    base_colour = "material metal/diamond_plate"
+    stripe_1 = "material basic/black"
+    stripe_2 = "material basic/orange"
+    windows = "material basic/blue"
+    
+    #the first iteration randomly sets a few of the voxels to on.
+    if curr_iteration == 1:
+        val = random.randint(1,60)
+        if val == 1:
+            ret.append(stripe_1)
+        elif val == 2:
+            ret.append(stripe_2)
+        else:
+            ret.append(base_colour)
+            
+    #the rest just run the automata rules.
+    elif curr_iteration > 1 and curr_iteration < total_iterations:
+        if base_colour in voxel["detail_info"]:
+            
+            make_stripe_1 = False;
+            make_stripe_2 = False;
+
+            for x in [1]:
+                for y in [1]:
+                    for z in [0,2]:
+                        if stripe_1 in neighbourhood[x][y][z]["detail_info"]:
+                            make_stripe_1 = True
+
+            for x in [1,0,2]:
+                for y in [0,2]:
+                    for z in [1]:
+                        if stripe_2 in neighbourhood[x][y][z]["detail_info"]:
+                            make_stripe_2 = True
+
+            if make_stripe_1:
+                ret.append(stripe_1)
+            elif make_stripe_2:
+                ret.append(stripe_2)
+            else:
+                ret.append(base_colour)
+            
+        else:
+            ret.append(voxel["detail_info"][0])
+        
+    #then add the windows on the final pass    
+    elif curr_iteration == total_iterations:
+        if abs(voxel["aggregate_normal"][1]) == 0 and abs(voxel["aggregate_normal"][0]) >= 0.8 and position[1] % 3 == 1 and random.randint(1,4) == 1:
+            ret.append(windows)
+        else:
+            ret.append(voxel["detail_info"][0])
 
     return ret

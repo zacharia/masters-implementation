@@ -336,6 +336,24 @@ material basic/yellow
 }
 
 
+material basic/orange
+{
+	// first, preferred technique
+	technique
+	{
+		pass
+		{
+			shading phong
+
+			texture_unit 
+			{
+				texture textures/orange.jpg
+			}
+		}
+	}
+}
+
+
 material basic/dark_green
 {
     // first, preferred technique
