@@ -17,56 +17,104 @@ run_commands = True
 
 models = [
     
-          # ["castle_1.output", "castle", "5"],
-          # ["castle_2.output", "castle", "5"],
-          # ["castle_3.output", "castle", "5"],
-          # ["castle_4.output", "castle", "5"],
-          # ["castle_5.output", "castle", "5"],
-          # ["castle_6.output", "castle", "5"],
-          # ["castle_7.output", "castle", "5"],
-          # ["castle_8.output", "castle", "5"],
+          ["castle_1.output", "castle", "5"],
+          ["castle_2.output", "castle", "5"],
+          ["castle_3.output", "castle", "5"],
+          ["castle_4.output", "castle", "5"],
+          ["castle_5.output", "castle", "5"],
+          ["castle_6.output", "castle", "5"],
+          ["castle_7.output", "castle", "5"],
+          ["castle_8.output", "castle", "5"],
 
-          # ["tank_1.output", "tank", "1"],
-          # ["tank_2.output", "tank", "1"],
-          # ["tank_3.output", "tank", "1"],
-          # ["tank_4.output", "tank", "1"],
-          # ["tank_1.output", "tank", "1"],
-          # ["tank_6.output", "tank", "1"],
-          # ["tank_7.output", "tank", "1"],
-          # ["tank_8.output", "tank", "1"],
+          ["tank_1.output", "tank", "1"],
+          ["tank_2.output", "tank", "1"],
+          ["tank_3.output", "tank", "1"],
+          ["tank_4.output", "tank", "1"],
+          ["tank_1.output", "tank", "1"],
+          ["tank_6.output", "tank", "1"],
+          ["tank_7.output", "tank", "1"],
+          ["tank_8.output", "tank", "1"],
 
-          # ["space_station_1.output", "c_station_detail", "5"],
-          # ["space_station_2.output", "c_station_detail", "5"],
-          # ["space_station_3.output", "c_station_detail", "5"],
-          # ["space_station_4.output", "c_station_detail", "5"],
-          # ["space_station_5.output", "c_station_detail", "5"],
-          # ["space_station_6.output", "c_station_detail", "5"],
-          # ["space_station_7.output", "c_station_detail", "5"],
-          # ["space_station_8.output", "c_station_detail", "5"],
-          # ["space_station_9.output", "c_station_detail", "5"],
-          # ["space_station_10.output", "c_station_detail", "5"],
+          ["space_station_1.output", "c_station_detail", "5"],
+          ["space_station_2.output", "c_station_detail", "5"],
+          ["space_station_3.output", "c_station_detail", "5"],
+          ["space_station_4.output", "c_station_detail", "5"],
+          ["space_station_5.output", "c_station_detail", "5"],
+          ["space_station_6.output", "c_station_detail", "5"],
+          ["space_station_7.output", "c_station_detail", "5"],
+          ["space_station_8.output", "c_station_detail", "5"],
+          ["space_station_9.output", "c_station_detail", "5"],
+          ["space_station_10.output", "c_station_detail", "5"],
 
+          ["skyscraper.output", "skyscraper", "1"],
+          # ["skyscraper.output", "skyscraper", "1"],
+          # ["skyscraper.output", "skyscraper", "1"],
+          # ["skyscraper.output", "skyscraper", "1"],
           # ["skyscraper.output", "skyscraper", "1"],
           
+          ["enterprise.output", "enterprise", "1"],
           # ["enterprise.output", "enterprise", "1"],
+          # ["enterprise.output", "enterprise", "1"],
+          # ["enterprise.output", "enterprise", "1"],
+          # ["enterprise.output", "enterprise", "1"],
+          ["enterprise.output", "camoflauge", "1"],
           # ["enterprise.output", "camoflauge", "1"],
+          # ["enterprise.output", "camoflauge", "1"],
+          # ["enterprise.output", "camoflauge", "1"],
+          # ["enterprise.output", "camoflauge", "1"],
+          ["enterprise.output", "rule110", "20"],
+          # ["enterprise.output", "rule110", "20"],
+          # ["enterprise.output", "rule110", "20"],
+          # ["enterprise.output", "rule110", "20"],
           # ["enterprise.output", "rule110", "20"],
           
+          ["fractal_tree.output", "grey", "1"],
+          # ["fractal_tree.output", "grey", "1"],
+          # ["fractal_tree.output", "grey", "1"],
+          # ["fractal_tree.output", "grey", "1"],
           # ["fractal_tree.output", "grey", "1"],
           
+          ["spiral.output", "spiral_detail", "1"],
+          # ["spiral.output", "spiral_detail", "1"],
+          # ["spiral.output", "spiral_detail", "1"],
+          # ["spiral.output", "spiral_detail", "1"],
           # ["spiral.output", "spiral_detail", "1"],
           
+          ["spike_ship.output", "spaceship_windows", "1"],
+          # ["spike_ship.output", "spaceship_windows", "1"],
+          # ["spike_ship.output", "spaceship_windows", "1"],
+          # ["spike_ship.output", "spaceship_windows", "1"],
           # ["spike_ship.output", "spaceship_windows", "1"],
 
+          ["c_station.output", "c_station_detail", "5"],
+          # ["c_station.output", "c_station_detail", "5"],
+          # ["c_station.output", "c_station_detail", "5"],
+          # ["c_station.output", "c_station_detail", "5"],
           # ["c_station.output", "c_station_detail", "5"],
 
+          ["flat_rectangle.output", "rule90", "25"],
           # ["flat_rectangle.output", "rule90", "25"],
+          # ["flat_rectangle.output", "rule90", "25"],
+          # ["flat_rectangle.output", "rule90", "25"],
+          # ["flat_rectangle.output", "rule90", "25"],
+          ["flat_rectangle.output", "rule30", "25"],
+          # ["flat_rectangle.output", "rule30", "25"],
+          # ["flat_rectangle.output", "rule30", "25"],
+          # ["flat_rectangle.output", "rule30", "25"],
           # ["flat_rectangle.output", "rule30", "25"],
 
-          #some extra setups I added for the journal application thing.
+          # some extra setups I added for the journal application thing.
 
           ["enterprise.output", "flames", "15"],
-          #["spike_ship.output", "spike_ship", "15"],
+          # ["enterprise.output", "flames", "15"],
+          # ["enterprise.output", "flames", "15"],
+          # ["enterprise.output", "flames", "15"],
+          # ["enterprise.output", "flames", "15"],
+          ["spike_ship.output", "spike_ship", "15"],
+          # ["spike_ship.output", "spike_ship", "15"],
+          # ["spike_ship.output", "spike_ship", "15"],
+          # ["spike_ship.output", "spike_ship", "15"],
+          # ["spike_ship.output", "spike_ship", "15"],
           
           ]
 
@@ -81,8 +129,8 @@ for grid_size in sizes:
         command = global_args + " -s " + str(grid_size) + " -f " + input_files_directory + models[i][0] + " -m " + models[i][1] + " -ani " + models[i][2] + " -o " + mesh_output_directory + output_name
         #output some information
         time_now = time.strftime("%H:%M:%S")
-        print "at time: %s" % time_now
-        print "we ran the command: ||| %s |||" % command
+        print "at_time: %s" % time_now
+        print "ran_command: ||| %s |||" % command
 
         #os.system(command)
 
@@ -94,7 +142,7 @@ for grid_size in sizes:
             print out
 
         time_now = time.strftime("%H:%M:%S")
-        print "it finished at time: %s" % time_now
+        print "finished_at_time: %s" % time_now
         
         print "====================================================================================="
 

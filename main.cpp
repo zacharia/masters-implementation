@@ -343,10 +343,42 @@ int main(int argc, char** argv)
 	//deconstructed after the step is finished, and displays it's
 	//timing information.
 	{
-		TimedSection voxelization_timer("voxelization", show_timings);
+		TimedSection voxelization_timer("voxelization_time", show_timings);
 
 		//shape voxelization
 		vg->createShapes();
+	}
+
+	if (show_mem_usage)
+	{
+		std::ifstream in_status("/proc/self/status");
+
+		if (in_status)
+		{
+			string temp;
+			while (!in_status.eof())
+			{
+				in_status >> temp >> ws;
+				if (temp == "VmPeak:")
+				{
+					in_status >> temp >> ws;
+					std::cerr << "peak_memory_usage_after_voxelization: " << temp << " kB" << "\n";
+					break;
+				}
+				if (temp == "VmSize:")
+				{
+					in_status >> temp >> ws;
+					std::cerr << "current_memory_usage: " << temp << " kB" << "\n";
+					break;
+				}
+			}
+		}
+		else
+		{
+			std::cout << "Could not open /proc/self/status to get memory usage." << "\n";
+		}
+
+		in_status.close();
 	}
 
 	if (verbose)
@@ -358,7 +390,7 @@ int main(int argc, char** argv)
 	//deconstructed after the step is finished, and displays it's
 	//timing information.
 	{
-		TimedSection detailing_timer("voxel detailing", show_timings);
+		TimedSection detailing_timer("voxel_detailing_time", show_timings);
 
 		//voxel detailing
 		vg->setAutomataRuleSet(automata_rules_file);
@@ -366,6 +398,38 @@ int main(int argc, char** argv)
 		vg->setAutomataIterations(automata_num_iterations);
 		vg->setAutomataNeighbourhoodSize(automata_neighbourhood_size);
 		vg->doSurfaceDetail();
+	}
+
+	if (show_mem_usage)
+	{
+		std::ifstream in_status("/proc/self/status");
+
+		if (in_status)
+		{
+			string temp;
+			while (!in_status.eof())
+			{
+				in_status >> temp >> ws;
+				if (temp == "VmPeak:")
+				{
+					in_status >> temp >> ws;
+					std::cerr << "Peak_memory_usage_after_voxel_detailing_was: " << temp << " kB" << "\n";
+					break;
+				}
+				if (temp == "VmSize:")
+				{
+					in_status >> temp >> ws;
+					std::cerr << "and_current_memory_usage_was: " << temp << " kB" << "\n";
+					break;
+				}
+			}
+		}
+		else
+		{
+			std::cout << "Could not open /proc/self/status to get memory usage." << "\n";
+		}
+
+		in_status.close();
 	}
 	
 	if (verbose)
@@ -380,9 +444,41 @@ int main(int argc, char** argv)
 	else
 	{
 		//a timer to record how long it takes to mesh the voxel grid.
-		TimedSection main_timer("meshing voxel grid", show_timings);
+		TimedSection main_timer("meshing_voxel_grid_time", show_timings);
 		
 		vg->polygonize();	
+	}
+
+	if (show_mem_usage)
+	{
+		std::ifstream in_status("/proc/self/status");
+
+		if (in_status)
+		{
+			string temp;
+			while (!in_status.eof())
+			{
+				in_status >> temp >> ws;
+				if (temp == "VmPeak:")
+				{
+					in_status >> temp >> ws;
+					std::cerr << "Peak_memory_usage_after_meshing_was: " << temp << " kB" << "\n";
+					break;
+				}
+				if (temp == "VmSize:")
+				{
+					in_status >> temp >> ws;
+					std::cerr << "and_current_memory_usage_was: " << temp << " kB" << "\n";
+					break;
+				}
+			}
+		}
+		else
+		{
+			std::cout << "Could not open /proc/self/status to get memory usage." << "\n";
+		}
+
+		in_status.close();
 	}
 
 	//if the export mesh file name is not the empty string (i.e. we should export the created model to a mesh file after generating it.
@@ -428,7 +524,7 @@ int main(int argc, char** argv)
 					if (temp == "VmPeak:")
 					{
 						in_status >> temp >> ws;
-						std::cerr << "Peak memory usage was: " << temp << " kB" << "\n";
+						std::cerr << "Peak_memory_usage_was: " << temp << " kB" << "\n";
 						break;
 					}
 				}
@@ -537,7 +633,7 @@ int main(int argc, char** argv)
 				if (temp == "VmPeak:")
 				{
 					in_status >> temp >> ws;
-					std::cerr << "Peak memory usage was: " << temp << " kB" << "\n";
+					std::cerr << "Peak_memory_usage_was: " << temp << " kB" << "\n";
 					break;
 				}
 			}

@@ -60,7 +60,7 @@ void OgreDisplay::initialize()
 
 	//set up some options for our window
 	root->getRenderSystem()->setConfigOption( "Full Screen", "No" );
-	root->getRenderSystem()->setConfigOption( "Video Mode", "1400x1050" );
+	root->getRenderSystem()->setConfigOption( "Video Mode", "1920x1000" );
 	root->getRenderSystem()->setConfigOption( "VSync", "Yes" );
 	root->saveConfig();
 

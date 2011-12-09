@@ -14,24 +14,27 @@ output_picture_directory = "/home/zcrumley/temp/rendering_output_png/"
 run_commands = True
 
 to_render = [
-             "castles_128",
-             "c_station",
-             "enterprise_camoflauge",
-             "enterprise_enterprise",
-             "enterprise_rule110",
-             "flat_rectangle_rule30",
-             "flat_rectangle_rule90",
-             "fractal_tree",
-             "skyscraper",
-             "space_stations_128",
-             "spike_ship",
-             "spiral",
-             "tanks_128",
-             "smoothing_comparison_unsmoothed",
-             "smoothing_comparison_smoothed",
-             "spike_ship_redux",
-             "enterprise_rule110_redux",
-             "enterprise_flames"
+             "castles_repositioned",
+             "space_stations_repositioned",
+             "tanks_repositioned"
+             # "castles_128",
+             # "c_station",
+             # "enterprise_camoflauge",
+             # "enterprise_enterprise",
+             # "enterprise_rule110",
+             # "flat_rectangle_rule30",
+             # "flat_rectangle_rule90",
+             # "fractal_tree",
+             # "skyscraper",
+             # "space_stations_128",
+             # "spike_ship",
+             # "spiral",
+             # "tanks_128",
+             # "smoothing_comparison_unsmoothed",
+             # "smoothing_comparison_smoothed",
+             # "spike_ship_redux",
+             # "enterprise_rule110_redux",
+             # "enterprise_flames"
              ]
 
 for name in to_render:
